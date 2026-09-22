@@ -3,7 +3,9 @@ import "./App.css";
 function App() {
   return (
     <div>
-      <h1 className="text-4xl text-center font-bold ">sohan</h1>
+      <form className="bg-red-500 text-center">
+        <h1>Login</h1>
+      </form>
     </div>
   );
 }
