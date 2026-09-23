@@ -20,7 +20,7 @@ const useCurrentUser = () => {
       try {
         const serverUrl =
           import.meta.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:8000";
-        const response = await axios.get(`${serverUrl}/api/auth/me`, {
+        const response = await axios.get(`${serverUrl}/api/user/current`, {
           withCredentials: true,
         });
 
