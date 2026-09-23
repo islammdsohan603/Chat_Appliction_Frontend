@@ -14,6 +14,8 @@ import {
 import axios from "axios";
 
 import { toast } from "react-toastify";
+import { useDispatch } from "react-redux";
+import { setUserData } from "../../redux/userSlice";
 
 /* ── Particle configuration ── */
 const PARTICLES = [
@@ -118,6 +120,7 @@ const strengthLabelColor = (label) => {
    ══════════════════════════════════════════════ */
 const Signup = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [formData, setFormData] = useState({
     username: "",
     email: "",
@@ -159,20 +162,21 @@ const Signup = () => {
     try {
       const serverUrl =
         import.meta.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:8000";
-      
+
       const payload = {
         userName: formData.username,
         email: formData.email,
-        password: formData.password
+        password: formData.password,
       };
 
       const response = await axios.post(
         `${serverUrl}/api/auth/signup`,
         payload,
       );
-      
+
       console.log("Signup success:", response.data);
-      toast.success("Signup successful! Please log in.");
+      dispatch(setUserData(response.data));
+      toast.success("Signup successful!");
       navigate("/login");
     } catch (err) {
       const errorMessage =

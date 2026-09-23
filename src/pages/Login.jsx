@@ -1,6 +1,8 @@
 import { useState, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { useDispatch } from "react-redux";
+import { setUserData } from "../../redux/userSlice";
 import {
   HiOutlineEnvelope,
   HiOutlineLockClosed,
@@ -15,14 +17,70 @@ import axios from "axios";
 
 /* ── Particle configuration ── */
 const PARTICLES = [
-  { left: "10%", top: "20%", dur: "18s", delay: "0s", bg: "rgba(6,182,212,0.4)", size: "2px" },
-  { left: "25%", top: "60%", dur: "22s", delay: "-3s", bg: "rgba(139,92,246,0.5)", size: "3px" },
-  { left: "45%", top: "15%", dur: "20s", delay: "-7s", bg: "rgba(236,72,153,0.35)", size: "2px" },
-  { left: "65%", top: "75%", dur: "25s", delay: "-2s", bg: "rgba(6,182,212,0.3)", size: "4px" },
-  { left: "80%", top: "30%", dur: "19s", delay: "-5s", bg: "rgba(139,92,246,0.4)", size: "2px" },
-  { left: "15%", top: "80%", dur: "23s", delay: "-8s", bg: "rgba(236,72,153,0.3)", size: "3px" },
-  { left: "55%", top: "45%", dur: "21s", delay: "-1s", bg: "rgba(6,182,212,0.35)", size: "2px" },
-  { left: "90%", top: "55%", dur: "17s", delay: "-4s", bg: "rgba(139,92,246,0.3)", size: "3px" },
+  {
+    left: "10%",
+    top: "20%",
+    dur: "18s",
+    delay: "0s",
+    bg: "rgba(6,182,212,0.4)",
+    size: "2px",
+  },
+  {
+    left: "25%",
+    top: "60%",
+    dur: "22s",
+    delay: "-3s",
+    bg: "rgba(139,92,246,0.5)",
+    size: "3px",
+  },
+  {
+    left: "45%",
+    top: "15%",
+    dur: "20s",
+    delay: "-7s",
+    bg: "rgba(236,72,153,0.35)",
+    size: "2px",
+  },
+  {
+    left: "65%",
+    top: "75%",
+    dur: "25s",
+    delay: "-2s",
+    bg: "rgba(6,182,212,0.3)",
+    size: "4px",
+  },
+  {
+    left: "80%",
+    top: "30%",
+    dur: "19s",
+    delay: "-5s",
+    bg: "rgba(139,92,246,0.4)",
+    size: "2px",
+  },
+  {
+    left: "15%",
+    top: "80%",
+    dur: "23s",
+    delay: "-8s",
+    bg: "rgba(236,72,153,0.3)",
+    size: "3px",
+  },
+  {
+    left: "55%",
+    top: "45%",
+    dur: "21s",
+    delay: "-1s",
+    bg: "rgba(6,182,212,0.35)",
+    size: "2px",
+  },
+  {
+    left: "90%",
+    top: "55%",
+    dur: "17s",
+    delay: "-4s",
+    bg: "rgba(139,92,246,0.3)",
+    size: "3px",
+  },
 ];
 
 /* ══════════════════════════════════════════════
@@ -30,6 +88,7 @@ const PARTICLES = [
    ══════════════════════════════════════════════ */
 const Login = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -60,13 +119,19 @@ const Login = () => {
     setIsLoading(true);
 
     try {
-      const serverUrl = import.meta.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:8000";
-      const response = await axios.post(`${serverUrl}/api/auth/login`, formData);
+      const serverUrl =
+        import.meta.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:8000";
+      const response = await axios.post(
+        `${serverUrl}/api/auth/login`,
+        formData,
+      );
       console.log("Login success:", response.data);
+      dispatch(setUserData(response.data));
       toast.success("Welcome back!");
       navigate("/");
     } catch (err) {
-      const errorMessage = err.response?.data?.message || err.message || "Invalid credentials.";
+      const errorMessage =
+        err.response?.data?.message || err.message || "Invalid credentials.";
       setError(errorMessage);
       toast.error(errorMessage);
     } finally {
@@ -165,17 +230,30 @@ const Login = () => {
 
           {/* Description */}
           <p className="text-base leading-[1.7] text-slate-400/[0.85] max-w-[400px] max-[900px]:max-w-full">
-            Pick up right where you left off. Continue your conversations and stay connected with your team securely.
+            Pick up right where you left off. Continue your conversations and
+            stay connected with your team securely.
           </p>
 
           {/* Feature list */}
           <div className="flex flex-col gap-4 mt-2 max-[900px]:items-center">
             {[
-              { icon: <HiOutlineBolt />, text: "Lightning-fast real-time messaging" },
-              { icon: <HiOutlineShieldCheck />, text: "End-to-end encryption by default" },
-              { icon: <HiOutlineChatBubbleLeftRight />, text: "Group chats, channels & threads" },
+              {
+                icon: <HiOutlineBolt />,
+                text: "Lightning-fast real-time messaging",
+              },
+              {
+                icon: <HiOutlineShieldCheck />,
+                text: "End-to-end encryption by default",
+              },
+              {
+                icon: <HiOutlineChatBubbleLeftRight />,
+                text: "Group chats, channels & threads",
+              },
             ].map((f, i) => (
-              <div key={i} className="flex items-center gap-3 text-slate-300/90 text-sm font-medium">
+              <div
+                key={i}
+                className="flex items-center gap-3 text-slate-300/90 text-sm font-medium"
+              >
                 <div className="w-8 h-8 rounded-[10px] bg-purple-500/[0.12] border border-purple-500/20 flex items-center justify-center shrink-0">
                   <span className="w-4 h-4 text-purple-400">{f.icon}</span>
                 </div>
@@ -280,11 +358,14 @@ const Login = () => {
                 >
                   Password
                 </label>
-                <Link to="/forgot-password" className="text-[11px] text-purple-400 hover:text-purple-300 transition-colors">
+                <Link
+                  to="/forgot-password"
+                  className="text-[11px] text-purple-400 hover:text-purple-300 transition-colors"
+                >
                   Forgot password?
                 </Link>
               </div>
-              
+
               <div className="relative flex items-center group">
                 <span className="absolute left-4 flex items-center justify-center text-slate-400/50 transition-colors duration-300 pointer-events-none z-[2] group-focus-within:text-purple-400">
                   <HiOutlineLockClosed className="w-[18px] h-[18px]" />
