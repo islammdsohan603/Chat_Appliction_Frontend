@@ -37,7 +37,9 @@ const InfoRow = ({ icon, label, value }) => (
       {icon}
     </div>
     <div className="flex-1 min-w-0">
-      <p className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider">{label}</p>
+      <p className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider">
+        {label}
+      </p>
       <p className="text-sm text-slate-200 truncate mt-0.5">{value || "—"}</p>
     </div>
   </div>
@@ -45,7 +47,9 @@ const InfoRow = ({ icon, label, value }) => (
 
 /* ── Section card ── */
 const Card = ({ title, children, className = "" }) => (
-  <div className={`glass rounded-2xl border border-purple-500/15 overflow-hidden ${className}`}>
+  <div
+    className={`glass rounded-2xl border border-purple-500/15 overflow-hidden ${className}`}
+  >
     {title && (
       <div className="px-5 py-4 border-b border-purple-500/10">
         <h3 className="text-sm font-semibold text-slate-200">{title}</h3>
@@ -57,7 +61,8 @@ const Card = ({ title, children, className = "" }) => (
 
 /* ── Quick action button ── */
 const ActionButton = ({ icon, label, href, onClick, variant = "default" }) => {
-  const base = "flex items-center gap-3 px-4 py-3.5 rounded-xl transition-all text-sm font-medium w-full text-left";
+  const base =
+    "flex items-center gap-3 px-4 py-3.5 rounded-xl transition-all text-sm font-medium w-full text-left";
   const variants = {
     default: "text-slate-300 hover:bg-purple-500/10 hover:text-white",
     danger: "text-red-400 hover:bg-red-500/10 hover:text-red-300",
@@ -76,7 +81,11 @@ const ActionButton = ({ icon, label, href, onClick, variant = "default" }) => {
 
   return (
     <button onClick={onClick} className={cls}>
-      <span className={variant === "danger" ? "text-red-400" : "text-slate-400"}>{icon}</span>
+      <span
+        className={variant === "danger" ? "text-red-400" : "text-slate-400"}
+      >
+        {icon}
+      </span>
       {label}
     </button>
   );
@@ -98,7 +107,9 @@ const Profile = () => {
     try {
       const serverUrl =
         import.meta.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:8000";
-      await axios.get(`${serverUrl}/api/auth/logout`, { withCredentials: true });
+      await axios.get(`${serverUrl}/api/auth/logout`, {
+        withCredentials: true,
+      });
     } catch {
       // Ignore and logout anyway
     }
@@ -119,10 +130,20 @@ const Profile = () => {
     <div className="min-h-screen bg-[#060918] font-inter text-slate-200">
       {/* Background */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute -top-40 -left-40 w-[500px] h-[500px] rounded-full blur-[100px] opacity-20"
-          style={{ background: "radial-gradient(circle, rgba(139,92,246,0.8) 0%, transparent 70%)" }} />
-        <div className="absolute -bottom-40 -right-40 w-[500px] h-[500px] rounded-full blur-[100px] opacity-15"
-          style={{ background: "radial-gradient(circle, rgba(6,182,212,0.8) 0%, transparent 70%)" }} />
+        <div
+          className="absolute -top-40 -left-40 w-[500px] h-[500px] rounded-full blur-[100px] opacity-20"
+          style={{
+            background:
+              "radial-gradient(circle, rgba(139,92,246,0.8) 0%, transparent 70%)",
+          }}
+        />
+        <div
+          className="absolute -bottom-40 -right-40 w-[500px] h-[500px] rounded-full blur-[100px] opacity-15"
+          style={{
+            background:
+              "radial-gradient(circle, rgba(6,182,212,0.8) 0%, transparent 70%)",
+          }}
+        />
       </div>
 
       {/* Top nav */}
@@ -138,7 +159,7 @@ const Profile = () => {
           <h1 className="text-sm font-bold text-slate-200">My Profile</h1>
           <button
             aria-label="Edit profile"
-            className="p-2 rounded-xl text-slate-400 hover:text-purple-300 hover:bg-purple-500/10 transition-all"
+            className="p-2  cursor-pointer rounded-xl text-slate-400 hover:text-purple-300 hover:bg-purple-500/10 transition-all"
           >
             <HiOutlinePencilSquare className="w-4.5 h-4.5" />
           </button>
@@ -148,7 +169,6 @@ const Profile = () => {
       {/* Main content */}
       <main className="relative max-w-4xl mx-auto px-4 py-8 pb-16">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-
           {/* ── Left column: avatar + basic info ── */}
           <div className="lg:col-span-1 flex flex-col gap-5">
             {/* Profile card */}
@@ -164,9 +184,13 @@ const Profile = () => {
 
                 {/* Name & username */}
                 <div className="text-center">
-                  <h2 className="text-xl font-extrabold text-slate-100">{displayName}</h2>
+                  <h2 className="text-xl font-extrabold text-slate-100">
+                    {displayName}
+                  </h2>
                   {userName && (
-                    <p className="text-sm text-purple-400/80 mt-0.5">@{userName}</p>
+                    <p className="text-sm text-purple-400/80 mt-0.5">
+                      @{userName}
+                    </p>
                   )}
                 </div>
 
@@ -178,7 +202,9 @@ const Profile = () => {
                 {/* Online indicator */}
                 <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-green-500/10 border border-green-500/25">
                   <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                  <span className="text-xs font-medium text-green-400">Online now</span>
+                  <span className="text-xs font-medium text-green-400">
+                    Online now
+                  </span>
                 </div>
 
                 {/* Edit profile button */}
@@ -199,10 +225,25 @@ const Profile = () => {
             {/* Quick actions */}
             <Card title="Quick Actions">
               <div className="px-2 py-2 flex flex-col gap-0.5">
-                <ActionButton icon={<HiOutlineChatBubbleLeftRight className="w-4 h-4" />} label="Open Chat" href="/chat" />
-                <ActionButton icon={<HiOutlineBell className="w-4 h-4" />} label="Notification Settings" />
-                <ActionButton icon={<HiOutlineCog6Tooth className="w-4 h-4" />} label="Account Settings" />
-                <ActionButton icon={<HiOutlineArrowRightOnRectangle className="w-4 h-4" />} label="Log Out" onClick={handleLogout} variant="danger" />
+                <ActionButton
+                  icon={<HiOutlineChatBubbleLeftRight className="w-4 h-4" />}
+                  label="Open Chat"
+                  href="/chat"
+                />
+                <ActionButton
+                  icon={<HiOutlineBell className="w-4 h-4" />}
+                  label="Notification Settings"
+                />
+                <ActionButton
+                  icon={<HiOutlineCog6Tooth className="w-4 h-4" />}
+                  label="Account Settings"
+                />
+                <ActionButton
+                  icon={<HiOutlineArrowRightOnRectangle className="w-4 h-4" />}
+                  label="Log Out"
+                  onClick={handleLogout}
+                  variant="danger"
+                />
               </div>
             </Card>
           </div>
@@ -223,7 +264,21 @@ const Profile = () => {
                   value={userName ? `@${userName}` : undefined}
                 />
                 <InfoRow
-                  icon={<svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" /></svg>}
+                  icon={
+                    <svg
+                      className="w-4 h-4"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth={2}
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"
+                      />
+                    </svg>
+                  }
                   label="Email Address"
                   value={email}
                 />
@@ -243,8 +298,12 @@ const Profile = () => {
                     <HiOutlineShieldCheck className="w-4 h-4" />
                   </div>
                   <div className="flex-1">
-                    <p className="text-sm font-semibold text-slate-200">Account is Secure</p>
-                    <p className="text-xs text-slate-500 mt-0.5">JWT authentication active · Password encrypted</p>
+                    <p className="text-sm font-semibold text-slate-200">
+                      Account is Secure
+                    </p>
+                    <p className="text-xs text-slate-500 mt-0.5">
+                      JWT authentication active · Password encrypted
+                    </p>
                   </div>
                   <div className="px-2.5 py-1 rounded-full bg-green-500/10 border border-green-500/25 text-[10px] font-semibold text-green-400">
                     Active
@@ -252,7 +311,8 @@ const Profile = () => {
                 </div>
                 <div className="px-4 py-3 mx-2 mb-2 rounded-xl bg-purple-500/5 border border-purple-500/10">
                   <p className="text-xs text-slate-500">
-                    Your password is encrypted using bcryptjs. Sessions are managed with secure httpOnly cookies that expire in 7 days.
+                    Your password is encrypted using bcryptjs. Sessions are
+                    managed with secure httpOnly cookies that expire in 7 days.
                   </p>
                 </div>
               </div>
@@ -262,10 +322,30 @@ const Profile = () => {
             <Card title="Recent Activity">
               <div className="px-4 py-3">
                 {[
-                  { action: "Sent a message", target: "Alex Morgan", time: "2 minutes ago", icon: "💬" },
-                  { action: "Joined group", target: "Design Team", time: "1 hour ago", icon: "👥" },
-                  { action: "Logged in", target: "from Chrome · Windows", time: "3 hours ago", icon: "🔐" },
-                  { action: "Account created", target: "Welcome to NEXORA!", time: "September 2026", icon: "🎉" },
+                  {
+                    action: "Sent a message",
+                    target: "Alex Morgan",
+                    time: "2 minutes ago",
+                    icon: "💬",
+                  },
+                  {
+                    action: "Joined group",
+                    target: "Design Team",
+                    time: "1 hour ago",
+                    icon: "👥",
+                  },
+                  {
+                    action: "Logged in",
+                    target: "from Chrome · Windows",
+                    time: "3 hours ago",
+                    icon: "🔐",
+                  },
+                  {
+                    action: "Account created",
+                    target: "Welcome to NEXORA!",
+                    time: "September 2026",
+                    icon: "🎉",
+                  },
                 ].map((item, i) => (
                   <div
                     key={i}
@@ -277,9 +357,13 @@ const Profile = () => {
                     <div className="flex-1 min-w-0">
                       <p className="text-sm text-slate-200">
                         <span className="font-medium">{item.action}</span>{" "}
-                        <span className="text-purple-400/80">{item.target}</span>
+                        <span className="text-purple-400/80">
+                          {item.target}
+                        </span>
                       </p>
-                      <p className="text-xs text-slate-500 mt-0.5">{item.time}</p>
+                      <p className="text-xs text-slate-500 mt-0.5">
+                        {item.time}
+                      </p>
                     </div>
                   </div>
                 ))}
