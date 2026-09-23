@@ -1,5 +1,6 @@
 import { useState, useCallback } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import {
   HiOutlineUser,
   HiOutlineEnvelope,
@@ -11,17 +12,74 @@ import {
   HiOutlineShieldCheck,
   HiOutlineChatBubbleLeftRight,
 } from "react-icons/hi2";
+import axios from "axios";
 
 /* ── Particle configuration ── */
 const PARTICLES = [
-  { left: "10%", top: "20%", dur: "18s", delay: "0s", bg: "rgba(6,182,212,0.4)", size: "2px" },
-  { left: "25%", top: "60%", dur: "22s", delay: "-3s", bg: "rgba(139,92,246,0.5)", size: "3px" },
-  { left: "45%", top: "15%", dur: "20s", delay: "-7s", bg: "rgba(236,72,153,0.35)", size: "2px" },
-  { left: "65%", top: "75%", dur: "25s", delay: "-2s", bg: "rgba(6,182,212,0.3)", size: "4px" },
-  { left: "80%", top: "30%", dur: "19s", delay: "-5s", bg: "rgba(139,92,246,0.4)", size: "2px" },
-  { left: "15%", top: "80%", dur: "23s", delay: "-8s", bg: "rgba(236,72,153,0.3)", size: "3px" },
-  { left: "55%", top: "45%", dur: "21s", delay: "-1s", bg: "rgba(6,182,212,0.35)", size: "2px" },
-  { left: "90%", top: "55%", dur: "17s", delay: "-4s", bg: "rgba(139,92,246,0.3)", size: "3px" },
+  {
+    left: "10%",
+    top: "20%",
+    dur: "18s",
+    delay: "0s",
+    bg: "rgba(6,182,212,0.4)",
+    size: "2px",
+  },
+  {
+    left: "25%",
+    top: "60%",
+    dur: "22s",
+    delay: "-3s",
+    bg: "rgba(139,92,246,0.5)",
+    size: "3px",
+  },
+  {
+    left: "45%",
+    top: "15%",
+    dur: "20s",
+    delay: "-7s",
+    bg: "rgba(236,72,153,0.35)",
+    size: "2px",
+  },
+  {
+    left: "65%",
+    top: "75%",
+    dur: "25s",
+    delay: "-2s",
+    bg: "rgba(6,182,212,0.3)",
+    size: "4px",
+  },
+  {
+    left: "80%",
+    top: "30%",
+    dur: "19s",
+    delay: "-5s",
+    bg: "rgba(139,92,246,0.4)",
+    size: "2px",
+  },
+  {
+    left: "15%",
+    top: "80%",
+    dur: "23s",
+    delay: "-8s",
+    bg: "rgba(236,72,153,0.3)",
+    size: "3px",
+  },
+  {
+    left: "55%",
+    top: "45%",
+    dur: "21s",
+    delay: "-1s",
+    bg: "rgba(6,182,212,0.35)",
+    size: "2px",
+  },
+  {
+    left: "90%",
+    top: "55%",
+    dur: "17s",
+    delay: "-4s",
+    bg: "rgba(139,92,246,0.3)",
+    size: "3px",
+  },
 ];
 
 /* ── Password‑strength helper ── */
@@ -58,6 +116,7 @@ const strengthLabelColor = (label) => {
    Signup component
    ══════════════════════════════════════════════ */
 const Signup = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     username: "",
     email: "",
@@ -94,28 +153,19 @@ const Signup = () => {
 
     setIsLoading(true);
 
-    // ── API call placeholder ──
-    // Replace the setTimeout below with your actual API call, e.g.:
-    //
-    // try {
-    //   const response = await fetch("/api/auth/signup", {
-    //     method: "POST",
-    //     headers: { "Content-Type": "application/json" },
-    //     body: JSON.stringify(formData),
-    //   });
-    //   const data = await response.json();
-    //   if (!response.ok) throw new Error(data.message);
-    //   // Handle success (redirect, set token, etc.)
-    // } catch (err) {
-    //   setError(err.message || "Something went wrong.");
-    // } finally {
-    //   setIsLoading(false);
-    // }
-
-    setTimeout(() => {
+    try {
+      const serverUrl = import.meta.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:8000";
+      const response = await axios.post(`${serverUrl}/api/auth/signup`, formData);
+      console.log("Signup success:", response.data);
+      toast.success("Signup successful! Please log in.");
+      navigate("/login");
+    } catch (err) {
+      const errorMessage = err.response?.data?.message || err.message || "Something went wrong.";
+      setError(errorMessage);
+      toast.error(errorMessage);
+    } finally {
       setIsLoading(false);
-      console.log("Signup payload:", formData);
-    }, 1500);
+    }
   };
 
   return (
@@ -218,11 +268,23 @@ const Signup = () => {
           {/* Feature list */}
           <div className="flex flex-col gap-4 mt-2 max-[900px]:items-center">
             {[
-              { icon: <HiOutlineBolt />, text: "Lightning-fast real-time messaging" },
-              { icon: <HiOutlineShieldCheck />, text: "End-to-end encryption by default" },
-              { icon: <HiOutlineChatBubbleLeftRight />, text: "Group chats, channels & threads" },
+              {
+                icon: <HiOutlineBolt />,
+                text: "Lightning-fast real-time messaging",
+              },
+              {
+                icon: <HiOutlineShieldCheck />,
+                text: "End-to-end encryption by default",
+              },
+              {
+                icon: <HiOutlineChatBubbleLeftRight />,
+                text: "Group chats, channels & threads",
+              },
             ].map((f, i) => (
-              <div key={i} className="flex items-center gap-3 text-slate-300/90 text-sm font-medium">
+              <div
+                key={i}
+                className="flex items-center gap-3 text-slate-300/90 text-sm font-medium"
+              >
                 <div className="w-8 h-8 rounded-[10px] bg-purple-500/[0.12] border border-purple-500/20 flex items-center justify-center shrink-0">
                   <span className="w-4 h-4 text-purple-400">{f.icon}</span>
                 </div>

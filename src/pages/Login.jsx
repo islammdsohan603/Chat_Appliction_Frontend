@@ -1,5 +1,6 @@
 import { useState, useCallback } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import {
   HiOutlineEnvelope,
   HiOutlineLockClosed,
@@ -10,6 +11,7 @@ import {
   HiOutlineShieldCheck,
   HiOutlineChatBubbleLeftRight,
 } from "react-icons/hi2";
+import axios from "axios";
 
 /* ── Particle configuration ── */
 const PARTICLES = [
@@ -27,6 +29,7 @@ const PARTICLES = [
    Login component
    ══════════════════════════════════════════════ */
 const Login = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -56,28 +59,19 @@ const Login = () => {
 
     setIsLoading(true);
 
-    // ── API call placeholder ──
-    // Replace the setTimeout below with your actual API call, e.g.:
-    //
-    // try {
-    //   const response = await fetch("/api/auth/login", {
-    //     method: "POST",
-    //     headers: { "Content-Type": "application/json" },
-    //     body: JSON.stringify(formData),
-    //   });
-    //   const data = await response.json();
-    //   if (!response.ok) throw new Error(data.message);
-    //   // Handle success (redirect, set token, etc.)
-    // } catch (err) {
-    //   setError(err.message || "Invalid credentials.");
-    // } finally {
-    //   setIsLoading(false);
-    // }
-
-    setTimeout(() => {
+    try {
+      const serverUrl = import.meta.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:8000";
+      const response = await axios.post(`${serverUrl}/api/auth/login`, formData);
+      console.log("Login success:", response.data);
+      toast.success("Welcome back!");
+      navigate("/");
+    } catch (err) {
+      const errorMessage = err.response?.data?.message || err.message || "Invalid credentials.";
+      setError(errorMessage);
+      toast.error(errorMessage);
+    } finally {
       setIsLoading(false);
-      console.log("Login payload:", formData);
-    }, 1500);
+    }
   };
 
   return (
