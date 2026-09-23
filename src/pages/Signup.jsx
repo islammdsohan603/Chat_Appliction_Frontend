@@ -1,6 +1,5 @@
 import { useState, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
 import {
   HiOutlineUser,
   HiOutlineEnvelope,
@@ -13,6 +12,8 @@ import {
   HiOutlineChatBubbleLeftRight,
 } from "react-icons/hi2";
 import axios from "axios";
+
+import { toast } from "react-toastify";
 
 /* ── Particle configuration ── */
 const PARTICLES = [
@@ -153,14 +154,29 @@ const Signup = () => {
 
     setIsLoading(true);
 
+    // ── API call placeholder ──
+
     try {
-      const serverUrl = import.meta.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:8000";
-      const response = await axios.post(`${serverUrl}/api/auth/signup`, formData);
+      const serverUrl =
+        import.meta.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:8000";
+      
+      const payload = {
+        userName: formData.username,
+        email: formData.email,
+        password: formData.password
+      };
+
+      const response = await axios.post(
+        `${serverUrl}/api/auth/signup`,
+        payload,
+      );
+      
       console.log("Signup success:", response.data);
       toast.success("Signup successful! Please log in.");
       navigate("/login");
     } catch (err) {
-      const errorMessage = err.response?.data?.message || err.message || "Something went wrong.";
+      const errorMessage =
+        err.response?.data?.message || err.message || "Something went wrong.";
       setError(errorMessage);
       toast.error(errorMessage);
     } finally {
