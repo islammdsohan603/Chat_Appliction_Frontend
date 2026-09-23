@@ -217,7 +217,7 @@ const Login = () => {
               </svg>
             </div>
             <span className="text-[32px] font-extrabold bg-gradient-to-br from-indigo-200 via-purple-300 to-cyan-300 bg-clip-text text-transparent tracking-[-0.5px]">
-              Chatly
+              NEXORA
             </span>
           </div>
 
@@ -304,7 +304,7 @@ const Login = () => {
               Log In
             </h2>
             <p className="text-sm text-slate-400/70">
-              Access your Chatly account
+              Welcome back to NEXORA
             </p>
           </div>
 

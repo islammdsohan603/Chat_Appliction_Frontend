@@ -1,0 +1,203 @@
+/**
+ * ChatSidebar — Left sidebar with NEXORA logo, search, conversation list.
+ *
+ * Props:
+ *  - user: { userName, email } from Redux
+ *  - conversations: array
+ *  - activeId: string
+ *  - onSelect: (id) => void
+ *  - onLogout: () => void
+ *  - isLoading: boolean
+ *  - isOpen: boolean (mobile drawer state)
+ *  - onClose: () => void
+ */
+import { useState } from "react";
+import { Link } from "react-router-dom";
+import UserAvatar from "../ui/UserAvatar";
+import UserStatus from "../ui/UserStatus";
+import ConversationList from "./ConversationList";
+import {
+  HiOutlineMagnifyingGlass,
+  HiOutlinePencilSquare,
+  HiOutlineUser,
+  HiOutlineCog6Tooth,
+  HiOutlineArrowRightOnRectangle,
+  HiOutlineXMark,
+  HiOutlineBell,
+} from "react-icons/hi2";
+
+const TABS = [
+  { id: "all", label: "All" },
+  { id: "unread", label: "Unread" },
+  { id: "groups", label: "Groups" },
+];
+
+/* ── NEXORA Logo Mark ── */
+const NexoraLogo = () => (
+  <div className="flex items-center gap-3">
+    <div className="relative w-9 h-9 rounded-xl bg-gradient-to-br from-purple-500 to-cyan-500 flex items-center justify-center shadow-[0_4px_16px_rgba(139,92,246,0.35)]">
+      <div className="absolute -inset-0.5 rounded-[14px] bg-gradient-to-br from-purple-500/50 to-cyan-500/50 -z-[1] blur-[6px]" />
+      <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+      </svg>
+    </div>
+    <span className="text-xl font-extrabold bg-gradient-to-br from-indigo-200 via-purple-300 to-cyan-300 bg-clip-text text-transparent tracking-tight">
+      NEXORA
+    </span>
+  </div>
+);
+
+const ChatSidebar = ({
+  user = {},
+  conversations = [],
+  activeId = null,
+  onSelect,
+  onLogout,
+  isLoading = false,
+  isOpen = true,
+  onClose,
+}) => {
+  const [search, setSearch] = useState("");
+  const [activeTab, setActiveTab] = useState("all");
+
+  const filteredConversations = conversations.filter((c) =>
+    c.name?.toLowerCase().includes(search.toLowerCase())
+  );
+
+  return (
+    <>
+      {/* Mobile backdrop */}
+      {isOpen && (
+        <div
+          className="fixed inset-0 bg-black/40 backdrop-blur-sm z-20 md:hidden"
+          onClick={onClose}
+          aria-hidden="true"
+        />
+      )}
+
+      <aside
+        className={`
+          flex flex-col h-full bg-[#0a0f2a] border-r border-purple-500/10
+          transition-all duration-300 ease-in-out
+          md:relative md:translate-x-0 md:w-72 lg:w-80
+          fixed left-0 top-0 bottom-0 w-[300px] z-30
+          ${isOpen ? "translate-x-0" : "-translate-x-full"}
+        `}
+        aria-label="Chat sidebar"
+      >
+        {/* Top: Logo + close (mobile) */}
+        <div className="flex items-center justify-between px-4 py-4 shrink-0">
+          <NexoraLogo />
+          <div className="flex items-center gap-1">
+            <button
+              aria-label="Compose new message"
+              className="p-2 rounded-xl text-slate-400/70 hover:text-purple-300 hover:bg-purple-500/10 transition-all"
+            >
+              <HiOutlinePencilSquare className="w-5 h-5" />
+            </button>
+            <button
+              onClick={onClose}
+              aria-label="Close sidebar"
+              className="p-2 rounded-xl text-slate-400/70 hover:text-white hover:bg-purple-500/10 transition-all md:hidden"
+            >
+              <HiOutlineXMark className="w-5 h-5" />
+            </button>
+          </div>
+        </div>
+
+        {/* Current user card */}
+        <div className="mx-3 mb-3 px-3 py-3 rounded-xl bg-purple-500/8 border border-purple-500/15 flex items-center gap-3 shrink-0">
+          <UserAvatar name={user.userName || user.email || "?"} size="sm" online />
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-semibold text-slate-200 truncate">
+              {user.userName || "You"}
+            </p>
+            <UserStatus status="online" />
+          </div>
+          <button aria-label="Notifications" className="p-1.5 rounded-lg text-slate-400/60 hover:text-purple-300 hover:bg-purple-500/10 transition-all">
+            <HiOutlineBell className="w-4 h-4" />
+          </button>
+        </div>
+
+        {/* Search */}
+        <div className="px-3 mb-3 shrink-0">
+          <div className="relative">
+            <HiOutlineMagnifyingGlass className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+            <input
+              type="search"
+              placeholder="Search conversations…"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              aria-label="Search conversations"
+              className="w-full pl-9 pr-4 py-2.5 rounded-xl bg-[#111840] border border-purple-500/15 text-sm text-slate-200 placeholder:text-slate-500/60 outline-none focus:border-purple-500/40 focus:shadow-[0_0_0_3px_rgba(139,92,246,0.08)] transition-all"
+            />
+          </div>
+        </div>
+
+        {/* Filter Tabs */}
+        <div className="flex gap-1 px-3 mb-3 shrink-0">
+          {TABS.map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`flex-1 py-1.5 text-xs font-semibold rounded-lg transition-all ${
+                activeTab === tab.id
+                  ? "bg-purple-500/20 border border-purple-500/30 text-purple-300"
+                  : "text-slate-400/70 hover:text-slate-300 hover:bg-purple-500/8"
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+
+        {/* Section label */}
+        <div className="px-5 mb-1 shrink-0">
+          <span className="text-[10px] font-semibold text-slate-500/80 uppercase tracking-widest">
+            Messages
+          </span>
+        </div>
+
+        {/* Conversation list — scrollable */}
+        <div className="flex-1 overflow-y-auto no-scrollbar">
+          <ConversationList
+            conversations={filteredConversations}
+            activeId={activeId}
+            onSelect={onSelect}
+            isLoading={isLoading}
+            filter={activeTab}
+          />
+        </div>
+
+        {/* Bottom nav */}
+        <div className="shrink-0 border-t border-purple-500/10 px-3 py-3 flex items-center justify-between">
+          <Link
+            to="/profile"
+            aria-label="Profile"
+            className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-slate-400/70 hover:text-white hover:bg-purple-500/10 transition-all text-xs font-medium"
+          >
+            <HiOutlineUser className="w-5 h-5" />
+            <span className="hidden lg:block">Profile</span>
+          </Link>
+          <button
+            aria-label="Settings"
+            className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-slate-400/70 hover:text-white hover:bg-purple-500/10 transition-all text-xs font-medium"
+          >
+            <HiOutlineCog6Tooth className="w-5 h-5" />
+            <span className="hidden lg:block">Settings</span>
+          </button>
+          <button
+            onClick={onLogout}
+            aria-label="Log out"
+            className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-slate-400/70 hover:text-red-400 hover:bg-red-500/10 transition-all text-xs font-medium"
+          >
+            <HiOutlineArrowRightOnRectangle className="w-5 h-5" />
+            <span className="hidden lg:block">Logout</span>
+          </button>
+        </div>
+      </aside>
+    </>
+  );
+};
+
+export default ChatSidebar;
