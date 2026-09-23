@@ -124,6 +124,7 @@ const Login = () => {
       const response = await axios.post(
         `${serverUrl}/api/auth/login`,
         formData,
+        { withCredentials: true },
       );
       console.log("Login success:", response.data);
       dispatch(setUserData(response.data));

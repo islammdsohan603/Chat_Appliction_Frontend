@@ -172,6 +172,7 @@ const Signup = () => {
       const response = await axios.post(
         `${serverUrl}/api/auth/signup`,
         payload,
+        { withCredentials: true },
       );
 
       console.log("Signup success:", response.data);
