@@ -19,6 +19,9 @@ import {
   HiOutlineGlobeAlt,
   HiOutlineUser,
 } from "react-icons/hi2";
+import { useState } from "react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogClose } from "../components/ui/dialog";
+import { FieldGroup, Field, FieldLabel } from "../components/ui/field";
 
 /* ── Stats row ── */
 const StatItem = ({ value, label }) => (
@@ -99,6 +102,8 @@ const Profile = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  const [models,setIsModels]=useState(false)
+
   const user = userData?.user || userData || {};
   const { userName, email, name } = user;
   const displayName = name || userName || "User";
@@ -158,8 +163,9 @@ const Profile = () => {
           </Link>
           <h1 className="text-sm font-bold text-slate-200">My Profile</h1>
           <button
+            onClick={() => setIsModels(true)}
             aria-label="Edit profile"
-            className="p-2  cursor-pointer rounded-xl text-slate-400 hover:text-purple-300 hover:bg-purple-500/10 transition-all"
+            className="p-2 cursor-pointer rounded-xl text-slate-400 hover:text-purple-300 hover:bg-purple-500/10 transition-all"
           >
             <HiOutlinePencilSquare className="w-4.5 h-4.5" />
           </button>
@@ -208,7 +214,9 @@ const Profile = () => {
                 </div>
 
                 {/* Edit profile button */}
-                <button className="w-full py-2.5 rounded-xl border border-purple-500/25 text-sm font-semibold text-purple-300 hover:bg-purple-500/10 hover:border-purple-500/40 transition-all flex items-center justify-center gap-2">
+                <button 
+                  onClick={() => setIsModels(true)}
+                  className="w-full py-2.5 rounded-xl border border-purple-500/25 text-sm font-semibold text-purple-300 hover:bg-purple-500/10 hover:border-purple-500/40 transition-all flex items-center justify-center gap-2">
                   <HiOutlinePencilSquare className="w-4 h-4" />
                   Edit Profile
                 </button>
@@ -372,6 +380,57 @@ const Profile = () => {
           </div>
         </div>
       </main>
+
+      {/* Edit Profile Modal */}
+      <Dialog open={models} onOpenChange={setIsModels}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Edit Profile</DialogTitle>
+          </DialogHeader>
+          <FieldGroup>
+            <Field>
+              <FieldLabel>Display Name</FieldLabel>
+              <input
+                type="text"
+                defaultValue={displayName}
+                className="w-full px-3 py-2 rounded-xl bg-[#060918]/50 border border-purple-500/20 text-slate-200 outline-none focus:border-purple-500/50"
+              />
+            </Field>
+            <Field>
+              <FieldLabel>Username</FieldLabel>
+              <input
+                type="text"
+                defaultValue={userName}
+                className="w-full px-3 py-2 rounded-xl bg-[#060918]/50 border border-purple-500/20 text-slate-200 outline-none focus:border-purple-500/50"
+              />
+            </Field>
+            <Field>
+              <FieldLabel>Email Address</FieldLabel>
+              <input
+                type="email"
+                defaultValue={email}
+                className="w-full px-3 py-2 rounded-xl bg-[#060918]/50 border border-purple-500/20 text-slate-200 outline-none focus:border-purple-500/50"
+              />
+            </Field>
+          </FieldGroup>
+          <DialogFooter>
+            <DialogClose asChild>
+              <button
+                className="px-4 py-2 rounded-xl text-sm font-semibold text-slate-400 hover:text-white transition-colors"
+                onClick={() => setIsModels(false)}
+              >
+                Cancel
+              </button>
+            </DialogClose>
+            <button
+              className="px-4 py-2 rounded-xl text-sm font-semibold bg-purple-600 hover:bg-purple-500 text-white transition-colors"
+              onClick={() => setIsModels(false)}
+            >
+              Save Changes
+            </button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

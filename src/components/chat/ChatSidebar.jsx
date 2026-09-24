@@ -107,10 +107,15 @@ const ChatSidebar = ({
 
         {/* Current user card */}
         <div className="mx-3 mb-3 px-3 py-3 rounded-xl bg-purple-500/8 border border-purple-500/15 flex items-center gap-3 shrink-0">
-          <UserAvatar name={user.userName || user.email || "?"} size="sm" online />
+          <UserAvatar
+            name={user.name || user.userName || user.email || "?"}
+            src={user.image}
+            size="sm"
+            online
+          />
           <div className="flex-1 min-w-0">
             <p className="text-sm font-semibold text-slate-200 truncate">
-              {user.userName || "You"}
+              {user.name || user.userName || "You"}
             </p>
             <UserStatus status="online" />
           </div>
