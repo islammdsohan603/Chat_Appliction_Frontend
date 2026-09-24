@@ -166,8 +166,9 @@ const ChatLayout = () => {
   const [conversations, setConversations] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  const currentUserId = userData?.user?._id || "me";
-  const currentUserName = userData?.user?.name || userData?.user?.userName || userData?.userName || "You";
+  const currentUser = userData?.user || userData || {};
+  const currentUserId = currentUser._id || "me";
+  const currentUserName = currentUser.name || currentUser.userName || "You";
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -250,7 +251,7 @@ const ChatLayout = () => {
     <div className="h-screen w-full flex bg-[#060918] overflow-hidden font-inter">
       {/* ════ LEFT SIDEBAR ════ */}
       <ChatSidebar
-        user={{ userName: currentUserName, email: userData?.user?.email, image: userData?.user?.image, name: userData?.user?.name }}
+        user={{ userName: currentUserName, email: currentUser.email, image: currentUser.image, name: currentUser.name }}
         conversations={conversations}
         activeId={activeConversationId}
         onSelect={handleSelectConversation}
