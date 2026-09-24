@@ -4,7 +4,7 @@
  * Tablet: Sidebar | Chat (Profile as drawer)
  * Mobile: Single panel with navigation
  */
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -163,11 +163,44 @@ const ChatLayout = () => {
   const [activeConversationId, setActiveConversationId] = useState(null);
   const [messages, setMessages] = useState([]);
   const [isTyping] = useState(false);
+  const [conversations, setConversations] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const currentUserId = userData?.user?.id || "me";
-  const currentUserName = userData?.user?.userName || userData?.userName || "You";
+  const currentUserId = userData?.user?._id || "me";
+  const currentUserName = userData?.user?.name || userData?.user?.userName || userData?.userName || "You";
 
-  const activeConversation = MOCK_CONVERSATIONS.find(
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const serverUrl =
+          import.meta.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:8000";
+        const response = await axios.get(`${serverUrl}/api/user/all`, {
+          withCredentials: true,
+        });
+
+        // Map users to conversation format
+        const mappedUsers = response.data.map((u) => ({
+          id: u._id,
+          name: u.name || u.userName,
+          lastMessage: "Start a conversation",
+          timestamp: u.updatedAt,
+          unread: 0,
+          status: "offline",
+          isGroup: false,
+          avatar: u.image,
+        }));
+
+        setConversations(mappedUsers);
+      } catch (error) {
+        console.error("Failed to fetch users", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchUsers();
+  }, []);
+
+  const activeConversation = conversations.find(
     (c) => c.id === activeConversationId
   );
 
@@ -217,12 +250,12 @@ const ChatLayout = () => {
     <div className="h-screen w-full flex bg-[#060918] overflow-hidden font-inter">
       {/* ════ LEFT SIDEBAR ════ */}
       <ChatSidebar
-        user={{ userName: currentUserName, email: userData?.user?.email }}
-        conversations={MOCK_CONVERSATIONS}
+        user={{ userName: currentUserName, email: userData?.user?.email, image: userData?.user?.image, name: userData?.user?.name }}
+        conversations={conversations}
         activeId={activeConversationId}
         onSelect={handleSelectConversation}
         onLogout={handleLogout}
-        isLoading={false}
+        isLoading={isLoading}
         isOpen={sidebarOpen}
         onClose={() => setSidebarOpen(false)}
       />
