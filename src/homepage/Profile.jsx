@@ -240,10 +240,12 @@ const Profile = () => {
                 <ActionButton
                   icon={<HiOutlineBell className="w-4 h-4" />}
                   label="Notification Settings"
+                  href="/settings"
                 />
                 <ActionButton
                   icon={<HiOutlineCog6Tooth className="w-4 h-4" />}
                   label="Account Settings"
+                  href="/settings"
                 />
                 <ActionButton
                   icon={<HiOutlineArrowRightOnRectangle className="w-4 h-4" />}

@@ -184,13 +184,14 @@ const ChatSidebar = ({
             <HiOutlineUser className="w-5 h-5" />
             <span className="hidden lg:block">Profile</span>
           </Link>
-          <button
+          <Link
+            to="/settings"
             aria-label="Settings"
             className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-slate-400/70 hover:text-white hover:bg-purple-500/10 transition-all text-xs font-medium"
           >
             <HiOutlineCog6Tooth className="w-5 h-5" />
             <span className="hidden lg:block">Settings</span>
-          </button>
+          </Link>
           <button
             onClick={onLogout}
             aria-label="Log out"

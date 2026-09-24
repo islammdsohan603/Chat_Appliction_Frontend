@@ -7,6 +7,7 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Home from "./homepage/Home";
 import Profile from "./homepage/Profile";
+import Settings from "./pages/Settings";
 import ChatLayout from "./components/chat/ChatLayout";
 import useCurrentUser from "./customHooks/getCurrentUser";
 import RouteTransitionWrapper from "./components/ui/RouteTransitionWrapper";
@@ -22,7 +23,7 @@ const ProtectedRoute = ({ children }) => {
   const location = useLocation();
 
   if (isLoading) {
-    if (location.pathname.startsWith("/profile")) {
+    if (location.pathname.startsWith("/profile") || location.pathname.startsWith("/settings")) {
       return <ProfileSkeleton />;
     }
     return <ChatSkeleton />;
@@ -91,6 +92,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <Profile />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/settings"
+            element={
+              <ProtectedRoute>
+                <Settings />
               </ProtectedRoute>
             }
           />
