@@ -9,6 +9,7 @@
  */
 import UserAvatar from "../ui/UserAvatar";
 import UserStatus from "../ui/UserStatus";
+import ThemeToggle from "../ui/ThemeToggle";
 import {
   HiOutlinePhone,
   HiOutlineVideoCamera,
@@ -53,6 +54,7 @@ const ChatHeader = ({
 
       {/* Action icons */}
       <div className="flex items-center gap-1 shrink-0">
+        <ThemeToggle className="!p-1.5 !rounded-xl" />
         <button
           aria-label="Voice call"
           className="p-2.5 rounded-xl text-slate-400/70 hover:text-purple-300 hover:bg-purple-500/10 transition-all hidden sm:flex"

@@ -49,7 +49,31 @@
     background: rgba(139, 92, 246, 0.5);
   }
 
-  :root,
+  /* ── Light Mode (Alabaster & Royal Iris) ── */
+  :root {
+    --background: 220 33% 98%;
+    --foreground: 222 47% 11%;
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+    --primary: 262 83% 58%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 220 14% 94%;
+    --secondary-foreground: 222 47% 11%;
+    --muted: 220 14% 94%;
+    --muted-foreground: 215 16% 47%;
+    --accent: 199 89% 48%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 262 83% 58%;
+    --input: 262 83% 58%;
+    --ring: 262 83% 58%;
+    --radius: 0.75rem;
+  }
+
+  /* ── Dark Mode (Obsidian & Nebula) ── */
   .dark {
     --background: 232 59% 6%;
     --foreground: 210 40% 98%;
@@ -63,7 +87,7 @@
     --secondary-foreground: 210 40% 98%;
     --muted: 230 45% 18%;
     --muted-foreground: 215 20% 65%;
-    --accent: 263 70% 50%;
+    --accent: 189 94% 43%;
     --accent-foreground: 210 40% 98%;
     --destructive: 0 84% 60%;
     --destructive-foreground: 210 40% 98%;
@@ -108,12 +132,22 @@
     overflow: hidden;
   }
 
-  /* Glass card */
+  /* Glass card (light default) */
   .glass {
-    background: rgba(13, 18, 48, 0.65);
+    background: rgba(255, 255, 255, 0.88);
     backdrop-filter: blur(40px) saturate(150%);
     -webkit-backdrop-filter: blur(40px) saturate(150%);
-    border: 1px solid rgba(139, 92, 246, 0.15);
+    border: 1px solid rgba(139, 92, 246, 0.2);
+    box-shadow: 0 10px 30px -5px rgba(139, 92, 246, 0.08);
+  }
+
+  /* Glass card (dark mode) */
+  .dark .glass {
+    background: rgba(13, 18, 48, 0.72);
+    backdrop-filter: blur(40px) saturate(150%);
+    -webkit-backdrop-filter: blur(40px) saturate(150%);
+    border: 1px solid rgba(139, 92, 246, 0.18);
+    box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.45);
   }
 
   /* Gradient text */

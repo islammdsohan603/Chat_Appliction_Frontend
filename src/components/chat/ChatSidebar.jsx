@@ -15,6 +15,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import UserAvatar from "../ui/UserAvatar";
 import UserStatus from "../ui/UserStatus";
+import ThemeToggle from "../ui/ThemeToggle";
 import ConversationList from "./ConversationList";
 import {
   HiOutlineMagnifyingGlass,
@@ -34,17 +35,21 @@ const TABS = [
 
 /* ── NEXORA Logo Mark ── */
 const NexoraLogo = () => (
-  <div className="flex items-center gap-3">
-    <div className="relative w-9 h-9 rounded-xl bg-gradient-to-br from-purple-500 to-cyan-500 flex items-center justify-center shadow-[0_4px_16px_rgba(139,92,246,0.35)]">
-      <div className="absolute -inset-0.5 rounded-[14px] bg-gradient-to-br from-purple-500/50 to-cyan-500/50 -z-[1] blur-[6px]" />
-      <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+  <Link
+    to="/"
+    aria-label="Go to home page"
+    className="flex items-center gap-3 group cursor-pointer"
+  >
+    <div className="relative w-9 h-9 rounded-xl bg-gradient-to-br from-purple-500 to-cyan-500 flex items-center justify-center shadow-[0_4px_16px_rgba(139,92,246,0.35)] group-hover:scale-105 group-hover:shadow-[0_0_20px_rgba(139,92,246,0.5)] transition-all duration-300">
+      <div className="absolute -inset-0.5 rounded-[14px] bg-gradient-to-br from-purple-500/50 to-cyan-500/50 -z-[1] blur-[6px] group-hover:blur-[8px] transition-all" />
+      <svg className="w-5 h-5 text-white group-hover:rotate-6 transition-transform duration-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
       </svg>
     </div>
-    <span className="text-xl font-extrabold bg-gradient-to-br from-indigo-200 via-purple-300 to-cyan-300 bg-clip-text text-transparent tracking-tight">
+    <span className="text-xl font-extrabold bg-gradient-to-br from-indigo-200 via-purple-300 to-cyan-300 bg-clip-text text-transparent tracking-tight group-hover:from-white group-hover:to-cyan-200 transition-all">
       NEXORA
     </span>
-  </div>
+  </Link>
 );
 
 const ChatSidebar = ({
@@ -119,9 +124,12 @@ const ChatSidebar = ({
             </p>
             <UserStatus status="online" />
           </div>
-          <button aria-label="Notifications" className="p-1.5 rounded-lg text-slate-400/60 hover:text-purple-300 hover:bg-purple-500/10 transition-all">
-            <HiOutlineBell className="w-4 h-4" />
-          </button>
+          <div className="flex items-center gap-1">
+            <ThemeToggle className="!p-1.5 !rounded-lg" />
+            <button aria-label="Notifications" className="p-1.5 rounded-lg text-slate-400/60 hover:text-purple-300 hover:bg-purple-500/10 transition-all">
+              <HiOutlineBell className="w-4 h-4" />
+            </button>
+          </div>
         </div>
 
         {/* Search */}

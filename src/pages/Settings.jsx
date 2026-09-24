@@ -25,6 +25,7 @@ import {
   HiOutlineTrash,
   HiOutlineSpeakerWave,
   HiOutlineMoon,
+  HiOutlineSun,
   HiOutlineGlobeAlt,
   HiOutlineCheck,
   HiOutlineExclamationTriangle,
@@ -301,11 +302,25 @@ const Settings = () => {
                     <div className="flex items-center gap-1.5 p-1 rounded-xl bg-[#0a0f25] border border-purple-500/20">
                       {[
                         { id: "dark", label: "Dark", icon: HiOutlineMoon },
+                        { id: "light", label: "Light", icon: HiOutlineSun },
                         { id: "system", label: "System", icon: HiOutlineEye },
                       ].map((t) => (
                         <button
                           key={t.id}
-                          onClick={() => updateSetting("theme", t.id)}
+                          onClick={() => {
+                            updateSetting("theme", t.id);
+                            const isDark = t.id === "dark" || (t.id === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches);
+                            if (isDark) {
+                              document.documentElement.classList.add("dark");
+                              document.documentElement.classList.remove("light");
+                              localStorage.setItem("theme", "dark");
+                            } else {
+                              document.documentElement.classList.remove("dark");
+                              document.documentElement.classList.add("light");
+                              localStorage.setItem("theme", "light");
+                            }
+                            window.dispatchEvent(new CustomEvent("nexoraThemeChange", { detail: { theme: isDark ? "dark" : "light" } }));
+                          }}
                           className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
                             settings.theme === t.id
                               ? "bg-purple-600 text-white shadow-sm"

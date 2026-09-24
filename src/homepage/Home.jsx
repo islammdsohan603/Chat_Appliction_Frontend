@@ -23,6 +23,7 @@ import {
 } from "react-icons/hi2";
 import ScrollReveal from "./ScrollReveal";
 import TiltCard from "./TiltCard";
+import ThemeToggle from "../components/ui/ThemeToggle";
 
 /* ─────────────────────────────────────────
    Particle config
@@ -78,7 +79,7 @@ const Navbar = ({ isAuthenticated }) => {
     <nav
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         scrolled
-          ? "bg-[#060918]/90 backdrop-blur-xl border-b border-purple-500/15 shadow-[0_4px_24px_rgba(0,0,0,0.3)] py-2"
+          ? "bg-white/90 dark:bg-[#060918]/90 backdrop-blur-xl border-b border-purple-500/10 dark:border-purple-500/15 shadow-sm dark:shadow-[0_4px_24px_rgba(0,0,0,0.3)] py-2"
           : "bg-transparent py-4"
       }`}
     >
@@ -92,7 +93,7 @@ const Navbar = ({ isAuthenticated }) => {
               <a
                 key={item}
                 href={`#${item.toLowerCase()}`}
-                className="text-sm font-medium text-slate-400 hover:text-white transition-colors relative group py-1"
+                className="text-sm font-medium text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white transition-colors relative group py-1"
               >
                 {item}
                 <span className="absolute -bottom-0.5 left-0 w-0 h-0.5 bg-gradient-to-r from-purple-500 to-cyan-400 group-hover:w-full transition-all duration-300 rounded-full" />
@@ -100,12 +101,15 @@ const Navbar = ({ isAuthenticated }) => {
             ))}
           </div>
 
-          {/* CTA buttons */}
+          {/* CTA buttons + Theme Toggle */}
           <div className="hidden md:flex items-center gap-3">
+            {/* Theme Toggle Button */}
+            <ThemeToggle />
+
             {isAuthenticated ? (
               <Link
                 to="/chat"
-                className="px-5 py-2.5 rounded-xl bg-gradient-to-br from-purple-500 to-cyan-500 text-white text-sm font-semibold hover:shadow-[0_4px_25px_rgba(139,92,246,0.5)] hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200"
+                className="px-5 py-2.5 rounded-xl bg-gradient-to-br from-purple-500 to-cyan-500 text-white text-sm font-semibold hover:shadow-[0_4px_25px_rgba(139,92,246,0.5)] hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 shadow-md shadow-purple-900/20"
               >
                 Open Chat →
               </Link>
@@ -113,13 +117,13 @@ const Navbar = ({ isAuthenticated }) => {
               <>
                 <Link
                   to="/login"
-                  className="px-4 py-2 text-sm font-medium text-slate-300 hover:text-white hover:bg-purple-500/10 rounded-xl transition-all"
+                  className="px-4 py-2 text-sm font-medium text-slate-700 dark:text-slate-300 hover:text-purple-600 dark:hover:text-white hover:bg-purple-500/10 rounded-xl transition-all"
                 >
                   Log In
                 </Link>
                 <Link
                   to="/signup"
-                  className="relative px-5 py-2.5 rounded-xl bg-gradient-to-br from-purple-500 via-violet-600 to-cyan-500 text-white text-sm font-semibold hover:shadow-[0_4px_25px_rgba(139,92,246,0.45)] hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 overflow-hidden group"
+                  className="relative px-5 py-2.5 rounded-xl bg-gradient-to-br from-purple-500 via-violet-600 to-cyan-500 text-white text-sm font-semibold hover:shadow-[0_4px_25px_rgba(139,92,246,0.45)] hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 overflow-hidden group shadow-md shadow-purple-900/20"
                 >
                   <span className="relative z-10">Get Started</span>
                   <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 bg-gradient-to-r from-transparent via-white/20 to-transparent" />
@@ -128,26 +132,29 @@ const Navbar = ({ isAuthenticated }) => {
             )}
           </div>
 
-          {/* Mobile hamburger */}
-          <button
-            onClick={() => setIsOpen((v) => !v)}
-            aria-label="Toggle mobile menu"
-            className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-purple-500/10 transition-all md:hidden"
-          >
-            {isOpen ? <HiOutlineXMark className="w-6 h-6" /> : <HiOutlineBars3 className="w-6 h-6" />}
-          </button>
+          {/* Mobile controls */}
+          <div className="flex items-center gap-2 md:hidden">
+            <ThemeToggle />
+            <button
+              onClick={() => setIsOpen((v) => !v)}
+              aria-label="Toggle mobile menu"
+              className="p-2 rounded-xl text-slate-600 dark:text-slate-400 hover:text-purple-600 dark:hover:text-white hover:bg-purple-500/10 transition-all"
+            >
+              {isOpen ? <HiOutlineXMark className="w-6 h-6" /> : <HiOutlineBars3 className="w-6 h-6" />}
+            </button>
+          </div>
         </div>
 
         {/* Mobile menu */}
         {isOpen && (
-          <div className="md:hidden glass border border-purple-500/20 rounded-2xl mt-2 p-3 pb-4 animate-slideUp">
+          <div className="md:hidden glass border border-purple-500/20 rounded-2xl mt-2 p-3 pb-4 animate-slideUp shadow-xl">
             <div className="flex flex-col gap-1">
               {["Features", "Security", "Community"].map((item) => (
                 <a
                   key={item}
                   href={`#${item.toLowerCase()}`}
                   onClick={() => setIsOpen(false)}
-                  className="px-4 py-3 text-sm font-medium text-slate-300 hover:text-white hover:bg-purple-500/10 rounded-xl transition-all"
+                  className="px-4 py-3 text-sm font-medium text-slate-700 dark:text-slate-300 hover:text-purple-600 dark:hover:text-white hover:bg-purple-500/10 rounded-xl transition-all"
                 >
                   {item}
                 </a>
@@ -155,13 +162,13 @@ const Navbar = ({ isAuthenticated }) => {
               <div className="flex gap-2 mt-3 pt-2 border-t border-purple-500/10">
                 <Link
                   to="/login"
-                  className="flex-1 px-4 py-2.5 text-center text-sm font-medium text-slate-300 border border-purple-500/20 rounded-xl hover:bg-purple-500/10 transition-all"
+                  className="flex-1 px-4 py-2.5 text-center text-sm font-medium text-slate-700 dark:text-slate-300 border border-purple-500/20 rounded-xl hover:bg-purple-500/10 transition-all"
                 >
                   Log In
                 </Link>
                 <Link
                   to="/signup"
-                  className="flex-1 px-4 py-2.5 text-center text-sm text-white bg-gradient-to-br from-purple-500 to-violet-600 rounded-xl font-semibold"
+                  className="flex-1 px-4 py-2.5 text-center text-sm text-white bg-gradient-to-br from-purple-500 to-violet-600 rounded-xl font-semibold shadow-md"
                 >
                   Get Started
                 </Link>
@@ -178,44 +185,46 @@ const Navbar = ({ isAuthenticated }) => {
    3D Hero Chat Preview
    ───────────────────────────────────────── */
 const HeroChatPreview = () => {
-  const [messages, setMessages] = useState([
-    { id: 1, from: "Alex", text: "Hey! Just pushed the latest build 🚀", time: "10:42 AM", own: false, color: "from-purple-500/20 to-violet-600/20" },
+  const [messages] = useState([
+    { id: 1, from: "Alex", text: "Hey! Just pushed the latest build 🚀", time: "10:42 AM", own: false, color: "from-purple-500 to-violet-600" },
     { id: 2, from: "You", text: "Looks amazing! The UI is super clean 🔥", time: "10:43 AM", own: true },
-    { id: 3, from: "Sarah", text: "The design system is 💜", time: "10:44 AM", own: false, color: "from-cyan-500/20 to-blue-600/20" },
+    { id: 3, from: "Sarah", text: "The new design system is 💜", time: "10:44 AM", own: false, color: "from-cyan-500 to-blue-600" },
     { id: 4, from: "You", text: "Let's ship it! ✅", time: "10:45 AM", own: true },
   ]);
 
   return (
     <div
-      className="relative w-full max-w-[520px] animate-heroFloat transition-transform duration-500"
+      className="relative w-full max-w-[420px] sm:max-w-[460px] md:max-w-full lg:max-w-[500px] xl:max-w-[520px] animate-heroFloat transition-transform duration-500"
       style={{ perspective: "1000px" }}
     >
       {/* Main chat window */}
       <div
-        className="glass rounded-2xl overflow-hidden shadow-[0_20px_60px_rgba(0,0,0,0.6)] border border-purple-500/20 hover:border-purple-500/40 transition-all duration-300 group"
+        className="glass rounded-3xl overflow-hidden shadow-[0_20px_60px_rgba(0,0,0,0.12)] dark:shadow-[0_20px_60px_rgba(0,0,0,0.6)] border border-purple-500/20 hover:border-purple-500/40 transition-all duration-300 group"
         style={{
-          transform: "rotateY(-8deg) rotateX(4deg)",
           transformStyle: "preserve-3d",
         }}
       >
         {/* Chat header */}
-        <div className="flex items-center gap-3 px-4 py-3 border-b border-purple-500/15 bg-[#0d1230]/70">
+        <div className="flex items-center gap-3 px-4 py-3 border-b border-purple-500/15 dark:bg-[#0d1230]/75 bg-slate-100/90">
           <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-cyan-500 flex items-center justify-center text-xs font-bold text-white shadow-sm">
-            T
+            N
           </div>
           <div>
-            <p className="text-sm font-semibold text-slate-100">Team NEXORA</p>
-            <p className="text-[10px] text-green-400 font-medium">3 members online</p>
+            <p className="text-sm font-semibold text-slate-800 dark:text-slate-100">Team NEXORA</p>
+            <p className="text-[10px] text-green-500 dark:text-green-400 font-medium flex items-center gap-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+              3 members online
+            </p>
           </div>
           <div className="ml-auto flex gap-1.5">
-            <div className="w-2.5 h-2.5 rounded-full bg-red-500/70 hover:opacity-100 cursor-pointer" />
-            <div className="w-2.5 h-2.5 rounded-full bg-amber-500/70 hover:opacity-100 cursor-pointer" />
-            <div className="w-2.5 h-2.5 rounded-full bg-green-500/70 hover:opacity-100 cursor-pointer" />
+            <div className="w-2.5 h-2.5 rounded-full bg-red-500/80 hover:opacity-100 cursor-pointer" />
+            <div className="w-2.5 h-2.5 rounded-full bg-amber-500/80 hover:opacity-100 cursor-pointer" />
+            <div className="w-2.5 h-2.5 rounded-full bg-green-500/80 hover:opacity-100 cursor-pointer" />
           </div>
         </div>
 
         {/* Messages */}
-        <div className="px-4 py-4 space-y-3 bg-[#060918]/50">
+        <div className="px-4 py-4 space-y-3 dark:bg-[#060918]/60 bg-white/70">
           {messages.map((msg) => (
             <div
               key={msg.id}
@@ -227,40 +236,40 @@ const HeroChatPreview = () => {
                 </div>
               )}
               <div className={`flex flex-col gap-0.5 ${msg.own ? "items-end" : "items-start"}`}>
-                {!msg.own && <span className="text-[10px] text-purple-400/80 ml-1 font-medium">{msg.from}</span>}
-                <div className={`px-3 py-2 rounded-xl text-xs max-w-[200px] leading-relaxed transition-all duration-200 group-hover/msg:scale-[1.02] ${
+                {!msg.own && <span className="text-[10px] text-purple-600 dark:text-purple-400/80 ml-1 font-medium">{msg.from}</span>}
+                <div className={`px-3 py-2 rounded-xl text-xs max-w-[210px] leading-relaxed transition-all duration-200 group-hover/msg:scale-[1.02] ${
                   msg.own
-                    ? "bg-gradient-to-br from-purple-600 to-violet-700 text-white rounded-br-sm shadow-md shadow-purple-900/30 hover:shadow-purple-700/50"
-                    : "bg-[#111840] border border-purple-500/15 text-slate-200 rounded-bl-sm hover:border-purple-500/30"
+                    ? "bg-gradient-to-br from-purple-600 to-violet-700 text-white rounded-br-sm shadow-md shadow-purple-900/30"
+                    : "dark:bg-[#111840] bg-slate-100 border border-purple-500/15 text-slate-800 dark:text-slate-200 rounded-bl-sm"
                 }`}>
                   {msg.text}
                 </div>
-                <span className="text-[9px] text-slate-500 mx-1">{msg.time}</span>
+                <span className="text-[9px] text-slate-400 dark:text-slate-500 mx-1">{msg.time}</span>
               </div>
             </div>
           ))}
 
           {/* Typing indicator */}
           <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-full bg-gradient-to-br from-pink-500/20 to-rose-600/20 border border-purple-500/20 flex items-center justify-center text-[10px] font-bold text-white shrink-0">
+            <div className="w-7 h-7 rounded-full bg-gradient-to-br from-pink-500 to-rose-600 border border-purple-500/20 flex items-center justify-center text-[10px] font-bold text-white shrink-0">
               S
             </div>
-            <div className="px-3 py-2 rounded-xl rounded-bl-sm bg-[#111840] border border-purple-500/15 flex items-center gap-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-purple-400 animate-bounce" style={{ animationDelay: "0ms" }} />
-              <span className="w-1.5 h-1.5 rounded-full bg-purple-400 animate-bounce" style={{ animationDelay: "150ms" }} />
-              <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-bounce" style={{ animationDelay: "300ms" }} />
+            <div className="px-3 py-2 rounded-xl rounded-bl-sm dark:bg-[#111840] bg-slate-100 border border-purple-500/15 flex items-center gap-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-purple-500 animate-bounce" style={{ animationDelay: "0ms" }} />
+              <span className="w-1.5 h-1.5 rounded-full bg-purple-500 animate-bounce" style={{ animationDelay: "150ms" }} />
+              <span className="w-1.5 h-1.5 rounded-full bg-cyan-500 animate-bounce" style={{ animationDelay: "300ms" }} />
             </div>
             <span className="text-[10px] text-slate-500 italic">Sarah is typing…</span>
           </div>
         </div>
 
         {/* Composer */}
-        <div className="px-4 py-3 border-t border-purple-500/10 bg-[#0d1230]/70">
-          <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-[#111840] border border-purple-500/20 hover:border-purple-500/40 transition-colors">
-            <HiOutlineFaceSmile className="w-4 h-4 text-slate-500 hover:text-purple-400 cursor-pointer transition-colors" />
-            <span className="text-xs text-slate-500 flex-1">Type a message…</span>
-            <HiOutlinePaperClip className="w-4 h-4 text-slate-500 hover:text-cyan-400 cursor-pointer transition-colors" />
-            <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-purple-500 to-violet-600 flex items-center justify-center cursor-pointer hover:scale-110 active:scale-95 transition-transform">
+        <div className="px-4 py-3 border-t border-purple-500/10 dark:bg-[#0d1230]/75 bg-slate-100/90">
+          <div className="flex items-center gap-2 px-3 py-2 rounded-xl dark:bg-[#111840] bg-white border border-purple-500/20 hover:border-purple-500/40 transition-colors shadow-sm">
+            <HiOutlineFaceSmile className="w-4 h-4 text-slate-400 hover:text-purple-500 cursor-pointer transition-colors" />
+            <span className="text-xs text-slate-400 dark:text-slate-500 flex-1 truncate">Type a message…</span>
+            <HiOutlinePaperClip className="w-4 h-4 text-slate-400 hover:text-cyan-500 cursor-pointer transition-colors" />
+            <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-purple-500 to-violet-600 flex items-center justify-center cursor-pointer hover:scale-110 active:scale-95 transition-transform shadow-sm">
               <svg className="w-3 h-3 text-white rotate-45" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
               </svg>
@@ -270,34 +279,34 @@ const HeroChatPreview = () => {
       </div>
 
       {/* Floating notification card */}
-      <div className="absolute -top-6 -right-6 glass rounded-xl px-3.5 py-2.5 flex items-center gap-2.5 shadow-xl animate-heroFloat2 border border-purple-500/30 hover:scale-105 transition-transform cursor-pointer">
+      <div className="absolute -top-4 sm:-top-6 -right-2 sm:-right-6 glass rounded-2xl px-3.5 py-2.5 flex items-center gap-2.5 shadow-xl animate-heroFloat2 border border-purple-500/30 hover:scale-105 transition-transform cursor-pointer">
         <div className="w-8 h-8 rounded-full bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center text-sm shadow-md">
           🚀
         </div>
         <div>
-          <p className="text-xs font-semibold text-slate-200">Build shipped!</p>
-          <p className="text-[10px] text-slate-400">just now</p>
+          <p className="text-xs font-semibold text-slate-800 dark:text-slate-200">Build shipped!</p>
+          <p className="text-[10px] text-slate-500 dark:text-slate-400">just now</p>
         </div>
         <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
       </div>
 
       {/* Online users card */}
-      <div className="absolute -bottom-5 -left-5 glass rounded-xl px-3.5 py-2.5 flex items-center gap-2.5 shadow-xl animate-heroFloat border border-cyan-500/30 hover:scale-105 transition-transform cursor-pointer" style={{ animationDelay: "1s" }}>
+      <div className="absolute -bottom-4 sm:-bottom-5 -left-2 sm:-left-5 glass rounded-2xl px-3.5 py-2.5 flex items-center gap-2.5 shadow-xl animate-heroFloat border border-cyan-500/30 hover:scale-105 transition-transform cursor-pointer" style={{ animationDelay: "1s" }}>
         <div className="flex -space-x-2">
           {["A", "S", "M"].map((l, i) => (
-            <div key={i} className={`w-7 h-7 rounded-full border-2 border-[#060918] flex items-center justify-center text-[10px] font-bold text-white bg-gradient-to-br ${i === 0 ? "from-purple-500 to-violet-600" : i === 1 ? "from-cyan-500 to-blue-600" : "from-pink-500 to-rose-600"} shadow-sm`}>
+            <div key={i} className={`w-7 h-7 rounded-full border-2 border-white dark:border-[#060918] flex items-center justify-center text-[10px] font-bold text-white bg-gradient-to-br ${i === 0 ? "from-purple-500 to-violet-600" : i === 1 ? "from-cyan-500 to-blue-600" : "from-pink-500 to-rose-600"} shadow-sm`}>
               {l}
             </div>
           ))}
         </div>
         <div>
-          <p className="text-[10px] font-semibold text-slate-300">+12 online</p>
-          <p className="text-[9px] text-green-400 font-medium">Active now</p>
+          <p className="text-[10px] font-semibold text-slate-700 dark:text-slate-300">+12 online</p>
+          <p className="text-[9px] text-green-500 font-medium">Active now</p>
         </div>
       </div>
 
       {/* Reaction pop */}
-      <div className="absolute top-1/2 -right-8 glass rounded-full px-3 py-1.5 text-sm shadow-lg animate-scaleIn border border-purple-500/30 hover:scale-125 transition-transform cursor-pointer" style={{ animationDelay: "0.5s" }}>
+      <div className="absolute top-1/2 -right-3 sm:-right-5 glass rounded-full px-3 py-1.5 text-xs font-bold text-slate-700 dark:text-slate-200 shadow-lg animate-scaleIn border border-purple-500/30 hover:scale-125 transition-transform cursor-pointer" style={{ animationDelay: "0.5s" }}>
         🔥 4
       </div>
     </div>
@@ -305,18 +314,18 @@ const HeroChatPreview = () => {
 };
 
 /* ─────────────────────────────────────────
-   Hero Section
+   Hero Section — 2-column grid layout for 'md' screen sizes and up
    ───────────────────────────────────────── */
 const Hero = ({ isAuthenticated }) => (
-  <section className="relative min-h-screen flex items-center pt-20 pb-16 overflow-hidden">
+  <section className="relative min-h-screen flex items-center pt-24 sm:pt-28 pb-16 overflow-hidden">
     {/* Background orbs */}
-    <div className="absolute w-[650px] h-[650px] -left-[100px] top-1/4 blur-[90px] pointer-events-none opacity-40 animate-pulse"
+    <div className="absolute w-[600px] h-[600px] -left-[100px] top-1/4 blur-[100px] pointer-events-none opacity-30 dark:opacity-40 animate-pulse"
       style={{ background: "radial-gradient(ellipse, rgba(139,92,246,0.5) 0%, transparent 70%)" }} />
-    <div className="absolute w-[550px] h-[550px] right-0 bottom-0 blur-[90px] pointer-events-none opacity-30 animate-pulse"
+    <div className="absolute w-[500px] h-[500px] right-0 bottom-0 blur-[100px] pointer-events-none opacity-20 dark:opacity-30 animate-pulse"
       style={{ background: "radial-gradient(ellipse, rgba(6,182,212,0.5) 0%, transparent 70%)" }} />
 
-    {/* Grid */}
-    <div className="absolute inset-0 pointer-events-none" style={{
+    {/* Subtle Grid */}
+    <div className="absolute inset-0 pointer-events-none opacity-40 dark:opacity-100" style={{
       background: [
         "repeating-linear-gradient(0deg, transparent, transparent 78px, rgba(139,92,246,0.025) 78px, rgba(139,92,246,0.025) 80px)",
         "repeating-linear-gradient(90deg, transparent, transparent 78px, rgba(139,92,246,0.025) 78px, rgba(139,92,246,0.025) 80px)",
@@ -331,38 +340,39 @@ const Hero = ({ isAuthenticated }) => (
       ))}
     </div>
 
-    <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full py-12">
-      <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-16">
-        {/* Left: copy with scroll reveal */}
-        <div className="flex-1 text-center lg:text-left max-w-xl mx-auto lg:mx-0">
+    <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full py-8 md:py-12">
+      {/* 2-column grid layout on 'md' screens and above */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-8 lg:gap-14 items-center">
+        {/* Column 1: Copy, Headings & CTAs */}
+        <div className="w-full text-center md:text-left max-w-xl mx-auto md:mx-0">
           {/* Badge */}
           <ScrollReveal animation="fade-down" delay={100}>
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-purple-500/10 border border-purple-500/25 text-xs font-semibold text-purple-300 mb-6 shadow-sm hover:border-purple-400 hover:bg-purple-500/15 transition-all cursor-default">
-              <HiOutlineSparkles className="w-3.5 h-3.5 text-purple-400" />
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-purple-500/10 border border-purple-500/25 text-xs font-semibold text-purple-600 dark:text-purple-300 mb-6 shadow-sm hover:border-purple-400 hover:bg-purple-500/15 transition-all cursor-default">
+              <HiOutlineSparkles className="w-3.5 h-3.5 text-purple-500 dark:text-purple-400" />
               Introducing NEXORA 1.0
             </div>
           </ScrollReveal>
 
           <ScrollReveal animation="fade-up" delay={200}>
-            <h1 className="text-5xl sm:text-6xl lg:text-7xl font-extrabold leading-[1.08] tracking-[-2px] mb-6">
-              <span className="text-slate-100">Connect.</span>{" "}
-              <span className="bg-gradient-to-br from-purple-400 via-violet-400 to-cyan-400 bg-clip-text text-transparent">Chat.</span>{" "}
-              <span className="text-slate-100">Collaborate.</span>
+            <h1 className="text-4xl sm:text-5xl md:text-4xl lg:text-6xl xl:text-7xl font-extrabold leading-[1.08] tracking-[-1.5px] md:tracking-[-2px] mb-6">
+              <span className="text-slate-900 dark:text-slate-100">Connect.</span>{" "}
+              <span className="bg-gradient-to-br from-purple-500 via-violet-500 to-cyan-400 bg-clip-text text-transparent">Chat.</span>{" "}
+              <span className="text-slate-900 dark:text-slate-100">Collaborate.</span>
             </h1>
           </ScrollReveal>
 
           <ScrollReveal animation="fade-up" delay={300}>
-            <p className="text-lg text-slate-400 leading-relaxed mb-8 max-w-[480px] mx-auto lg:mx-0">
+            <p className="text-base sm:text-lg text-slate-600 dark:text-slate-400 leading-relaxed mb-8 max-w-[480px] mx-auto md:mx-0">
               Experience fast, seamless and modern real-time communication built for meaningful conversations. Your team, always connected.
             </p>
           </ScrollReveal>
 
           {/* CTA buttons */}
           <ScrollReveal animation="fade-up" delay={400}>
-            <div className="flex flex-col sm:flex-row items-center gap-4 justify-center lg:justify-start">
+            <div className="flex flex-col sm:flex-row items-center gap-4 justify-center md:justify-start">
               <Link
                 to={isAuthenticated ? "/chat" : "/signup"}
-                className="w-full sm:w-auto px-8 py-4 rounded-2xl bg-gradient-to-br from-purple-500 via-violet-600 to-cyan-500 text-white font-bold text-base tracking-wide hover:shadow-[0_8px_32px_rgba(139,92,246,0.5)] hover:-translate-y-1 active:translate-y-0 transition-all duration-300 relative overflow-hidden group"
+                className="w-full sm:w-auto px-7 py-3.5 sm:px-8 sm:py-4 rounded-2xl bg-gradient-to-br from-purple-500 via-violet-600 to-cyan-500 text-white font-bold text-base tracking-wide hover:shadow-[0_8px_32px_rgba(139,92,246,0.5)] hover:-translate-y-1 active:translate-y-0 transition-all duration-300 relative overflow-hidden group shadow-lg shadow-purple-900/25"
               >
                 <span className="relative z-10 flex items-center justify-center gap-2">
                   {isAuthenticated ? "Open NEXORA" : "Start Chatting Free"}
@@ -372,7 +382,7 @@ const Hero = ({ isAuthenticated }) => (
               </Link>
               <a
                 href="#features"
-                className="w-full sm:w-auto px-8 py-4 rounded-2xl border border-purple-500/25 text-slate-300 font-semibold text-base hover:bg-purple-500/10 hover:border-purple-500/50 hover:text-white transition-all duration-300"
+                className="w-full sm:w-auto px-7 py-3.5 sm:px-8 sm:py-4 rounded-2xl border border-purple-500/25 text-slate-700 dark:text-slate-300 font-semibold text-base hover:bg-purple-500/10 hover:border-purple-500/50 hover:text-purple-600 dark:hover:text-white transition-all duration-300 text-center"
               >
                 Explore Features
               </a>
@@ -381,25 +391,25 @@ const Hero = ({ isAuthenticated }) => (
 
           {/* Stats */}
           <ScrollReveal animation="fade-up" delay={500}>
-            <div className="flex items-center gap-8 mt-10 justify-center lg:justify-start">
+            <div className="flex items-center gap-6 sm:gap-8 mt-8 md:mt-10 justify-center md:justify-start flex-wrap">
               {[
                 { value: "10K+", label: "Active users" },
                 { value: "99.9%", label: "Uptime" },
                 { value: "<50ms", label: "Message delay" },
               ].map((stat) => (
-                <div key={stat.label} className="text-center lg:text-left group cursor-default">
+                <div key={stat.label} className="text-center md:text-left group cursor-default">
                   <div className="text-2xl font-extrabold gradient-text group-hover:scale-110 transition-transform duration-200">
                     {stat.value}
                   </div>
-                  <div className="text-xs text-slate-400 mt-0.5">{stat.label}</div>
+                  <div className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{stat.label}</div>
                 </div>
               ))}
             </div>
           </ScrollReveal>
         </div>
 
-        {/* Right: 3D chat preview with scroll entrance */}
-        <div className="flex-1 flex justify-center lg:justify-end w-full">
+        {/* Column 2: 3D Chat Preview (Medium & Large screens) */}
+        <div className="w-full flex justify-center md:justify-end">
           <ScrollReveal animation="fade-left" delay={300} duration={900}>
             <HeroChatPreview />
           </ScrollReveal>
@@ -479,13 +489,13 @@ const Features = () => (
             <HiOutlineSparkles className="w-3.5 h-3.5 text-purple-400" />
             Everything you need
           </div>
-          <h2 className="text-4xl sm:text-5xl font-extrabold text-slate-100 tracking-tight mb-4">
+          <h2 className="text-4xl sm:text-5xl font-extrabold text-slate-900 dark:text-slate-100 tracking-tight mb-4">
             Built for{" "}
             <span className="bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text text-transparent">
               serious teams
             </span>
           </h2>
-          <p className="text-slate-400 text-lg max-w-2xl mx-auto leading-relaxed">
+          <p className="text-slate-600 dark:text-slate-400 text-lg max-w-2xl mx-auto leading-relaxed">
             Every feature you need to collaborate effectively, communicate clearly, and move faster.
           </p>
         </div>
@@ -503,10 +513,10 @@ const Features = () => (
                 <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${feature.color} border ${feature.border} flex items-center justify-center ${feature.iconColor} mb-5 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300 shadow-md`}>
                   {feature.icon}
                 </div>
-                <h3 className="text-lg font-bold text-slate-100 mb-2.5 group-hover:text-purple-300 transition-colors">
+                <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100 mb-2.5 group-hover:text-purple-600 dark:group-hover:text-purple-300 transition-colors">
                   {feature.title}
                 </h3>
-                <p className="text-sm text-slate-400 leading-relaxed">
+                <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
                   {feature.desc}
                 </p>
               </div>
@@ -533,13 +543,13 @@ const LivePreview = () => (
             <HiOutlineChatBubbleLeftRight className="w-3.5 h-3.5 text-cyan-400" />
             See it in action
           </div>
-          <h2 className="text-4xl sm:text-5xl font-extrabold text-slate-100 tracking-tight mb-4">
+          <h2 className="text-4xl sm:text-5xl font-extrabold text-slate-900 dark:text-slate-100 tracking-tight mb-4">
             A chat experience{" "}
             <span className="bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">
               unlike any other
             </span>
           </h2>
-          <p className="text-slate-400 text-lg max-w-xl mx-auto">
+          <p className="text-slate-600 dark:text-slate-400 text-lg max-w-xl mx-auto">
             Real-time, beautiful, and blazing fast. Built to impress and built to ship.
           </p>
         </div>
@@ -547,16 +557,16 @@ const LivePreview = () => (
 
       {/* App preview with Tilt & Scroll Reveal */}
       <ScrollReveal animation="scale-up" duration={800}>
-        <div className="glass rounded-3xl overflow-hidden border border-purple-500/20 shadow-[0_24px_60px_rgba(0,0,0,0.5)] max-w-5xl mx-auto hover:border-purple-500/40 transition-all duration-300">
+        <div className="glass rounded-3xl overflow-hidden border border-purple-500/20 shadow-[0_24px_60px_rgba(0,0,0,0.1)] dark:shadow-[0_24px_60px_rgba(0,0,0,0.5)] max-w-5xl mx-auto hover:border-purple-500/40 transition-all duration-300">
           {/* Window chrome */}
-          <div className="flex items-center gap-2 px-4 py-3 border-b border-purple-500/15 bg-[#0a0f2a]/90">
+          <div className="flex items-center gap-2 px-4 py-3 border-b border-purple-500/15 dark:bg-[#0a0f2a]/90 bg-slate-100/90">
             <div className="flex gap-1.5">
               <div className="w-3 h-3 rounded-full bg-red-500/80 hover:opacity-100 cursor-pointer" />
               <div className="w-3 h-3 rounded-full bg-amber-500/80 hover:opacity-100 cursor-pointer" />
               <div className="w-3 h-3 rounded-full bg-green-500/80 hover:opacity-100 cursor-pointer" />
             </div>
             <div className="flex-1 flex justify-center">
-              <div className="flex items-center gap-2 px-4 py-1 rounded-lg bg-[#111840] border border-purple-500/15 text-[11px] text-slate-400">
+              <div className="flex items-center gap-2 px-4 py-1 rounded-lg dark:bg-[#111840] bg-white border border-purple-500/15 text-[11px] text-slate-600 dark:text-slate-400 shadow-sm">
                 <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
                 nexora.app — Secure connection
               </div>
@@ -566,12 +576,12 @@ const LivePreview = () => (
           {/* Three-panel layout */}
           <div className="flex h-[420px] sm:h-[480px]">
             {/* Sidebar */}
-            <div className="w-56 sm:w-64 border-r border-purple-500/10 bg-[#0a0f2a]/60 flex-col hidden sm:flex">
+            <div className="w-56 sm:w-64 border-r border-purple-500/10 dark:bg-[#0a0f2a]/60 bg-white/70 flex-col hidden sm:flex">
               <div className="px-3 py-3 border-b border-purple-500/10">
                 <Logo size="sm" />
               </div>
               <div className="px-3 py-2">
-                <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-[#111840] border border-purple-500/15 text-[11px] text-slate-500">
+                <div className="flex items-center gap-2 px-3 py-2 rounded-xl dark:bg-[#111840] bg-slate-100 border border-purple-500/15 text-[11px] text-slate-500">
                   <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                   </svg>
@@ -593,8 +603,8 @@ const LivePreview = () => (
                       {c.online && <div className="absolute bottom-0 right-0 w-2 h-2 rounded-full bg-green-500 border border-[#0a0f2a]" />}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-[11px] font-semibold text-slate-200 truncate">{c.name}</p>
-                      <p className="text-[10px] text-slate-400 truncate">{c.msg}</p>
+                      <p className="text-[11px] font-semibold text-slate-800 dark:text-slate-200 truncate">{c.name}</p>
+                      <p className="text-[10px] text-slate-500 dark:text-slate-400 truncate">{c.msg}</p>
                     </div>
                     {c.badge && (
                       <div className="w-4 h-4 rounded-full bg-purple-500 text-[9px] text-white flex items-center justify-center font-bold shrink-0 shadow-sm">
@@ -607,16 +617,16 @@ const LivePreview = () => (
             </div>
 
             {/* Main chat */}
-            <div className="flex-1 flex flex-col bg-[#060918]/50">
+            <div className="flex-1 flex flex-col dark:bg-[#060918]/50 bg-slate-50/70">
               {/* Header */}
               <div className="flex items-center gap-3 px-4 py-3 border-b border-purple-500/10">
                 <div className="relative">
                   <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-violet-600 flex items-center justify-center text-xs font-bold text-white shadow-sm">A</div>
-                  <div className="absolute bottom-0 right-0 w-2 h-2 rounded-full bg-green-500 border border-[#060918]" />
+                  <div className="absolute bottom-0 right-0 w-2 h-2 rounded-full bg-green-500 border border-white dark:border-[#060918]" />
                 </div>
                 <div>
-                  <p className="text-xs font-semibold text-slate-100">Alex Morgan</p>
-                  <p className="text-[10px] text-green-400 font-medium">Online</p>
+                  <p className="text-xs font-semibold text-slate-800 dark:text-slate-100">Alex Morgan</p>
+                  <p className="text-[10px] text-green-500 dark:text-green-400 font-medium">Online</p>
                 </div>
               </div>
               {/* Messages */}
@@ -633,7 +643,7 @@ const LivePreview = () => (
                     <div className={`px-3 py-2 rounded-xl text-[11px] max-w-[75%] leading-relaxed transition-transform duration-200 group-hover/bubble:scale-[1.02] ${
                       m.own
                         ? "bg-gradient-to-br from-purple-600 to-violet-700 text-white rounded-br-sm shadow-md"
-                        : "bg-[#111840] border border-purple-500/15 text-slate-200 rounded-bl-sm"
+                        : "dark:bg-[#111840] bg-white border border-purple-500/15 text-slate-800 dark:text-slate-200 rounded-bl-sm shadow-sm"
                     }`}>
                       {m.text}
                     </div>
@@ -642,7 +652,7 @@ const LivePreview = () => (
                 {/* Typing indicator */}
                 <div className="flex items-center gap-2">
                   <div className="w-6 h-6 rounded-full bg-purple-500/20 border border-purple-500/15 shrink-0 self-end" />
-                  <div className="px-3 py-2 rounded-xl bg-[#111840] border border-purple-500/10 flex gap-1 items-center">
+                  <div className="px-3 py-2 rounded-xl dark:bg-[#111840] bg-white border border-purple-500/10 flex gap-1 items-center shadow-sm">
                     {[0, 150, 300].map((d) => (
                       <span key={d} className="w-1.5 h-1.5 rounded-full bg-purple-400 animate-bounce" style={{ animationDelay: `${d}ms` }} />
                     ))}
@@ -708,13 +718,13 @@ const Security = () => (
                 <HiOutlineShieldCheck className="w-3.5 h-3.5 text-cyan-400" />
                 Enterprise-grade security
               </div>
-              <h2 className="text-4xl font-extrabold text-slate-100 tracking-tight mb-4">
+              <h2 className="text-4xl font-extrabold text-slate-900 dark:text-slate-100 tracking-tight mb-4">
                 Your conversations,{" "}
                 <span className="bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">
                   always protected
                 </span>
               </h2>
-              <p className="text-slate-400 text-lg leading-relaxed mb-8">
+              <p className="text-slate-600 dark:text-slate-400 text-lg leading-relaxed mb-8">
                 Built from the ground up with security-first principles. JWT authentication, bcrypt hashing, and httpOnly cookies keep your data safe.
               </p>
               <div className="flex flex-col gap-3.5">
@@ -723,12 +733,12 @@ const Security = () => (
                   "Passwords hashed with bcryptjs",
                   "CORS protection on all API endpoints",
                   "Cookie-parser with secure flag in production",
-                ].map((item, idx) => (
+                ].map((item) => (
                   <div key={item} className="flex items-center gap-3 group hover:translate-x-1.5 transition-transform duration-200">
                     <div className="w-5 h-5 rounded-full bg-cyan-500/15 border border-cyan-500/30 flex items-center justify-center shrink-0 group-hover:bg-cyan-500 group-hover:text-black transition-colors">
                       <HiOutlineCheck className="w-3 h-3 text-cyan-400 group-hover:text-black transition-colors" />
                     </div>
-                    <span className="text-sm text-slate-300 group-hover:text-white transition-colors">{item}</span>
+                    <span className="text-sm text-slate-700 dark:text-slate-300 group-hover:text-purple-600 dark:group-hover:text-white transition-colors">{item}</span>
                   </div>
                 ))}
               </div>
@@ -774,19 +784,19 @@ const CTA = ({ isAuthenticated }) => (
           <div className="absolute inset-0 pointer-events-none"
             style={{ background: "radial-gradient(ellipse at center, rgba(139,92,246,0.18) 0%, transparent 70%)" }} />
           <div className="relative z-10">
-            <h2 className="text-4xl sm:text-5xl font-extrabold text-slate-100 tracking-tight mb-4">
+            <h2 className="text-4xl sm:text-5xl font-extrabold text-slate-900 dark:text-slate-100 tracking-tight mb-4">
               Ready to{" "}
               <span className="bg-gradient-to-br from-purple-400 to-cyan-400 bg-clip-text text-transparent">
                 connect?
               </span>
             </h2>
-            <p className="text-slate-400 text-lg mb-8 max-w-lg mx-auto leading-relaxed">
+            <p className="text-slate-600 dark:text-slate-400 text-lg mb-8 max-w-lg mx-auto leading-relaxed">
               Join thousands of teams already using NEXORA to communicate faster and collaborate better.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <Link
                 to={isAuthenticated ? "/chat" : "/signup"}
-                className="px-10 py-4 rounded-2xl bg-gradient-to-br from-purple-500 via-violet-600 to-cyan-500 text-white font-bold text-base hover:shadow-[0_8px_32px_rgba(139,92,246,0.5)] hover:-translate-y-1 active:translate-y-0 transition-all duration-300 relative overflow-hidden group"
+                className="px-10 py-4 rounded-2xl bg-gradient-to-br from-purple-500 via-violet-600 to-cyan-500 text-white font-bold text-base hover:shadow-[0_8px_32px_rgba(139,92,246,0.5)] hover:-translate-y-1 active:translate-y-0 transition-all duration-300 relative overflow-hidden group shadow-lg shadow-purple-900/25"
               >
                 <span className="relative z-10">
                   {isAuthenticated ? "Go to NEXORA →" : "Create Free Account →"}
@@ -796,7 +806,7 @@ const CTA = ({ isAuthenticated }) => (
               {!isAuthenticated && (
                 <Link
                   to="/login"
-                  className="px-10 py-4 rounded-2xl border border-purple-500/25 text-slate-300 font-semibold hover:bg-purple-500/10 hover:border-purple-500/40 hover:text-white transition-all"
+                  className="px-10 py-4 rounded-2xl border border-purple-500/25 text-slate-700 dark:text-slate-300 font-semibold hover:bg-purple-500/10 hover:border-purple-500/40 hover:text-purple-600 dark:hover:text-white transition-all"
                 >
                   Already have an account?
                 </Link>
@@ -813,7 +823,7 @@ const CTA = ({ isAuthenticated }) => (
    Footer
    ───────────────────────────────────────── */
 const Footer = () => (
-  <footer className="border-t border-purple-500/10 py-12 px-4 bg-[#040612]">
+  <footer className="border-t border-purple-500/10 py-12 px-4 bg-slate-100 dark:bg-[#040612] transition-colors">
     <div className="max-w-7xl mx-auto">
       <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
         <Logo />
@@ -821,9 +831,9 @@ const Footer = () => (
           © 2026 NEXORA. Built with React, Node.js, and MongoDB.
         </p>
         <div className="flex items-center gap-6">
-          <span className="text-xs text-slate-500 hover:text-purple-400 transition-colors cursor-pointer">Privacy</span>
-          <span className="text-xs text-slate-500 hover:text-purple-400 transition-colors cursor-pointer">Terms</span>
-          <span className="text-xs text-slate-500 hover:text-cyan-400 transition-colors cursor-pointer">GitHub</span>
+          <span className="text-xs text-slate-500 hover:text-purple-500 dark:hover:text-purple-400 transition-colors cursor-pointer">Privacy</span>
+          <span className="text-xs text-slate-500 hover:text-purple-500 dark:hover:text-purple-400 transition-colors cursor-pointer">Terms</span>
+          <span className="text-xs text-slate-500 hover:text-cyan-500 dark:hover:text-cyan-400 transition-colors cursor-pointer">GitHub</span>
         </div>
       </div>
     </div>
@@ -851,7 +861,7 @@ const Home = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#060918] font-inter text-slate-200 relative">
+    <div className="min-h-screen bg-slate-50 dark:bg-[#060918] font-inter text-slate-800 dark:text-slate-200 transition-colors duration-300 relative">
       {/* Scroll Progress Indicator Bar */}
       <div className="fixed top-0 left-0 right-0 z-[60] h-[3px] bg-transparent">
         <div

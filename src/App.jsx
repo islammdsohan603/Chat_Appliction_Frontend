@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -52,6 +53,18 @@ const PublicRoute = ({ children }) => {
 function App() {
   // Initialize user fetch on app load
   useCurrentUser();
+
+  // Initialize theme on app load
+  useEffect(() => {
+    const savedTheme = localStorage.getItem("theme") || "dark";
+    if (savedTheme === "dark") {
+      document.documentElement.classList.add("dark");
+      document.documentElement.classList.remove("light");
+    } else {
+      document.documentElement.classList.remove("dark");
+      document.documentElement.classList.add("light");
+    }
+  }, []);
 
   return (
     <>
