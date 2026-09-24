@@ -3,9 +3,11 @@
  * Sections: Navbar → Hero → Features → Live Preview → Security → CTA → Footer
  * Enhanced with Scroll Animations & Interactive 3D Hover Animations.
  */
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
+import gsap from "gsap";
+import ScrollRevealLib from "scrollreveal";
 import {
   HiOutlineBolt,
   HiOutlineShieldCheck,
@@ -182,9 +184,15 @@ const Navbar = ({ isAuthenticated }) => {
 };
 
 /* ─────────────────────────────────────────
-   3D Hero Chat Preview
+   3D Hero Chat Preview — Enlarged Dimensions & Continuous GSAP Float
    ───────────────────────────────────────── */
 const HeroChatPreview = () => {
+  const containerRef = useRef(null);
+  const cardRef = useRef(null);
+  const badge1Ref = useRef(null);
+  const badge2Ref = useRef(null);
+  const badge3Ref = useRef(null);
+
   const [messages] = useState([
     { id: 1, from: "Alex", text: "Hey! Just pushed the latest build 🚀", time: "10:42 AM", own: false, color: "from-purple-500 to-violet-600" },
     { id: 2, from: "You", text: "Looks amazing! The UI is super clean 🔥", time: "10:43 AM", own: true },
@@ -192,85 +200,199 @@ const HeroChatPreview = () => {
     { id: 4, from: "You", text: "Let's ship it! ✅", time: "10:45 AM", own: true },
   ]);
 
+  useEffect(() => {
+    // 1. ScrollReveal — smoothly float up from the bottom as user scrolls into view
+    let srInstance = null;
+    if (containerRef.current) {
+      try {
+        srInstance = ScrollRevealLib({
+          origin: "bottom",
+          distance: "80px",
+          duration: 1100,
+          delay: 150,
+          opacity: 0,
+          scale: 0.95,
+          easing: "cubic-bezier(0.2, 0.8, 0.2, 1)",
+          reset: false,
+        });
+        srInstance.reveal(containerRef.current);
+      } catch (err) {
+        console.warn("ScrollReveal init error:", err);
+      }
+    }
+
+    // 2. GSAP Context — Continuous floating animation & badges
+    const ctx = gsap.context(() => {
+      // Continuous levitating float on card
+      gsap.to(cardRef.current, {
+        y: -16,
+        rotationZ: 0.6,
+        duration: 3.8,
+        repeat: -1,
+        yoyo: true,
+        ease: "sine.inOut",
+      });
+
+      // Floating badge 1 (top right)
+      if (badge1Ref.current) {
+        gsap.to(badge1Ref.current, {
+          y: -12,
+          x: 4,
+          duration: 3.2,
+          repeat: -1,
+          yoyo: true,
+          ease: "sine.inOut",
+          delay: 0.2,
+        });
+      }
+
+      // Floating badge 2 (bottom left)
+      if (badge2Ref.current) {
+        gsap.to(badge2Ref.current, {
+          y: 10,
+          x: -4,
+          duration: 3.6,
+          repeat: -1,
+          yoyo: true,
+          ease: "sine.inOut",
+          delay: 0.5,
+        });
+      }
+
+      // Floating badge 3 (reaction pill)
+      if (badge3Ref.current) {
+        gsap.to(badge3Ref.current, {
+          y: -10,
+          scale: 1.08,
+          duration: 2.8,
+          repeat: -1,
+          yoyo: true,
+          ease: "sine.inOut",
+          delay: 0.8,
+        });
+      }
+    }, containerRef);
+
+    // 3. Smooth animation when switching themes
+    const handleThemeChange = (e) => {
+      if (cardRef.current) {
+        const isDark = e.detail?.theme === "dark";
+        gsap.timeline()
+          .to(cardRef.current, {
+            scale: 1.025,
+            boxShadow: isDark
+              ? "0 0 50px rgba(168, 85, 247, 0.45)"
+              : "0 0 40px rgba(99, 102, 241, 0.35)",
+            borderColor: isDark ? "rgba(168, 85, 247, 0.5)" : "rgba(99, 102, 241, 0.4)",
+            duration: 0.3,
+            ease: "power2.out",
+          })
+          .to(cardRef.current, {
+            scale: 1,
+            boxShadow: "",
+            borderColor: "",
+            duration: 0.6,
+            ease: "power2.inOut",
+          });
+      }
+    };
+
+    window.addEventListener("nexoraThemeChange", handleThemeChange);
+
+    return () => {
+      ctx.revert();
+      window.removeEventListener("nexoraThemeChange", handleThemeChange);
+      if (srInstance) {
+        try {
+          srInstance.destroy();
+        } catch {
+          // ignore
+        }
+      }
+    };
+  }, []);
+
   return (
     <div
-      className="relative w-full max-w-[460px] sm:max-w-[520px] md:max-w-[580px] lg:max-w-[560px] xl:max-w-[620px] animate-heroFloat transition-transform duration-500"
+      ref={containerRef}
+      className="relative w-full max-w-[500px] sm:max-w-[580px] md:max-w-[650px] lg:max-w-[600px] xl:max-w-[680px] mx-auto lg:mr-0 transition-transform duration-500"
       style={{ perspective: "1000px" }}
     >
       {/* Main chat window */}
       <div
-        className="glass rounded-3xl overflow-hidden shadow-[0_20px_60px_rgba(0,0,0,0.12)] dark:shadow-[0_20px_60px_rgba(0,0,0,0.6)] border border-purple-500/20 hover:border-purple-500/40 transition-all duration-300 group"
+        ref={cardRef}
+        className="glass rounded-3xl overflow-hidden shadow-[0_24px_70px_rgba(0,0,0,0.12)] dark:shadow-[0_24px_70px_rgba(0,0,0,0.65)] border border-purple-500/25 hover:border-purple-500/45 transition-all duration-300 group"
         style={{
           transformStyle: "preserve-3d",
         }}
       >
         {/* Chat header */}
-        <div className="flex items-center gap-3.5 px-5 py-3.5 sm:py-4 border-b border-purple-500/15 dark:bg-[#0d1230]/75 bg-slate-100/90">
-          <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-gradient-to-br from-purple-500 to-cyan-500 flex items-center justify-center text-sm font-bold text-white shadow-md">
+        <div className="flex items-center gap-4 px-6 py-4 sm:py-4.5 border-b border-purple-500/15 dark:bg-[#0d1230]/80 bg-slate-100/90 backdrop-blur-md">
+          <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-gradient-to-br from-purple-500 to-cyan-500 flex items-center justify-center text-base font-bold text-white shadow-md">
             N
           </div>
           <div>
             <p className="text-sm sm:text-base font-bold text-slate-800 dark:text-slate-100">Team NEXORA</p>
-            <p className="text-xs text-green-500 dark:text-green-400 font-medium flex items-center gap-1.5">
+            <p className="text-xs sm:text-sm text-green-500 dark:text-green-400 font-medium flex items-center gap-1.5">
               <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
               3 members online
             </p>
           </div>
           <div className="ml-auto flex gap-2">
-            <div className="w-3 h-3 rounded-full bg-red-500/80 hover:opacity-100 cursor-pointer" />
-            <div className="w-3 h-3 rounded-full bg-amber-500/80 hover:opacity-100 cursor-pointer" />
-            <div className="w-3 h-3 rounded-full bg-green-500/80 hover:opacity-100 cursor-pointer" />
+            <div className="w-3.5 h-3.5 rounded-full bg-red-500/80 hover:opacity-100 cursor-pointer" />
+            <div className="w-3.5 h-3.5 rounded-full bg-amber-500/80 hover:opacity-100 cursor-pointer" />
+            <div className="w-3.5 h-3.5 rounded-full bg-green-500/80 hover:opacity-100 cursor-pointer" />
           </div>
         </div>
 
         {/* Messages */}
-        <div className="px-5 py-5 sm:py-6 space-y-4 dark:bg-[#060918]/60 bg-white/70">
+        <div className="px-6 py-6 sm:py-7 space-y-4 sm:space-y-5 min-h-[380px] sm:min-h-[440px] md:min-h-[470px] flex flex-col justify-center dark:bg-[#060918]/65 bg-white/75 backdrop-blur-sm">
           {messages.map((msg) => (
             <div
               key={msg.id}
-              className={`flex gap-2.5 sm:gap-3 group/msg ${msg.own ? "flex-row-reverse" : ""}`}
+              className={`flex gap-3 sm:gap-3.5 group/msg ${msg.own ? "flex-row-reverse" : ""}`}
             >
               {!msg.own && (
-                <div className={`w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-gradient-to-br ${msg.color} border border-purple-500/20 flex items-center justify-center text-xs font-bold text-white shrink-0 shadow-sm`}>
+                <div className={`w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-gradient-to-br ${msg.color} border border-purple-500/20 flex items-center justify-center text-xs sm:text-sm font-bold text-white shrink-0 shadow-sm`}>
                   {msg.from[0]}
                 </div>
               )}
-              <div className={`flex flex-col gap-1 ${msg.own ? "items-end" : "items-start"}`}>
-                {!msg.own && <span className="text-xs text-purple-600 dark:text-purple-400/90 ml-1 font-semibold">{msg.from}</span>}
-                <div className={`px-4 py-2.5 sm:py-3 rounded-2xl text-xs sm:text-sm max-w-[280px] sm:max-w-[360px] leading-relaxed transition-all duration-200 group-hover/msg:scale-[1.01] ${
+              <div className={`flex flex-col gap-1.5 ${msg.own ? "items-end" : "items-start"}`}>
+                {!msg.own && <span className="text-xs sm:text-sm text-purple-600 dark:text-purple-400/90 ml-1 font-semibold">{msg.from}</span>}
+                <div className={`px-4 sm:px-5 py-2.5 sm:py-3.5 rounded-2xl text-xs sm:text-sm md:text-[15px] max-w-[280px] sm:max-w-[380px] md:max-w-[420px] leading-relaxed transition-all duration-200 group-hover/msg:scale-[1.01] ${
                   msg.own
                     ? "bg-gradient-to-br from-purple-600 to-violet-700 text-white rounded-br-sm shadow-md shadow-purple-900/30"
                     : "dark:bg-[#111840] bg-slate-100 border border-purple-500/15 text-slate-800 dark:text-slate-200 rounded-bl-sm shadow-sm"
                 }`}>
                   {msg.text}
                 </div>
-                <span className="text-[10px] sm:text-[11px] text-slate-400 dark:text-slate-500 mx-1">{msg.time}</span>
+                <span className="text-[10px] sm:text-xs text-slate-400 dark:text-slate-500 mx-1">{msg.time}</span>
               </div>
             </div>
           ))}
 
           {/* Typing indicator */}
-          <div className="flex items-center gap-2.5 pt-1">
-            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-gradient-to-br from-pink-500 to-rose-600 border border-purple-500/20 flex items-center justify-center text-xs font-bold text-white shrink-0">
+          <div className="flex items-center gap-3 pt-1">
+            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-gradient-to-br from-pink-500 to-rose-600 border border-purple-500/20 flex items-center justify-center text-xs sm:text-sm font-bold text-white shrink-0">
               S
             </div>
-            <div className="px-4 py-2.5 rounded-2xl rounded-bl-sm dark:bg-[#111840] bg-slate-100 border border-purple-500/15 flex items-center gap-1.5 shadow-sm">
+            <div className="px-4 sm:px-5 py-2.5 sm:py-3 rounded-2xl rounded-bl-sm dark:bg-[#111840] bg-slate-100 border border-purple-500/15 flex items-center gap-1.5 shadow-sm">
               <span className="w-2 h-2 rounded-full bg-purple-500 animate-bounce" style={{ animationDelay: "0ms" }} />
               <span className="w-2 h-2 rounded-full bg-purple-500 animate-bounce" style={{ animationDelay: "150ms" }} />
               <span className="w-2 h-2 rounded-full bg-cyan-500 animate-bounce" style={{ animationDelay: "300ms" }} />
             </div>
-            <span className="text-xs text-slate-500 italic">Sarah is typing…</span>
+            <span className="text-xs sm:text-sm text-slate-500 italic">Sarah is typing…</span>
           </div>
         </div>
 
         {/* Composer */}
-        <div className="px-5 py-4 border-t border-purple-500/10 dark:bg-[#0d1230]/75 bg-slate-100/90">
-          <div className="flex items-center gap-3 px-4 py-3 rounded-2xl dark:bg-[#111840] bg-white border border-purple-500/20 hover:border-purple-500/40 transition-colors shadow-sm">
-            <HiOutlineFaceSmile className="w-5 h-5 text-slate-400 hover:text-purple-500 cursor-pointer transition-colors" />
-            <span className="text-sm text-slate-400 dark:text-slate-500 flex-1 truncate">Type a message…</span>
-            <HiOutlinePaperClip className="w-5 h-5 text-slate-400 hover:text-cyan-500 cursor-pointer transition-colors" />
-            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-gradient-to-br from-purple-500 to-violet-600 flex items-center justify-center cursor-pointer hover:scale-110 active:scale-95 transition-transform shadow-sm">
-              <svg className="w-4 h-4 text-white rotate-45" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+        <div className="px-6 py-4 sm:py-5 border-t border-purple-500/15 dark:bg-[#0d1230]/80 bg-slate-100/90 backdrop-blur-md">
+          <div className="flex items-center gap-3.5 px-4 sm:px-5 py-3 sm:py-3.5 rounded-2xl dark:bg-[#111840] bg-white border border-purple-500/20 hover:border-purple-500/40 transition-colors shadow-sm">
+            <HiOutlineFaceSmile className="w-5 h-5 sm:w-6 sm:h-6 text-slate-400 hover:text-purple-500 cursor-pointer transition-colors" />
+            <span className="text-sm sm:text-base text-slate-400 dark:text-slate-500 flex-1 truncate">Type a message…</span>
+            <HiOutlinePaperClip className="w-5 h-5 sm:w-6 sm:h-6 text-slate-400 hover:text-cyan-500 cursor-pointer transition-colors" />
+            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-br from-purple-500 to-violet-600 flex items-center justify-center cursor-pointer hover:scale-110 active:scale-95 transition-transform shadow-sm">
+              <svg className="w-4 h-4 sm:w-4.5 sm:h-4.5 text-white rotate-45" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
               </svg>
             </div>
@@ -279,34 +401,43 @@ const HeroChatPreview = () => {
       </div>
 
       {/* Floating notification card */}
-      <div className="absolute -top-5 sm:-top-7 -right-3 sm:-right-7 glass rounded-2xl px-4 py-3 flex items-center gap-3 shadow-2xl animate-heroFloat2 border border-purple-500/30 hover:scale-105 transition-transform cursor-pointer">
-        <div className="w-9 h-9 rounded-full bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center text-base shadow-md">
+      <div
+        ref={badge1Ref}
+        className="absolute -top-5 sm:-top-7 -right-3 sm:-right-7 glass rounded-2xl px-4 sm:px-5 py-3 sm:py-3.5 flex items-center gap-3 sm:gap-3.5 shadow-2xl border border-purple-500/30 hover:scale-105 transition-transform cursor-pointer z-20"
+      >
+        <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center text-base sm:text-lg shadow-md">
           🚀
         </div>
         <div>
           <p className="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-200">Build shipped!</p>
-          <p className="text-[11px] text-slate-500 dark:text-slate-400">just now</p>
+          <p className="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400">just now</p>
         </div>
         <div className="w-2.5 h-2.5 rounded-full bg-green-500 animate-pulse ml-1" />
       </div>
 
       {/* Online users card */}
-      <div className="absolute -bottom-5 sm:-bottom-6 -left-3 sm:-left-6 glass rounded-2xl px-4 py-3 flex items-center gap-3 shadow-2xl animate-heroFloat border border-cyan-500/30 hover:scale-105 transition-transform cursor-pointer" style={{ animationDelay: "1s" }}>
+      <div
+        ref={badge2Ref}
+        className="absolute -bottom-5 sm:-bottom-7 -left-3 sm:-left-7 glass rounded-2xl px-4 sm:px-5 py-3 sm:py-3.5 flex items-center gap-3 sm:gap-3.5 shadow-2xl border border-cyan-500/30 hover:scale-105 transition-transform cursor-pointer z-20"
+      >
         <div className="flex -space-x-2.5">
           {["A", "S", "M"].map((l, i) => (
-            <div key={i} className={`w-8 h-8 rounded-full border-2 border-white dark:border-[#060918] flex items-center justify-center text-xs font-bold text-white bg-gradient-to-br ${i === 0 ? "from-purple-500 to-violet-600" : i === 1 ? "from-cyan-500 to-blue-600" : "from-pink-500 to-rose-600"} shadow-sm`}>
+            <div key={i} className={`w-8 h-8 sm:w-9 sm:h-9 rounded-full border-2 border-white dark:border-[#060918] flex items-center justify-center text-xs font-bold text-white bg-gradient-to-br ${i === 0 ? "from-purple-500 to-violet-600" : i === 1 ? "from-cyan-500 to-blue-600" : "from-pink-500 to-rose-600"} shadow-sm`}>
               {l}
             </div>
           ))}
         </div>
         <div>
-          <p className="text-xs font-bold text-slate-700 dark:text-slate-300">+12 online</p>
-          <p className="text-[10px] text-green-500 font-medium">Active now</p>
+          <p className="text-xs sm:text-sm font-bold text-slate-700 dark:text-slate-300">+12 online</p>
+          <p className="text-[10px] sm:text-xs text-green-500 font-medium">Active now</p>
         </div>
       </div>
 
       {/* Reaction pop */}
-      <div className="absolute top-1/2 -right-4 sm:-right-6 glass rounded-full px-3.5 py-2 text-xs sm:text-sm font-bold text-slate-700 dark:text-slate-200 shadow-xl animate-scaleIn border border-purple-500/30 hover:scale-125 transition-transform cursor-pointer" style={{ animationDelay: "0.5s" }}>
+      <div
+        ref={badge3Ref}
+        className="absolute top-1/2 -right-4 sm:-right-7 -translate-y-1/2 glass rounded-full px-4 py-2.5 text-xs sm:text-sm font-bold text-slate-700 dark:text-slate-200 shadow-xl border border-purple-500/30 hover:scale-125 transition-transform cursor-pointer z-20"
+      >
         🔥 4
       </div>
     </div>
@@ -410,9 +541,7 @@ const Hero = ({ isAuthenticated }) => (
 
         {/* Column 2: 3D Chat Preview (Centered on mobile & md, right-aligned on lg) */}
         <div className="w-full flex justify-center lg:justify-end mt-4 lg:mt-0">
-          <ScrollReveal animation="fade-left" delay={300} duration={900}>
-            <HeroChatPreview />
-          </ScrollReveal>
+          <HeroChatPreview />
         </div>
       </div>
     </div>

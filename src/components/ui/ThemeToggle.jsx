@@ -14,9 +14,12 @@ const ThemeToggle = ({ className = "", showLabel = false }) => {
     return document.documentElement.classList.contains("dark");
   });
 
-  const applyTheme = (dark) => {
+  const applyTheme = (dark, animate = true) => {
     setIsDark(dark);
     const themeStr = dark ? "dark" : "light";
+    if (animate) {
+      document.documentElement.classList.add("theme-transitioning");
+    }
     if (dark) {
       document.documentElement.classList.add("dark");
       document.documentElement.classList.remove("light");
@@ -29,16 +32,22 @@ const ThemeToggle = ({ className = "", showLabel = false }) => {
     localStorage.setItem("theme", themeStr);
     const metaTheme = document.querySelector('meta[name="theme-color"]');
     if (metaTheme) metaTheme.setAttribute("content", dark ? "#060918" : "#f8fafc");
+
+    if (animate) {
+      setTimeout(() => {
+        document.documentElement.classList.remove("theme-transitioning");
+      }, 400);
+    }
   };
 
   useEffect(() => {
-    // Initial check from localStorage or current DOM state
+    // Initial check from localStorage or current DOM state (without transition flicker)
     const saved = localStorage.getItem("theme");
     if (saved) {
-      applyTheme(saved === "dark");
+      applyTheme(saved === "dark", false);
     } else {
       const isCurrentlyDark = document.documentElement.classList.contains("dark");
-      applyTheme(isCurrentlyDark);
+      applyTheme(isCurrentlyDark, false);
     }
 
     // Listen to external theme changes (e.g. from Settings or another toggle)
