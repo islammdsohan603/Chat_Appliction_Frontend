@@ -71,6 +71,46 @@ const MessageBubble = ({ message, showAvatar = true }) => {
                 : "bg-[#111840] border border-purple-500/10 text-slate-200 rounded-bl-sm shadow-sm"
             }`}
           >
+            {/* AI badge if web search or deep think used */}
+            {(message.webSearch || message.deepThink) && (
+              <div className="flex items-center gap-1.5 mb-1.5 text-[10px] font-medium opacity-80">
+                {message.webSearch && (
+                  <span className="px-1.5 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">
+                    🌐 Web Search
+                  </span>
+                )}
+                {message.deepThink && (
+                  <span className="px-1.5 py-0.5 rounded-full bg-purple-500/20 text-purple-300 border border-purple-500/30">
+                    🧠 Deep Think
+                  </span>
+                )}
+              </div>
+            )}
+
+            {/* Attachments preview */}
+            {message.attachments?.length > 0 && (
+              <div className="flex flex-wrap gap-2 mb-2">
+                {message.attachments.map((att) => (
+                  <div key={att.id} className="rounded-xl overflow-hidden max-w-[220px]">
+                    {att.isImage && att.previewUrl ? (
+                      <img
+                        src={att.previewUrl}
+                        alt={att.name}
+                        className="max-h-48 w-full object-cover rounded-lg border border-purple-500/20"
+                      />
+                    ) : (
+                      <div className="flex items-center gap-2 p-2 bg-black/25 rounded-lg text-xs border border-white/10">
+                        <span className="text-purple-400">📎</span>
+                        <div className="flex flex-col min-w-0">
+                          <span className="truncate font-medium">{att.name}</span>
+                          <span className="text-[10px] opacity-70">{att.size}</span>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
             {text}
           </div>
 

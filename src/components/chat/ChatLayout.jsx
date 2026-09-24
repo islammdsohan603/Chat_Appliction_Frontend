@@ -14,6 +14,7 @@ import ChatSidebar from "./ChatSidebar";
 import ChatHeader from "./ChatHeader";
 import MessageList from "./MessageList";
 import MessageComposer from "./MessageComposer";
+import ChatInput from "./ChatInput";
 import ProfilePanel from "./ProfilePanel";
 import { HiOutlineBars3 } from "react-icons/hi2";
 
@@ -126,26 +127,37 @@ const generateMessages = (currentUserId) => [
 /* ═════════════════════════════════════════
    Empty / Welcome state when no chat selected
    ═════════════════════════════════════════ */
-const WelcomeScreen = () => (
-  <div className="flex-1 flex flex-col items-center justify-center gap-6 text-center px-8">
-    <div className="relative">
-      <div className="w-24 h-24 rounded-3xl bg-gradient-to-br from-purple-500/20 to-cyan-500/20 border border-purple-500/20 flex items-center justify-center">
-        <svg className="w-12 h-12 text-purple-400/60" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-          <path strokeLinecap="round" strokeLinejoin="round" d="M8.625 9.75a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375m-13.5 3.01c0 1.6 1.123 2.994 2.707 3.227 1.087.16 2.185.283 3.293.369V21l4.184-4.183a1.14 1.14 0 01.778-.332 48.294 48.294 0 005.83-.498c1.585-.233 2.708-1.626 2.708-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0012 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018z" />
-        </svg>
+const WelcomeScreen = ({ onSendMessage }) => (
+  <div className="flex-1 flex flex-col justify-between py-6 px-4 max-w-4xl mx-auto w-full overflow-y-auto no-scrollbar">
+    <div className="flex-1 flex flex-col items-center justify-center gap-5 text-center px-4 my-auto">
+      <div className="relative">
+        <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-3xl bg-gradient-to-br from-purple-500/20 to-cyan-500/20 border border-purple-500/25 flex items-center justify-center shadow-[0_0_30px_rgba(139,92,246,0.15)]">
+          <svg className="w-10 h-10 sm:w-12 sm:h-12 text-purple-400/80" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M8.625 9.75a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375m-13.5 3.01c0 1.6 1.123 2.994 2.707 3.227 1.087.16 2.185.283 3.293.369V21l4.184-4.183a1.14 1.14 0 01.778-.332 48.294 48.294 0 005.83-.498c1.585-.233 2.708-1.626 2.708-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0012 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018z" />
+          </svg>
+        </div>
+        {/* Floating pulse */}
+        <div className="absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full bg-cyan-400/60 animate-ping" />
       </div>
-      {/* Floating decoration */}
-      <div className="absolute -top-2 -right-2 w-5 h-5 rounded-full bg-purple-500/30 animate-ping" style={{ animationDelay: '0.5s' }} />
+      <div>
+        <h2 className="text-2xl sm:text-3xl font-bold text-slate-100 mb-2">What's on your mind today?</h2>
+        <p className="text-sm text-slate-400 max-w-sm leading-relaxed">
+          Ask questions, brainstorm with AI, or pick a conversation from the sidebar to start chatting.
+        </p>
+      </div>
+      <div className="flex items-center gap-2">
+        <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+        <span className="text-xs text-slate-500">All systems operational</span>
+      </div>
     </div>
-    <div>
-      <h2 className="text-2xl font-bold text-slate-200 mb-2">Welcome to NEXORA</h2>
-      <p className="text-sm text-slate-400 max-w-xs leading-relaxed">
-        Select a conversation from the sidebar to start chatting. Your messages are end-to-end encrypted.
-      </p>
-    </div>
-    <div className="flex items-center gap-2">
-      <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-      <span className="text-xs text-slate-500">All systems operational</span>
+
+    {/* ChatGPT prompt input on Welcome screen */}
+    <div className="w-full mt-4">
+      <ChatInput
+        onSend={onSendMessage}
+        placeholder="Ask anything or start a message…"
+        showStarters
+      />
     </div>
   </div>
 );
@@ -212,10 +224,22 @@ const ChatLayout = () => {
     setMessages(generateMessages(currentUserId));
   }, [currentUserId]);
 
-  const handleSendMessage = useCallback((text) => {
+  const handleSendMessage = useCallback((payload) => {
+    const textContent = typeof payload === "string" ? payload : payload?.text || "";
+    const attachments = typeof payload === "object" ? payload?.attachments || [] : [];
+    if (!textContent && attachments.length === 0) return;
+
+    // If no active conversation is selected yet, select the first one if available
+    if (!activeConversationId && conversations.length > 0) {
+      setActiveConversationId(conversations[0].id);
+    }
+
     const newMessage = {
       id: `msg-${Date.now()}`,
-      text,
+      text: textContent,
+      attachments,
+      webSearch: typeof payload === "object" ? payload?.webSearch : false,
+      deepThink: typeof payload === "object" ? payload?.deepThink : false,
       timestamp: new Date().toISOString(),
       senderId: currentUserId,
       senderName: currentUserName,
@@ -223,7 +247,7 @@ const ChatLayout = () => {
       reactions: [],
     };
     setMessages((prev) => [...prev, newMessage]);
-  }, [currentUserId, currentUserName]);
+  }, [activeConversationId, conversations, currentUserId, currentUserName]);
 
   const handleLogout = async () => {
     try {
@@ -313,12 +337,12 @@ const ChatLayout = () => {
             isLoading={false}
           />
         ) : (
-          <WelcomeScreen />
+          <WelcomeScreen onSendMessage={handleSendMessage} />
         )}
 
-        {/* Composer */}
+        {/* ChatGPT Style Floating Input for active chat */}
         {activeConversation && (
-          <MessageComposer
+          <ChatInput
             onSend={handleSendMessage}
             placeholder={`Message ${activeConversation.name}…`}
           />
