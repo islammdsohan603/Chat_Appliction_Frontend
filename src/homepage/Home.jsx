@@ -194,7 +194,7 @@ const HeroChatPreview = () => {
 
   return (
     <div
-      className="relative w-full max-w-[420px] sm:max-w-[460px] md:max-w-full lg:max-w-[500px] xl:max-w-[520px] animate-heroFloat transition-transform duration-500"
+      className="relative w-full max-w-[460px] sm:max-w-[520px] md:max-w-[580px] lg:max-w-[560px] xl:max-w-[620px] animate-heroFloat transition-transform duration-500"
       style={{ perspective: "1000px" }}
     >
       {/* Main chat window */}
@@ -205,72 +205,72 @@ const HeroChatPreview = () => {
         }}
       >
         {/* Chat header */}
-        <div className="flex items-center gap-3 px-4 py-3 border-b border-purple-500/15 dark:bg-[#0d1230]/75 bg-slate-100/90">
-          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-cyan-500 flex items-center justify-center text-xs font-bold text-white shadow-sm">
+        <div className="flex items-center gap-3.5 px-5 py-3.5 sm:py-4 border-b border-purple-500/15 dark:bg-[#0d1230]/75 bg-slate-100/90">
+          <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-gradient-to-br from-purple-500 to-cyan-500 flex items-center justify-center text-sm font-bold text-white shadow-md">
             N
           </div>
           <div>
-            <p className="text-sm font-semibold text-slate-800 dark:text-slate-100">Team NEXORA</p>
-            <p className="text-[10px] text-green-500 dark:text-green-400 font-medium flex items-center gap-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+            <p className="text-sm sm:text-base font-bold text-slate-800 dark:text-slate-100">Team NEXORA</p>
+            <p className="text-xs text-green-500 dark:text-green-400 font-medium flex items-center gap-1.5">
+              <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
               3 members online
             </p>
           </div>
-          <div className="ml-auto flex gap-1.5">
-            <div className="w-2.5 h-2.5 rounded-full bg-red-500/80 hover:opacity-100 cursor-pointer" />
-            <div className="w-2.5 h-2.5 rounded-full bg-amber-500/80 hover:opacity-100 cursor-pointer" />
-            <div className="w-2.5 h-2.5 rounded-full bg-green-500/80 hover:opacity-100 cursor-pointer" />
+          <div className="ml-auto flex gap-2">
+            <div className="w-3 h-3 rounded-full bg-red-500/80 hover:opacity-100 cursor-pointer" />
+            <div className="w-3 h-3 rounded-full bg-amber-500/80 hover:opacity-100 cursor-pointer" />
+            <div className="w-3 h-3 rounded-full bg-green-500/80 hover:opacity-100 cursor-pointer" />
           </div>
         </div>
 
         {/* Messages */}
-        <div className="px-4 py-4 space-y-3 dark:bg-[#060918]/60 bg-white/70">
+        <div className="px-5 py-5 sm:py-6 space-y-4 dark:bg-[#060918]/60 bg-white/70">
           {messages.map((msg) => (
             <div
               key={msg.id}
-              className={`flex gap-2 group/msg ${msg.own ? "flex-row-reverse" : ""}`}
+              className={`flex gap-2.5 sm:gap-3 group/msg ${msg.own ? "flex-row-reverse" : ""}`}
             >
               {!msg.own && (
-                <div className={`w-7 h-7 rounded-full bg-gradient-to-br ${msg.color} border border-purple-500/20 flex items-center justify-center text-[10px] font-bold text-white shrink-0 shadow-sm`}>
+                <div className={`w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-gradient-to-br ${msg.color} border border-purple-500/20 flex items-center justify-center text-xs font-bold text-white shrink-0 shadow-sm`}>
                   {msg.from[0]}
                 </div>
               )}
-              <div className={`flex flex-col gap-0.5 ${msg.own ? "items-end" : "items-start"}`}>
-                {!msg.own && <span className="text-[10px] text-purple-600 dark:text-purple-400/80 ml-1 font-medium">{msg.from}</span>}
-                <div className={`px-3 py-2 rounded-xl text-xs max-w-[210px] leading-relaxed transition-all duration-200 group-hover/msg:scale-[1.02] ${
+              <div className={`flex flex-col gap-1 ${msg.own ? "items-end" : "items-start"}`}>
+                {!msg.own && <span className="text-xs text-purple-600 dark:text-purple-400/90 ml-1 font-semibold">{msg.from}</span>}
+                <div className={`px-4 py-2.5 sm:py-3 rounded-2xl text-xs sm:text-sm max-w-[280px] sm:max-w-[360px] leading-relaxed transition-all duration-200 group-hover/msg:scale-[1.01] ${
                   msg.own
                     ? "bg-gradient-to-br from-purple-600 to-violet-700 text-white rounded-br-sm shadow-md shadow-purple-900/30"
-                    : "dark:bg-[#111840] bg-slate-100 border border-purple-500/15 text-slate-800 dark:text-slate-200 rounded-bl-sm"
+                    : "dark:bg-[#111840] bg-slate-100 border border-purple-500/15 text-slate-800 dark:text-slate-200 rounded-bl-sm shadow-sm"
                 }`}>
                   {msg.text}
                 </div>
-                <span className="text-[9px] text-slate-400 dark:text-slate-500 mx-1">{msg.time}</span>
+                <span className="text-[10px] sm:text-[11px] text-slate-400 dark:text-slate-500 mx-1">{msg.time}</span>
               </div>
             </div>
           ))}
 
           {/* Typing indicator */}
-          <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-full bg-gradient-to-br from-pink-500 to-rose-600 border border-purple-500/20 flex items-center justify-center text-[10px] font-bold text-white shrink-0">
+          <div className="flex items-center gap-2.5 pt-1">
+            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-gradient-to-br from-pink-500 to-rose-600 border border-purple-500/20 flex items-center justify-center text-xs font-bold text-white shrink-0">
               S
             </div>
-            <div className="px-3 py-2 rounded-xl rounded-bl-sm dark:bg-[#111840] bg-slate-100 border border-purple-500/15 flex items-center gap-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-purple-500 animate-bounce" style={{ animationDelay: "0ms" }} />
-              <span className="w-1.5 h-1.5 rounded-full bg-purple-500 animate-bounce" style={{ animationDelay: "150ms" }} />
-              <span className="w-1.5 h-1.5 rounded-full bg-cyan-500 animate-bounce" style={{ animationDelay: "300ms" }} />
+            <div className="px-4 py-2.5 rounded-2xl rounded-bl-sm dark:bg-[#111840] bg-slate-100 border border-purple-500/15 flex items-center gap-1.5 shadow-sm">
+              <span className="w-2 h-2 rounded-full bg-purple-500 animate-bounce" style={{ animationDelay: "0ms" }} />
+              <span className="w-2 h-2 rounded-full bg-purple-500 animate-bounce" style={{ animationDelay: "150ms" }} />
+              <span className="w-2 h-2 rounded-full bg-cyan-500 animate-bounce" style={{ animationDelay: "300ms" }} />
             </div>
-            <span className="text-[10px] text-slate-500 italic">Sarah is typing…</span>
+            <span className="text-xs text-slate-500 italic">Sarah is typing…</span>
           </div>
         </div>
 
         {/* Composer */}
-        <div className="px-4 py-3 border-t border-purple-500/10 dark:bg-[#0d1230]/75 bg-slate-100/90">
-          <div className="flex items-center gap-2 px-3 py-2 rounded-xl dark:bg-[#111840] bg-white border border-purple-500/20 hover:border-purple-500/40 transition-colors shadow-sm">
-            <HiOutlineFaceSmile className="w-4 h-4 text-slate-400 hover:text-purple-500 cursor-pointer transition-colors" />
-            <span className="text-xs text-slate-400 dark:text-slate-500 flex-1 truncate">Type a message…</span>
-            <HiOutlinePaperClip className="w-4 h-4 text-slate-400 hover:text-cyan-500 cursor-pointer transition-colors" />
-            <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-purple-500 to-violet-600 flex items-center justify-center cursor-pointer hover:scale-110 active:scale-95 transition-transform shadow-sm">
-              <svg className="w-3 h-3 text-white rotate-45" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+        <div className="px-5 py-4 border-t border-purple-500/10 dark:bg-[#0d1230]/75 bg-slate-100/90">
+          <div className="flex items-center gap-3 px-4 py-3 rounded-2xl dark:bg-[#111840] bg-white border border-purple-500/20 hover:border-purple-500/40 transition-colors shadow-sm">
+            <HiOutlineFaceSmile className="w-5 h-5 text-slate-400 hover:text-purple-500 cursor-pointer transition-colors" />
+            <span className="text-sm text-slate-400 dark:text-slate-500 flex-1 truncate">Type a message…</span>
+            <HiOutlinePaperClip className="w-5 h-5 text-slate-400 hover:text-cyan-500 cursor-pointer transition-colors" />
+            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-gradient-to-br from-purple-500 to-violet-600 flex items-center justify-center cursor-pointer hover:scale-110 active:scale-95 transition-transform shadow-sm">
+              <svg className="w-4 h-4 text-white rotate-45" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
               </svg>
             </div>
@@ -279,34 +279,34 @@ const HeroChatPreview = () => {
       </div>
 
       {/* Floating notification card */}
-      <div className="absolute -top-4 sm:-top-6 -right-2 sm:-right-6 glass rounded-2xl px-3.5 py-2.5 flex items-center gap-2.5 shadow-xl animate-heroFloat2 border border-purple-500/30 hover:scale-105 transition-transform cursor-pointer">
-        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center text-sm shadow-md">
+      <div className="absolute -top-5 sm:-top-7 -right-3 sm:-right-7 glass rounded-2xl px-4 py-3 flex items-center gap-3 shadow-2xl animate-heroFloat2 border border-purple-500/30 hover:scale-105 transition-transform cursor-pointer">
+        <div className="w-9 h-9 rounded-full bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center text-base shadow-md">
           🚀
         </div>
         <div>
-          <p className="text-xs font-semibold text-slate-800 dark:text-slate-200">Build shipped!</p>
-          <p className="text-[10px] text-slate-500 dark:text-slate-400">just now</p>
+          <p className="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-200">Build shipped!</p>
+          <p className="text-[11px] text-slate-500 dark:text-slate-400">just now</p>
         </div>
-        <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+        <div className="w-2.5 h-2.5 rounded-full bg-green-500 animate-pulse ml-1" />
       </div>
 
       {/* Online users card */}
-      <div className="absolute -bottom-4 sm:-bottom-5 -left-2 sm:-left-5 glass rounded-2xl px-3.5 py-2.5 flex items-center gap-2.5 shadow-xl animate-heroFloat border border-cyan-500/30 hover:scale-105 transition-transform cursor-pointer" style={{ animationDelay: "1s" }}>
-        <div className="flex -space-x-2">
+      <div className="absolute -bottom-5 sm:-bottom-6 -left-3 sm:-left-6 glass rounded-2xl px-4 py-3 flex items-center gap-3 shadow-2xl animate-heroFloat border border-cyan-500/30 hover:scale-105 transition-transform cursor-pointer" style={{ animationDelay: "1s" }}>
+        <div className="flex -space-x-2.5">
           {["A", "S", "M"].map((l, i) => (
-            <div key={i} className={`w-7 h-7 rounded-full border-2 border-white dark:border-[#060918] flex items-center justify-center text-[10px] font-bold text-white bg-gradient-to-br ${i === 0 ? "from-purple-500 to-violet-600" : i === 1 ? "from-cyan-500 to-blue-600" : "from-pink-500 to-rose-600"} shadow-sm`}>
+            <div key={i} className={`w-8 h-8 rounded-full border-2 border-white dark:border-[#060918] flex items-center justify-center text-xs font-bold text-white bg-gradient-to-br ${i === 0 ? "from-purple-500 to-violet-600" : i === 1 ? "from-cyan-500 to-blue-600" : "from-pink-500 to-rose-600"} shadow-sm`}>
               {l}
             </div>
           ))}
         </div>
         <div>
-          <p className="text-[10px] font-semibold text-slate-700 dark:text-slate-300">+12 online</p>
-          <p className="text-[9px] text-green-500 font-medium">Active now</p>
+          <p className="text-xs font-bold text-slate-700 dark:text-slate-300">+12 online</p>
+          <p className="text-[10px] text-green-500 font-medium">Active now</p>
         </div>
       </div>
 
       {/* Reaction pop */}
-      <div className="absolute top-1/2 -right-3 sm:-right-5 glass rounded-full px-3 py-1.5 text-xs font-bold text-slate-700 dark:text-slate-200 shadow-lg animate-scaleIn border border-purple-500/30 hover:scale-125 transition-transform cursor-pointer" style={{ animationDelay: "0.5s" }}>
+      <div className="absolute top-1/2 -right-4 sm:-right-6 glass rounded-full px-3.5 py-2 text-xs sm:text-sm font-bold text-slate-700 dark:text-slate-200 shadow-xl animate-scaleIn border border-purple-500/30 hover:scale-125 transition-transform cursor-pointer" style={{ animationDelay: "0.5s" }}>
         🔥 4
       </div>
     </div>
@@ -314,7 +314,7 @@ const HeroChatPreview = () => {
 };
 
 /* ─────────────────────────────────────────
-   Hero Section — 2-column grid layout for 'md' screen sizes and up
+   Hero Section — Single-column on mobile & 'md', 2-column on 'lg' and up
    ───────────────────────────────────────── */
 const Hero = ({ isAuthenticated }) => (
   <section className="relative min-h-screen flex items-center pt-24 sm:pt-28 pb-16 overflow-hidden">
@@ -341,10 +341,10 @@ const Hero = ({ isAuthenticated }) => (
     </div>
 
     <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full py-8 md:py-12">
-      {/* 2-column grid layout on 'md' screens and above */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-8 lg:gap-14 items-center">
+      {/* Single-column grid on mobile & 'md', 2-column grid layout on 'lg' and above */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-14 xl:gap-16 items-center">
         {/* Column 1: Copy, Headings & CTAs */}
-        <div className="w-full text-center md:text-left max-w-xl mx-auto md:mx-0">
+        <div className="w-full text-center lg:text-left max-w-2xl mx-auto lg:mx-0">
           {/* Badge */}
           <ScrollReveal animation="fade-down" delay={100}>
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-purple-500/10 border border-purple-500/25 text-xs font-semibold text-purple-600 dark:text-purple-300 mb-6 shadow-sm hover:border-purple-400 hover:bg-purple-500/15 transition-all cursor-default">
@@ -354,7 +354,7 @@ const Hero = ({ isAuthenticated }) => (
           </ScrollReveal>
 
           <ScrollReveal animation="fade-up" delay={200}>
-            <h1 className="text-4xl sm:text-5xl md:text-4xl lg:text-6xl xl:text-7xl font-extrabold leading-[1.08] tracking-[-1.5px] md:tracking-[-2px] mb-6">
+            <h1 className="text-4xl sm:text-5xl md:text-5xl lg:text-6xl xl:text-7xl font-extrabold leading-[1.08] tracking-[-1.5px] md:tracking-[-2px] mb-6">
               <span className="text-slate-900 dark:text-slate-100">Connect.</span>{" "}
               <span className="bg-gradient-to-br from-purple-500 via-violet-500 to-cyan-400 bg-clip-text text-transparent">Chat.</span>{" "}
               <span className="text-slate-900 dark:text-slate-100">Collaborate.</span>
@@ -362,14 +362,14 @@ const Hero = ({ isAuthenticated }) => (
           </ScrollReveal>
 
           <ScrollReveal animation="fade-up" delay={300}>
-            <p className="text-base sm:text-lg text-slate-600 dark:text-slate-400 leading-relaxed mb-8 max-w-[480px] mx-auto md:mx-0">
+            <p className="text-base sm:text-lg text-slate-600 dark:text-slate-400 leading-relaxed mb-8 max-w-[540px] mx-auto lg:mx-0">
               Experience fast, seamless and modern real-time communication built for meaningful conversations. Your team, always connected.
             </p>
           </ScrollReveal>
 
           {/* CTA buttons */}
           <ScrollReveal animation="fade-up" delay={400}>
-            <div className="flex flex-col sm:flex-row items-center gap-4 justify-center md:justify-start">
+            <div className="flex flex-col sm:flex-row items-center gap-4 justify-center lg:justify-start">
               <Link
                 to={isAuthenticated ? "/chat" : "/signup"}
                 className="w-full sm:w-auto px-7 py-3.5 sm:px-8 sm:py-4 rounded-2xl bg-gradient-to-br from-purple-500 via-violet-600 to-cyan-500 text-white font-bold text-base tracking-wide hover:shadow-[0_8px_32px_rgba(139,92,246,0.5)] hover:-translate-y-1 active:translate-y-0 transition-all duration-300 relative overflow-hidden group shadow-lg shadow-purple-900/25"
@@ -391,13 +391,13 @@ const Hero = ({ isAuthenticated }) => (
 
           {/* Stats */}
           <ScrollReveal animation="fade-up" delay={500}>
-            <div className="flex items-center gap-6 sm:gap-8 mt-8 md:mt-10 justify-center md:justify-start flex-wrap">
+            <div className="flex items-center gap-6 sm:gap-8 mt-8 md:mt-10 justify-center lg:justify-start flex-wrap">
               {[
                 { value: "10K+", label: "Active users" },
                 { value: "99.9%", label: "Uptime" },
                 { value: "<50ms", label: "Message delay" },
               ].map((stat) => (
-                <div key={stat.label} className="text-center md:text-left group cursor-default">
+                <div key={stat.label} className="text-center lg:text-left group cursor-default">
                   <div className="text-2xl font-extrabold gradient-text group-hover:scale-110 transition-transform duration-200">
                     {stat.value}
                   </div>
@@ -408,8 +408,8 @@ const Hero = ({ isAuthenticated }) => (
           </ScrollReveal>
         </div>
 
-        {/* Column 2: 3D Chat Preview (Medium & Large screens) */}
-        <div className="w-full flex justify-center md:justify-end">
+        {/* Column 2: 3D Chat Preview (Centered on mobile & md, right-aligned on lg) */}
+        <div className="w-full flex justify-center lg:justify-end mt-4 lg:mt-0">
           <ScrollReveal animation="fade-left" delay={300} duration={900}>
             <HeroChatPreview />
           </ScrollReveal>
