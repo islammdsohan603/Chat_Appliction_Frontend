@@ -20,8 +20,7 @@ import {
   HiOutlineUser,
 } from "react-icons/hi2";
 import { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogClose } from "../components/ui/dialog";
-import { FieldGroup, Field, FieldLabel } from "../components/ui/field";
+import { EditProfile } from "../components/models/EditProfile";
 
 /* ── Stats row ── */
 const StatItem = ({ value, label }) => (
@@ -181,8 +180,8 @@ const Profile = () => {
             <Card>
               <div className="flex flex-col items-center gap-4 px-6 py-8">
                 {/* Avatar with edit overlay */}
-                <div className="relative group cursor-pointer">
-                  <UserAvatar name={displayName} size="2xl" online />
+                <div className="relative group cursor-pointer" onClick={() => setIsModels(true)}>
+                  <UserAvatar name={displayName} src={user.image} size="2xl" online />
                   <div className="absolute inset-0 rounded-full bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                     <HiOutlinePencilSquare className="w-6 h-6 text-white" />
                   </div>
@@ -202,7 +201,7 @@ const Profile = () => {
 
                 {/* Bio */}
                 <p className="text-xs text-slate-400/70 text-center leading-relaxed">
-                  Building the future of real-time communication 💜
+                  {user.bio || "Building the future of real-time communication 💜"}
                 </p>
 
                 {/* Online indicator */}
@@ -382,55 +381,7 @@ const Profile = () => {
       </main>
 
       {/* Edit Profile Modal */}
-      <Dialog open={models} onOpenChange={setIsModels}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Edit Profile</DialogTitle>
-          </DialogHeader>
-          <FieldGroup>
-            <Field>
-              <FieldLabel>Display Name</FieldLabel>
-              <input
-                type="text"
-                defaultValue={displayName}
-                className="w-full px-3 py-2 rounded-xl bg-[#060918]/50 border border-purple-500/20 text-slate-200 outline-none focus:border-purple-500/50"
-              />
-            </Field>
-            <Field>
-              <FieldLabel>Username</FieldLabel>
-              <input
-                type="text"
-                defaultValue={userName}
-                className="w-full px-3 py-2 rounded-xl bg-[#060918]/50 border border-purple-500/20 text-slate-200 outline-none focus:border-purple-500/50"
-              />
-            </Field>
-            <Field>
-              <FieldLabel>Email Address</FieldLabel>
-              <input
-                type="email"
-                defaultValue={email}
-                className="w-full px-3 py-2 rounded-xl bg-[#060918]/50 border border-purple-500/20 text-slate-200 outline-none focus:border-purple-500/50"
-              />
-            </Field>
-          </FieldGroup>
-          <DialogFooter>
-            <DialogClose asChild>
-              <button
-                className="px-4 py-2 rounded-xl text-sm font-semibold text-slate-400 hover:text-white transition-colors"
-                onClick={() => setIsModels(false)}
-              >
-                Cancel
-              </button>
-            </DialogClose>
-            <button
-              className="px-4 py-2 rounded-xl text-sm font-semibold bg-purple-600 hover:bg-purple-500 text-white transition-colors"
-              onClick={() => setIsModels(false)}
-            >
-              Save Changes
-            </button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <EditProfile isOpen={models} onClose={() => setIsModels(false)} />
     </div>
   );
 };
