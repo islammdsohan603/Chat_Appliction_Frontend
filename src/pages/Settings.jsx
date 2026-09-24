@@ -13,6 +13,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { clearUser } from "../../redux/userSlice";
 import axios from "axios";
+import ThemeToggle from "../components/ui/ThemeToggle";
 import {
   HiOutlineArrowLeft,
   HiOutlineCog6Tooth,
@@ -89,15 +90,15 @@ const SettingRow = ({ title, description, children, badge = null, border = true 
   >
     <div className="flex-1 min-w-0 pr-2">
       <div className="flex items-center gap-2">
-        <h4 className="text-sm font-medium text-slate-200">{title}</h4>
+        <h4 className="text-sm font-medium text-slate-900 dark:text-slate-200">{title}</h4>
         {badge && (
-          <span className="text-[10px] uppercase font-semibold px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-300 border border-purple-500/30">
+          <span className="text-[10px] uppercase font-semibold px-2 py-0.5 rounded-full bg-purple-500/15 text-purple-700 dark:text-purple-300 border border-purple-500/30">
             {badge}
           </span>
         )}
       </div>
       {description && (
-        <p className="text-xs text-slate-400 mt-0.5 leading-relaxed">{description}</p>
+        <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5 leading-relaxed">{description}</p>
       )}
     </div>
     <div className="shrink-0 flex items-center">{children}</div>
@@ -201,18 +202,18 @@ const Settings = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#060918] font-inter text-slate-200">
+    <div className="min-h-screen bg-slate-50 dark:bg-[#060918] font-inter text-slate-800 dark:text-slate-200 transition-colors duration-200">
       {/* Background ambient lighting */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden -z-10">
         <div
-          className="absolute -top-36 -left-36 w-[550px] h-[550px] rounded-full blur-[120px] opacity-20"
+          className="absolute -top-36 -left-36 w-[550px] h-[550px] rounded-full blur-[120px] opacity-15 dark:opacity-20"
           style={{
             background:
               "radial-gradient(circle, rgba(139,92,246,0.8) 0%, transparent 70%)",
           }}
         />
         <div
-          className="absolute -bottom-36 -right-36 w-[550px] h-[550px] rounded-full blur-[120px] opacity-15"
+          className="absolute -bottom-36 -right-36 w-[550px] h-[550px] rounded-full blur-[120px] opacity-10 dark:opacity-15"
           style={{
             background:
               "radial-gradient(circle, rgba(6,182,212,0.8) 0%, transparent 70%)",
@@ -221,31 +222,34 @@ const Settings = () => {
       </div>
 
       {/* Top Header */}
-      <header className="sticky top-0 z-20 bg-[#060918]/85 backdrop-blur-xl border-b border-purple-500/10">
+      <header className="sticky top-0 z-20 bg-white/85 dark:bg-[#060918]/85 backdrop-blur-xl border-b border-purple-500/10">
         <div className="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
           <Link
             to="/chat"
-            className="flex items-center gap-2 px-3 py-1.5 rounded-xl text-sm font-medium text-slate-400 hover:text-white hover:bg-purple-500/10 transition-all"
+            className="flex items-center gap-2 px-3 py-1.5 rounded-xl text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-purple-600 dark:hover:text-white hover:bg-purple-500/10 transition-all"
           >
             <HiOutlineArrowLeft className="w-4 h-4" />
             <span>Back to Chat</span>
           </Link>
           <div className="flex items-center gap-2">
-            <HiOutlineCog6Tooth className="w-5 h-5 text-purple-400" />
-            <h1 className="text-base font-bold bg-gradient-to-r from-purple-200 to-cyan-200 bg-clip-text text-transparent">
+            <HiOutlineCog6Tooth className="w-5 h-5 text-purple-500 dark:text-purple-400" />
+            <h1 className="text-base font-bold bg-gradient-to-r from-purple-600 to-indigo-600 dark:from-purple-200 dark:to-cyan-200 bg-clip-text text-transparent">
               Settings
             </h1>
           </div>
-          <button
-            onClick={() => {
-              setSettings(DEFAULT_SETTINGS);
-              localStorage.setItem("nexora_user_settings", JSON.stringify(DEFAULT_SETTINGS));
-              toast.info("Settings reset to default");
-            }}
-            className="text-xs text-slate-400 hover:text-purple-300 transition-colors"
-          >
-            Reset Defaults
-          </button>
+          <div className="flex items-center gap-2">
+            <ThemeToggle className="!p-1.5 !rounded-xl" />
+            <button
+              onClick={() => {
+                setSettings(DEFAULT_SETTINGS);
+                localStorage.setItem("nexora_user_settings", JSON.stringify(DEFAULT_SETTINGS));
+                toast.info("Settings reset to default");
+              }}
+              className="text-xs text-slate-500 dark:text-slate-400 hover:text-purple-600 dark:hover:text-purple-300 transition-colors"
+            >
+              Reset Defaults
+            </button>
+          </div>
         </div>
       </header>
 
@@ -254,7 +258,7 @@ const Settings = () => {
         <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
           {/* Left Navigation Tabs (ChatGPT/Gemini Style) */}
           <aside className="md:col-span-4 lg:col-span-3">
-            <div className="sticky top-24 rounded-2xl bg-[#0d1230]/80 border border-purple-500/15 p-2 backdrop-blur-xl shadow-xl flex md:flex-col gap-1 overflow-x-auto no-scrollbar">
+            <div className="sticky top-24 rounded-2xl bg-white/80 dark:bg-[#0d1230]/80 border border-purple-300/40 dark:border-purple-500/15 p-2 backdrop-blur-xl shadow-lg dark:shadow-xl flex md:flex-col gap-1 overflow-x-auto no-scrollbar">
               {TABS.map((tab) => {
                 const Icon = tab.icon;
                 const isActive = activeTab === tab.id;
@@ -264,11 +268,11 @@ const Settings = () => {
                     onClick={() => setActiveTab(tab.id)}
                     className={`flex items-center gap-3 w-full px-3.5 py-3 rounded-xl text-left transition-all shrink-0 ${
                       isActive
-                        ? "bg-gradient-to-r from-purple-600/30 to-violet-600/20 text-white border border-purple-500/30 shadow-[0_2px_12px_rgba(139,92,246,0.15)]"
-                        : "text-slate-400 hover:text-slate-200 hover:bg-purple-500/5"
+                        ? "bg-gradient-to-r from-purple-500/15 to-violet-500/10 dark:from-purple-600/30 dark:to-violet-600/20 text-purple-900 dark:text-white border border-purple-400/40 dark:border-purple-500/30 shadow-[0_2px_12px_rgba(139,92,246,0.15)] font-semibold"
+                        : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-purple-50 dark:hover:bg-purple-500/5"
                     }`}
                   >
-                    <Icon className={`w-5 h-5 shrink-0 ${isActive ? "text-purple-400" : "text-slate-400"}`} />
+                    <Icon className={`w-5 h-5 shrink-0 ${isActive ? "text-purple-600 dark:text-purple-400" : "text-slate-400"}`} />
                     <div className="min-w-0">
                       <p className="text-xs font-semibold truncate">{tab.label}</p>
                       <p className="text-[10px] text-slate-500 truncate hidden lg:block">
@@ -283,13 +287,13 @@ const Settings = () => {
 
           {/* Right Content Panel */}
           <div className="md:col-span-8 lg:col-span-9">
-            <div className="rounded-3xl bg-[#0f1430]/75 border border-purple-500/15 p-6 md:p-8 backdrop-blur-xl shadow-2xl">
+            <div className="rounded-3xl bg-white/85 dark:bg-[#0f1430]/75 border border-purple-300/40 dark:border-purple-500/15 p-6 md:p-8 backdrop-blur-xl shadow-xl dark:shadow-2xl">
               {/* ════ TAB 1: GENERAL ════ */}
               {activeTab === "general" && (
                 <div className="space-y-6 animate-in fade-in-50 duration-200">
                   <div>
-                    <h2 className="text-lg font-bold text-slate-100">General Settings</h2>
-                    <p className="text-xs text-slate-400 mt-1">
+                    <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100">General Settings</h2>
+                    <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
                       Customize your visual theme, language, and interface audio options.
                     </p>
                   </div>
@@ -299,7 +303,7 @@ const Settings = () => {
                     title="Theme"
                     description="Choose your preferred interface appearance."
                   >
-                    <div className="flex items-center gap-1.5 p-1 rounded-xl bg-[#0a0f25] border border-purple-500/20">
+                    <div className="flex items-center gap-1.5 p-1 rounded-xl bg-slate-100 dark:bg-[#0a0f25] border border-purple-300/40 dark:border-purple-500/20">
                       {[
                         { id: "dark", label: "Dark", icon: HiOutlineMoon },
                         { id: "light", label: "Light", icon: HiOutlineSun },
@@ -313,18 +317,22 @@ const Settings = () => {
                             if (isDark) {
                               document.documentElement.classList.add("dark");
                               document.documentElement.classList.remove("light");
+                              document.documentElement.setAttribute("data-theme", "dark");
                               localStorage.setItem("theme", "dark");
                             } else {
                               document.documentElement.classList.remove("dark");
                               document.documentElement.classList.add("light");
+                              document.documentElement.setAttribute("data-theme", "light");
                               localStorage.setItem("theme", "light");
                             }
+                            const meta = document.querySelector('meta[name="theme-color"]');
+                            if (meta) meta.setAttribute("content", isDark ? "#060918" : "#f8fafc");
                             window.dispatchEvent(new CustomEvent("nexoraThemeChange", { detail: { theme: isDark ? "dark" : "light" } }));
                           }}
                           className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
                             settings.theme === t.id
-                              ? "bg-purple-600 text-white shadow-sm"
-                              : "text-slate-400 hover:text-slate-200"
+                              ? "bg-purple-600 text-white shadow-sm font-semibold"
+                              : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200"
                           }`}
                         >
                           <t.icon className="w-3.5 h-3.5" />
@@ -342,7 +350,7 @@ const Settings = () => {
                     <select
                       value={settings.language}
                       onChange={(e) => updateSetting("language", e.target.value)}
-                      className="px-3 py-2 rounded-xl bg-[#0a0f25] border border-purple-500/25 text-xs text-slate-200 outline-none focus:border-purple-500/50 cursor-pointer"
+                      className="px-3 py-2 rounded-xl bg-slate-100 dark:bg-[#0a0f25] border border-purple-300/40 dark:border-purple-500/25 text-xs text-slate-800 dark:text-slate-200 outline-none focus:border-purple-500/50 cursor-pointer"
                     >
                       <option value="en">English (US)</option>
                       <option value="es">Español</option>
@@ -362,7 +370,7 @@ const Settings = () => {
                       <select
                         value={settings.voiceModel}
                         onChange={(e) => updateSetting("voiceModel", e.target.value)}
-                        className="px-3 py-2 rounded-xl bg-[#0a0f25] border border-purple-500/25 text-xs text-slate-200 outline-none focus:border-purple-500/50 cursor-pointer"
+                        className="px-3 py-2 rounded-xl bg-slate-100 dark:bg-[#0a0f25] border border-purple-300/40 dark:border-purple-500/25 text-xs text-slate-800 dark:text-slate-200 outline-none focus:border-purple-500/50 cursor-pointer"
                       >
                         <option value="Breeze">Breeze (Warm & Neutral)</option>
                         <option value="Ember">Ember (Deep & Calm)</option>
@@ -375,7 +383,7 @@ const Settings = () => {
                         onClick={() => handlePlayVoicePreview(settings.voiceModel)}
                         aria-label="Preview Voice"
                         title="Preview Voice Sample"
-                        className="p-2 rounded-xl bg-purple-500/15 border border-purple-500/30 text-purple-300 hover:bg-purple-500/25 transition-all"
+                        className="p-2 rounded-xl bg-purple-500/15 border border-purple-500/30 text-purple-600 dark:text-purple-300 hover:bg-purple-500/25 transition-all"
                       >
                         <HiOutlineSpeakerWave className="w-4 h-4" />
                       </button>
@@ -400,8 +408,8 @@ const Settings = () => {
               {activeTab === "personalization" && (
                 <div className="space-y-6 animate-in fade-in-50 duration-200">
                   <div>
-                    <h2 className="text-lg font-bold text-slate-100">Personalization</h2>
-                    <p className="text-xs text-slate-400 mt-1">
+                    <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100">Personalization</h2>
+                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
                       Customize how Nexora behaves, remembers information, and formats answers.
                     </p>
                   </div>
@@ -415,7 +423,7 @@ const Settings = () => {
                     <select
                       value={settings.defaultModel}
                       onChange={(e) => updateSetting("defaultModel", e.target.value)}
-                      className="px-3 py-2 rounded-xl bg-[#0a0f25] border border-purple-500/25 text-xs text-slate-200 outline-none focus:border-purple-500/50 cursor-pointer"
+                      className="px-3 py-2 rounded-xl bg-slate-100 dark:bg-[#0a0f25] border border-purple-300/40 dark:border-purple-500/25 text-xs text-slate-800 dark:text-slate-200 outline-none focus:border-purple-500/50 cursor-pointer"
                     >
                       <option value="nexora-4o">Nexora 4.5 Omni (Balanced & Smart)</option>
                       <option value="nexora-flash">Nexora Flash 3.8 (Ultra-fast)</option>
@@ -439,8 +447,8 @@ const Settings = () => {
                   <div className="pt-2 border-t border-purple-500/10">
                     <div className="flex items-center justify-between mb-3">
                       <div>
-                        <h4 className="text-sm font-semibold text-slate-200">Custom Instructions</h4>
-                        <p className="text-xs text-slate-400">
+                        <h4 className="text-sm font-semibold text-slate-900 dark:text-slate-200">Custom Instructions</h4>
+                        <p className="text-xs text-slate-500 dark:text-slate-400">
                           Provide background info and guidelines for how the AI responds.
                         </p>
                       </div>
@@ -448,7 +456,7 @@ const Settings = () => {
 
                     <div className="space-y-4">
                       <div>
-                        <label className="block text-xs font-medium text-slate-300 mb-1.5">
+                        <label className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1.5">
                           What would you like Nexora to know about you?
                         </label>
                         <textarea
@@ -456,12 +464,12 @@ const Settings = () => {
                           value={settings.customAbout}
                           onChange={(e) => updateSetting("customAbout", e.target.value)}
                           placeholder="E.g., I'm a full-stack engineer building React & Node apps..."
-                          className="w-full p-3 rounded-2xl bg-[#0a0f25] border border-purple-500/20 text-xs text-slate-200 placeholder:text-slate-500 outline-none focus:border-purple-500/50 resize-none leading-relaxed"
+                          className="w-full p-3 rounded-2xl bg-slate-100 dark:bg-[#0a0f25] border border-purple-300/40 dark:border-purple-500/20 text-xs text-slate-800 dark:text-slate-200 placeholder:text-slate-400 dark:placeholder:text-slate-500 outline-none focus:border-purple-500/50 resize-none leading-relaxed"
                         />
                       </div>
 
                       <div>
-                        <label className="block text-xs font-medium text-slate-300 mb-1.5">
+                        <label className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1.5">
                           How would you like Nexora to respond?
                         </label>
                         <textarea
@@ -469,7 +477,7 @@ const Settings = () => {
                           value={settings.customResponseStyle}
                           onChange={(e) => updateSetting("customResponseStyle", e.target.value)}
                           placeholder="E.g., Concise answers, clean TypeScript snippets, polite tone..."
-                          className="w-full p-3 rounded-2xl bg-[#0a0f25] border border-purple-500/20 text-xs text-slate-200 placeholder:text-slate-500 outline-none focus:border-purple-500/50 resize-none leading-relaxed"
+                          className="w-full p-3 rounded-2xl bg-slate-100 dark:bg-[#0a0f25] border border-purple-300/40 dark:border-purple-500/20 text-xs text-slate-800 dark:text-slate-200 placeholder:text-slate-400 dark:placeholder:text-slate-500 outline-none focus:border-purple-500/50 resize-none leading-relaxed"
                         />
                       </div>
                     </div>
@@ -481,8 +489,8 @@ const Settings = () => {
               {activeTab === "data" && (
                 <div className="space-y-6 animate-in fade-in-50 duration-200">
                   <div>
-                    <h2 className="text-lg font-bold text-slate-100">Data Controls</h2>
-                    <p className="text-xs text-slate-400 mt-1">
+                    <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100">Data Controls</h2>
+                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
                       Manage your chat history, export your data, and control privacy preferences.
                     </p>
                   </div>
@@ -506,7 +514,7 @@ const Settings = () => {
                     <button
                       type="button"
                       onClick={handleExportData}
-                      className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-purple-500/15 border border-purple-500/30 text-purple-300 hover:bg-purple-500/25 hover:text-white transition-all text-xs font-medium"
+                      className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-purple-500/15 border border-purple-500/30 text-purple-600 dark:text-purple-300 hover:bg-purple-500/25 hover:text-purple-800 dark:hover:text-white transition-all text-xs font-medium"
                     >
                       <HiOutlineArrowDownTray className="w-4 h-4" />
                       <span>Export Data</span>
@@ -522,7 +530,7 @@ const Settings = () => {
                     <button
                       type="button"
                       onClick={() => setConfirmClearOpen(true)}
-                      className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-red-500/15 border border-red-500/30 text-red-400 hover:bg-red-500/25 transition-all text-xs font-medium"
+                      className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-red-500/15 border border-red-500/30 text-red-600 dark:text-red-400 hover:bg-red-500/25 transition-all text-xs font-medium"
                     >
                       <HiOutlineTrash className="w-4 h-4" />
                       <span>Clear Chats</span>
@@ -531,14 +539,14 @@ const Settings = () => {
 
                   {/* Confirmation Modal */}
                   {confirmClearOpen && (
-                    <div className="p-4 rounded-2xl bg-red-950/30 border border-red-500/30 flex flex-col sm:flex-row items-center justify-between gap-3 animate-in fade-in zoom-in-95">
+                    <div className="p-4 rounded-2xl bg-red-50 dark:bg-red-950/30 border border-red-300 dark:border-red-500/30 flex flex-col sm:flex-row items-center justify-between gap-3 animate-in fade-in zoom-in-95">
                       <div className="flex items-center gap-3">
-                        <HiOutlineExclamationTriangle className="w-6 h-6 text-red-400 shrink-0" />
+                        <HiOutlineExclamationTriangle className="w-6 h-6 text-red-600 dark:text-red-400 shrink-0" />
                         <div>
-                          <p className="text-xs font-semibold text-red-200">
+                          <p className="text-xs font-semibold text-red-800 dark:text-red-200">
                             Are you sure you want to clear all chat histories?
                           </p>
-                          <p className="text-[11px] text-red-300/70">
+                          <p className="text-[11px] text-red-600/80 dark:text-red-300/70">
                             This action cannot be undone.
                           </p>
                         </div>
@@ -546,7 +554,7 @@ const Settings = () => {
                       <div className="flex items-center gap-2 shrink-0">
                         <button
                           onClick={() => setConfirmClearOpen(false)}
-                          className="px-3 py-1.5 rounded-lg text-xs text-slate-400 hover:text-white bg-slate-800 transition-colors"
+                          className="px-3 py-1.5 rounded-lg text-xs text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white bg-slate-200 dark:bg-slate-800 transition-colors"
                         >
                           Cancel
                         </button>
@@ -566,8 +574,8 @@ const Settings = () => {
               {activeTab === "notifications" && (
                 <div className="space-y-6 animate-in fade-in-50 duration-200">
                   <div>
-                    <h2 className="text-lg font-bold text-slate-100">Notifications & Privacy</h2>
-                    <p className="text-xs text-slate-400 mt-1">
+                    <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100">Notifications & Privacy</h2>
+                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
                       Configure when you receive alerts and manage visibility to contacts.
                     </p>
                   </div>
@@ -628,28 +636,28 @@ const Settings = () => {
               {activeTab === "account" && (
                 <div className="space-y-6 animate-in fade-in-50 duration-200">
                   <div>
-                    <h2 className="text-lg font-bold text-slate-100">Account & Security</h2>
-                    <p className="text-xs text-slate-400 mt-1">
+                    <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100">Account & Security</h2>
+                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
                       Manage your credentials, two-factor authentication, and account details.
                     </p>
                   </div>
 
                   {/* User Overview card */}
-                  <div className="p-4 rounded-2xl bg-[#0a0f25] border border-purple-500/20 flex items-center justify-between">
+                  <div className="p-4 rounded-2xl bg-slate-100/90 dark:bg-[#0a0f25] border border-purple-200/60 dark:border-purple-500/20 flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-purple-500 to-cyan-500 flex items-center justify-center text-white font-bold text-lg">
                         {(user.name || user.userName || "U")[0]?.toUpperCase()}
                       </div>
                       <div>
-                        <p className="text-sm font-semibold text-slate-100">
+                        <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">
                           {user.name || user.userName || "Nexora User"}
                         </p>
-                        <p className="text-xs text-slate-400">{user.email || "No email linked"}</p>
+                        <p className="text-xs text-slate-500 dark:text-slate-400">{user.email || "No email linked"}</p>
                       </div>
                     </div>
                     <Link
                       to="/profile"
-                      className="px-3.5 py-1.5 rounded-xl bg-purple-500/15 border border-purple-500/30 text-purple-300 hover:text-white text-xs font-medium transition-all"
+                      className="px-3.5 py-1.5 rounded-xl bg-purple-500/15 border border-purple-500/30 text-purple-600 dark:text-purple-300 hover:text-purple-900 dark:hover:text-white text-xs font-medium transition-all"
                     >
                       View Profile
                     </Link>
@@ -675,7 +683,7 @@ const Settings = () => {
                     <button
                       type="button"
                       onClick={() => toast.success("All other active sessions have been invalidated.")}
-                      className="px-3.5 py-2 rounded-xl bg-slate-800/80 border border-slate-700/60 text-slate-300 hover:text-white text-xs font-medium transition-all"
+                      className="px-3.5 py-2 rounded-xl bg-slate-200 dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700/60 text-slate-700 dark:text-slate-300 hover:bg-slate-300 dark:hover:text-white text-xs font-medium transition-all"
                     >
                       Sign out other sessions
                     </button>
@@ -690,7 +698,7 @@ const Settings = () => {
                     <button
                       type="button"
                       onClick={handleLogout}
-                      className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-red-500/15 border border-red-500/30 text-red-400 hover:bg-red-500/25 transition-all text-xs font-medium"
+                      className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-red-500/15 border border-red-500/30 text-red-600 dark:text-red-400 hover:bg-red-500/25 transition-all text-xs font-medium"
                     >
                       <HiOutlineArrowRightOnRectangle className="w-4 h-4" />
                       <span>Log Out</span>

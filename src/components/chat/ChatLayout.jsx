@@ -140,18 +140,18 @@ const WelcomeScreen = ({ onSendMessage }) => (
         <div className="absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full bg-cyan-400/60 animate-ping" />
       </div>
       <div>
-        <h2 className="text-2xl sm:text-3xl font-bold text-slate-100 mb-2">What's on your mind today?</h2>
-        <p className="text-sm text-slate-400 max-w-sm leading-relaxed">
+        <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-slate-100 mb-2">What's on your mind today?</h2>
+        <p className="text-sm text-slate-600 dark:text-slate-400 max-w-sm leading-relaxed">
           Ask questions, brainstorm with AI, or pick a conversation from the sidebar to start chatting.
         </p>
       </div>
       <div className="flex items-center gap-2">
         <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-        <span className="text-xs text-slate-500">All systems operational</span>
+        <span className="text-xs text-slate-500 dark:text-slate-400">All systems operational</span>
       </div>
     </div>
 
-    {/* ChatGPT prompt input on Welcome screen */}
+    {/* input on Welcome screen */}
     <div className="w-full mt-4">
       <ChatInput
         onSend={onSendMessage}
@@ -272,7 +272,7 @@ const ChatLayout = () => {
     : {};
 
   return (
-    <div className="h-screen w-full flex bg-[#060918] overflow-hidden font-inter">
+    <div className="h-screen w-full flex bg-slate-50 dark:bg-[#060918] overflow-hidden font-inter transition-colors duration-200">
       {/* ════ LEFT SIDEBAR ════ */}
       <ChatSidebar
         user={{ userName: currentUserName, email: currentUser.email, image: currentUser.image, name: currentUser.name }}
@@ -289,11 +289,11 @@ const ChatLayout = () => {
       <main className="flex-1 flex flex-col min-w-0 relative">
         {/* Mobile top bar (when no chat selected) */}
         {!activeConversationId && (
-          <div className="flex items-center justify-between px-4 py-3 border-b border-purple-500/10 md:hidden">
+          <div className="flex items-center justify-between px-4 py-3 border-b border-purple-500/10 bg-white/80 dark:bg-[#060918]/80 backdrop-blur-sm md:hidden">
             <button
               onClick={() => setSidebarOpen(true)}
               aria-label="Open sidebar"
-              className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-purple-500/10 transition-all"
+              className="p-2 rounded-xl text-slate-600 dark:text-slate-400 hover:text-purple-600 dark:hover:text-white hover:bg-purple-500/10 transition-all"
             >
               <HiOutlineBars3 className="w-5 h-5" />
             </button>
@@ -320,7 +320,7 @@ const ChatLayout = () => {
           <button
             onClick={() => setSidebarOpen(true)}
             aria-label="Open sidebar"
-            className="absolute left-3 top-3 p-2 rounded-xl text-slate-400 hover:text-white hover:bg-purple-500/10 transition-all md:hidden z-10"
+            className="absolute left-3 top-3 p-2 rounded-xl text-slate-600 dark:text-slate-400 hover:text-purple-600 dark:hover:text-white hover:bg-purple-500/10 transition-all md:hidden z-10"
             style={{ display: 'none' }}
           >
             <HiOutlineBars3 className="w-5 h-5" />
@@ -363,7 +363,7 @@ const ChatLayout = () => {
         <button
           onClick={() => setSidebarOpen(true)}
           aria-label="Open sidebar"
-          className="fixed left-4 top-4 p-2.5 rounded-xl bg-[#111840] border border-purple-500/20 text-slate-300 shadow-lg md:hidden z-10"
+          className="fixed left-4 top-4 p-2.5 rounded-xl bg-white dark:bg-[#111840] border border-purple-300/40 dark:border-purple-500/20 text-slate-700 dark:text-slate-300 shadow-lg md:hidden z-10"
         >
           <HiOutlineBars3 className="w-5 h-5" />
         </button>

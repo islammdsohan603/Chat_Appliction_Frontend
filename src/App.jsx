@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -54,16 +54,50 @@ function App() {
   // Initialize user fetch on app load
   useCurrentUser();
 
-  // Initialize theme on app load
-  useEffect(() => {
-    const savedTheme = localStorage.getItem("theme") || "dark";
-    if (savedTheme === "dark") {
-      document.documentElement.classList.add("dark");
-      document.documentElement.classList.remove("light");
-    } else {
-      document.documentElement.classList.remove("dark");
-      document.documentElement.classList.add("light");
+  const [currentTheme, setCurrentTheme] = useState(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("theme") || "dark";
     }
+    return "dark";
+  });
+
+  // Initialize and synchronize theme across app
+  useEffect(() => {
+    const syncTheme = (theme) => {
+      const isDark = theme === "dark";
+      setCurrentTheme(isDark ? "dark" : "light");
+      if (isDark) {
+        document.documentElement.classList.add("dark");
+        document.documentElement.classList.remove("light");
+        document.documentElement.setAttribute("data-theme", "dark");
+      } else {
+        document.documentElement.classList.remove("dark");
+        document.documentElement.classList.add("light");
+        document.documentElement.setAttribute("data-theme", "light");
+      }
+      const meta = document.querySelector('meta[name="theme-color"]');
+      if (meta) meta.setAttribute("content", isDark ? "#060918" : "#f8fafc");
+    };
+
+    const initial = localStorage.getItem("theme") || (document.documentElement.classList.contains("dark") ? "dark" : "light");
+    syncTheme(initial);
+
+    const handleCustomChange = (e) => {
+      syncTheme(e.detail?.theme || "dark");
+    };
+    const handleStorageChange = (e) => {
+      if (e.key === "theme") {
+        syncTheme(e.newValue || "dark");
+      }
+    };
+
+    window.addEventListener("nexoraThemeChange", handleCustomChange);
+    window.addEventListener("storage", handleStorageChange);
+
+    return () => {
+      window.removeEventListener("nexoraThemeChange", handleCustomChange);
+      window.removeEventListener("storage", handleStorageChange);
+    };
   }, []);
 
   return (
@@ -123,9 +157,13 @@ function App() {
       </RouteTransitionWrapper>
 
       <ToastContainer
-        theme="dark"
+        theme={currentTheme === "dark" ? "dark" : "light"}
         position="bottom-right"
-        toastClassName="!bg-[#111840] !border !border-purple-500/20 !text-slate-200"
+        toastClassName={
+          currentTheme === "dark"
+            ? "!bg-[#111840] !border !border-purple-500/20 !text-slate-200"
+            : "!bg-white !border !border-purple-300/60 !text-slate-800 !shadow-lg"
+        }
       />
     </>
   );

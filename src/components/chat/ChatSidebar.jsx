@@ -82,7 +82,7 @@ const ChatSidebar = ({
 
       <aside
         className={`
-          flex flex-col h-full bg-[#0a0f2a] border-r border-purple-500/10
+          flex flex-col h-full bg-white/95 dark:bg-[#0a0f2a] border-r border-purple-500/10
           transition-all duration-300 ease-in-out
           md:relative md:translate-x-0 md:w-72 lg:w-80
           fixed left-0 top-0 bottom-0 w-[300px] z-30
@@ -96,14 +96,14 @@ const ChatSidebar = ({
           <div className="flex items-center gap-1">
             <button
               aria-label="Compose new message"
-              className="p-2 rounded-xl text-slate-400/70 hover:text-purple-300 hover:bg-purple-500/10 transition-all"
+              className="p-2 rounded-xl text-slate-500 dark:text-slate-400/70 hover:text-purple-600 dark:hover:text-purple-300 hover:bg-purple-500/10 transition-all"
             >
               <HiOutlinePencilSquare className="w-5 h-5" />
             </button>
             <button
               onClick={onClose}
               aria-label="Close sidebar"
-              className="p-2 rounded-xl text-slate-400/70 hover:text-white hover:bg-purple-500/10 transition-all md:hidden"
+              className="p-2 rounded-xl text-slate-500 dark:text-slate-400/70 hover:text-slate-900 dark:hover:text-white hover:bg-purple-500/10 transition-all md:hidden"
             >
               <HiOutlineXMark className="w-5 h-5" />
             </button>
@@ -111,7 +111,7 @@ const ChatSidebar = ({
         </div>
 
         {/* Current user card */}
-        <div className="mx-3 mb-3 px-3 py-3 rounded-xl bg-purple-500/8 border border-purple-500/15 flex items-center gap-3 shrink-0">
+        <div className="mx-3 mb-3 px-3 py-3 rounded-xl bg-purple-500/5 dark:bg-purple-500/8 border border-purple-500/15 flex items-center gap-3 shrink-0">
           <UserAvatar
             name={user.name || user.userName || user.email || "?"}
             src={user.image}
@@ -119,14 +119,14 @@ const ChatSidebar = ({
             online
           />
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-semibold text-slate-200 truncate">
+            <p className="text-sm font-semibold text-slate-800 dark:text-slate-200 truncate">
               {user.name || user.userName || "You"}
             </p>
             <UserStatus status="online" />
           </div>
           <div className="flex items-center gap-1">
             <ThemeToggle className="!p-1.5 !rounded-lg" />
-            <button aria-label="Notifications" className="p-1.5 rounded-lg text-slate-400/60 hover:text-purple-300 hover:bg-purple-500/10 transition-all">
+            <button aria-label="Notifications" className="p-1.5 rounded-lg text-slate-400 hover:text-purple-600 dark:hover:text-purple-300 hover:bg-purple-500/10 transition-all">
               <HiOutlineBell className="w-4 h-4" />
             </button>
           </div>
@@ -135,14 +135,14 @@ const ChatSidebar = ({
         {/* Search */}
         <div className="px-3 mb-3 shrink-0">
           <div className="relative">
-            <HiOutlineMagnifyingGlass className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+            <HiOutlineMagnifyingGlass className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 dark:text-slate-500" />
             <input
               type="search"
               placeholder="Search conversations…"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               aria-label="Search conversations"
-              className="w-full pl-9 pr-4 py-2.5 rounded-xl bg-[#111840] border border-purple-500/15 text-sm text-slate-200 placeholder:text-slate-500/60 outline-none focus:border-purple-500/40 focus:shadow-[0_0_0_3px_rgba(139,92,246,0.08)] transition-all"
+              className="w-full pl-9 pr-4 py-2.5 rounded-xl bg-slate-100 dark:bg-[#111840] border border-purple-300/40 dark:border-purple-500/15 text-sm text-slate-900 dark:text-slate-200 placeholder:text-slate-400 dark:placeholder:text-slate-500/60 outline-none focus:border-purple-500/40 focus:shadow-[0_0_0_3px_rgba(139,92,246,0.08)] transition-all"
             />
           </div>
         </div>
@@ -155,8 +155,8 @@ const ChatSidebar = ({
               onClick={() => setActiveTab(tab.id)}
               className={`flex-1 py-1.5 text-xs font-semibold rounded-lg transition-all ${
                 activeTab === tab.id
-                  ? "bg-purple-500/20 border border-purple-500/30 text-purple-300"
-                  : "text-slate-400/70 hover:text-slate-300 hover:bg-purple-500/8"
+                  ? "bg-purple-500/15 dark:bg-purple-500/20 border border-purple-500/30 text-purple-700 dark:text-purple-300 shadow-sm"
+                  : "text-slate-600 dark:text-slate-400/70 hover:text-slate-900 dark:hover:text-slate-300 hover:bg-purple-500/8"
               }`}
             >
               {tab.label}
@@ -166,7 +166,7 @@ const ChatSidebar = ({
 
         {/* Section label */}
         <div className="px-5 mb-1 shrink-0">
-          <span className="text-[10px] font-semibold text-slate-500/80 uppercase tracking-widest">
+          <span className="text-[10px] font-semibold text-slate-500 dark:text-slate-500/80 uppercase tracking-widest">
             Messages
           </span>
         </div>
@@ -187,7 +187,7 @@ const ChatSidebar = ({
           <Link
             to="/profile"
             aria-label="Profile"
-            className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-slate-400/70 hover:text-white hover:bg-purple-500/10 transition-all text-xs font-medium"
+            className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-slate-600 dark:text-slate-400/70 hover:text-purple-700 dark:hover:text-white hover:bg-purple-500/10 transition-all text-xs font-medium"
           >
             <HiOutlineUser className="w-5 h-5" />
             <span className="hidden lg:block">Profile</span>
@@ -195,7 +195,7 @@ const ChatSidebar = ({
           <Link
             to="/settings"
             aria-label="Settings"
-            className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-slate-400/70 hover:text-white hover:bg-purple-500/10 transition-all text-xs font-medium"
+            className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-slate-600 dark:text-slate-400/70 hover:text-purple-700 dark:hover:text-white hover:bg-purple-500/10 transition-all text-xs font-medium"
           >
             <HiOutlineCog6Tooth className="w-5 h-5" />
             <span className="hidden lg:block">Settings</span>
@@ -203,7 +203,7 @@ const ChatSidebar = ({
           <button
             onClick={onLogout}
             aria-label="Log out"
-            className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-slate-400/70 hover:text-red-400 hover:bg-red-500/10 transition-all text-xs font-medium"
+            className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-slate-600 dark:text-slate-400/70 hover:text-red-500 hover:bg-red-500/10 transition-all text-xs font-medium"
           >
             <HiOutlineArrowRightOnRectangle className="w-5 h-5" />
             <span className="hidden lg:block">Logout</span>

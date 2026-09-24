@@ -272,7 +272,7 @@ const ChatInput = ({
                 textareaRef.current?.focus();
                 adjustTextareaHeight();
               }}
-              className="text-xs px-3.5 py-1.5 rounded-full bg-[#111840]/90 border border-purple-500/20 text-slate-300 hover:text-white hover:border-purple-500/50 hover:bg-purple-500/10 transition-all shadow-sm"
+              className="text-xs px-3.5 py-1.5 rounded-full bg-white/90 dark:bg-[#111840]/90 border border-purple-300/40 dark:border-purple-500/20 text-slate-700 dark:text-slate-300 hover:text-purple-900 dark:hover:text-white hover:border-purple-400 dark:hover:border-purple-500/50 hover:bg-purple-50 dark:hover:bg-purple-500/10 transition-all shadow-xs"
             >
               {starter.label}
             </button>
@@ -289,8 +289,8 @@ const ChatInput = ({
           isDragging
             ? "border-2 border-dashed border-cyan-400 bg-cyan-950/20 shadow-[0_0_24px_rgba(6,182,212,0.25)]"
             : isFocused
-            ? "border border-purple-500/50 bg-[#0f1430]/95 shadow-[0_8px_32px_rgba(0,0,0,0.4),0_0_0_1px_rgba(168,85,247,0.25)]"
-            : "border border-purple-500/20 bg-[#0d1230]/90 hover:border-purple-500/35 shadow-[0_8px_24px_rgba(0,0,0,0.3)]"
+            ? "border border-purple-500/60 bg-white/95 dark:bg-[#0f1430]/95 shadow-[0_8px_32px_rgba(139,92,246,0.15)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.4),0_0_0_1px_rgba(168,85,247,0.25)]"
+            : "border border-purple-300/40 dark:border-purple-500/20 bg-white/90 dark:bg-[#0d1230]/90 hover:border-purple-400/60 dark:hover:border-purple-500/35 shadow-md dark:shadow-[0_8px_24px_rgba(0,0,0,0.3)]"
         } ${disabled ? "opacity-60 pointer-events-none" : ""}`}
       >
         {/* Hidden File Input */}
@@ -308,7 +308,7 @@ const ChatInput = ({
             {attachments.map((file) => (
               <div
                 key={file.id}
-                className="relative group flex items-center gap-2 pl-2 pr-2.5 py-1.5 rounded-xl bg-[#171e4a] border border-purple-500/20 text-slate-200 text-xs shrink-0 max-w-[200px]"
+                className="relative group flex items-center gap-2 pl-2 pr-2.5 py-1.5 rounded-xl bg-purple-50 dark:bg-[#171e4a] border border-purple-300/40 dark:border-purple-500/20 text-slate-800 dark:text-slate-200 text-xs shrink-0 max-w-[200px]"
               >
                 {file.isImage && file.previewUrl ? (
                   <img
@@ -317,21 +317,21 @@ const ChatInput = ({
                     className="w-7 h-7 rounded-lg object-cover border border-purple-500/30"
                   />
                 ) : file.isImage ? (
-                  <HiOutlinePhoto className="w-5 h-5 text-purple-400 shrink-0" />
+                  <HiOutlinePhoto className="w-5 h-5 text-purple-500 dark:text-purple-400 shrink-0" />
                 ) : (
-                  <HiOutlineDocumentText className="w-5 h-5 text-cyan-400 shrink-0" />
+                  <HiOutlineDocumentText className="w-5 h-5 text-cyan-600 dark:text-cyan-400 shrink-0" />
                 )}
                 <div className="flex flex-col min-w-0">
-                  <span className="truncate text-xs font-medium text-slate-200">
+                  <span className="truncate text-xs font-medium text-slate-800 dark:text-slate-200">
                     {file.name}
                   </span>
-                  <span className="text-[10px] text-slate-400">{file.size}</span>
+                  <span className="text-[10px] text-slate-500 dark:text-slate-400">{file.size}</span>
                 </div>
                 <button
                   type="button"
                   onClick={() => removeAttachment(file.id)}
                   aria-label="Remove attachment"
-                  className="p-1 rounded-full text-slate-400 hover:text-white hover:bg-white/10 transition-colors ml-1"
+                  className="p-1 rounded-full text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/10 transition-colors ml-1"
                 >
                   <HiOutlineXMark className="w-3.5 h-3.5" />
                 </button>
@@ -355,7 +355,7 @@ const ChatInput = ({
             placeholder={placeholder}
             disabled={disabled || isLoading}
             aria-label="Prompt input"
-            className="w-full bg-transparent text-slate-100 placeholder:text-slate-500/70 text-[15px] resize-none outline-none leading-relaxed min-h-[26px] max-h-[180px] overflow-y-auto no-scrollbar"
+            className="w-full bg-transparent text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500/70 text-[15px] resize-none outline-none leading-relaxed min-h-[26px] max-h-[180px] overflow-y-auto no-scrollbar"
             style={{ height: "auto" }}
           />
         </div>
@@ -370,7 +370,7 @@ const ChatInput = ({
               onClick={() => fileInputRef.current?.click()}
               aria-label="Attach files or images"
               title="Attach files or photos"
-              className="p-2 rounded-full text-slate-400 hover:text-slate-100 hover:bg-purple-500/15 border border-transparent hover:border-purple-500/20 transition-all shrink-0 active:scale-95"
+              className="p-2 rounded-full text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-purple-500/15 border border-transparent hover:border-purple-500/20 transition-all shrink-0 active:scale-95"
             >
               <HiPlus className="w-4 h-4" />
             </button>
@@ -383,8 +383,8 @@ const ChatInput = ({
               title="Search the web"
               className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-xs font-medium transition-all ${
                 webSearchActive
-                  ? "bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow-[0_0_12px_rgba(6,182,212,0.2)]"
-                  : "text-slate-400 hover:text-slate-200 hover:bg-purple-500/10 border border-transparent"
+                  ? "bg-cyan-500/20 text-cyan-700 dark:text-cyan-300 border border-cyan-500/40 shadow-[0_0_12px_rgba(6,182,212,0.2)]"
+                  : "text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-purple-500/10 border border-transparent"
               }`}
             >
               <HiOutlineGlobeAlt className="w-4 h-4" />
@@ -399,8 +399,8 @@ const ChatInput = ({
               title="Deep Think mode"
               className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-xs font-medium transition-all ${
                 deepThinkActive
-                  ? "bg-purple-500/25 text-purple-300 border border-purple-500/40 shadow-[0_0_12px_rgba(168,85,247,0.2)]"
-                  : "text-slate-400 hover:text-slate-200 hover:bg-purple-500/10 border border-transparent"
+                  ? "bg-purple-500/20 text-purple-700 dark:text-purple-300 border border-purple-500/40 shadow-[0_0_12px_rgba(168,85,247,0.2)]"
+                  : "text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-purple-500/10 border border-transparent"
               }`}
             >
               <HiOutlineSparkles className="w-4 h-4" />
@@ -416,8 +416,8 @@ const ChatInput = ({
                 title="Add emoji"
                 className={`p-2 rounded-full transition-all shrink-0 ${
                   showEmojiPicker
-                    ? "text-purple-400 bg-purple-500/20"
-                    : "text-slate-400 hover:text-slate-100 hover:bg-purple-500/15"
+                    ? "text-purple-600 dark:text-purple-400 bg-purple-500/20"
+                    : "text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-purple-500/15"
                 }`}
               >
                 <HiOutlineFaceSmile className="w-4 h-4" />
@@ -425,8 +425,8 @@ const ChatInput = ({
 
               {/* Emoji Picker Popup */}
               {showEmojiPicker && (
-                <div className="absolute bottom-full left-0 mb-2 p-2.5 rounded-2xl bg-[#111840] border border-purple-500/30 shadow-[0_12px_36px_rgba(0,0,0,0.6)] backdrop-blur-xl z-50 w-64 animate-in fade-in zoom-in-95 duration-150">
-                  <div className="text-[11px] font-semibold text-slate-400 mb-1.5 px-1 uppercase tracking-wider">
+                <div className="absolute bottom-full left-0 mb-2 p-2.5 rounded-2xl bg-white dark:bg-[#111840] border border-purple-300/40 dark:border-purple-500/30 shadow-[0_12px_36px_rgba(0,0,0,0.15)] dark:shadow-[0_12px_36px_rgba(0,0,0,0.6)] backdrop-blur-xl z-50 w-64 animate-in fade-in zoom-in-95 duration-150">
+                  <div className="text-[11px] font-semibold text-slate-500 dark:text-slate-400 mb-1.5 px-1 uppercase tracking-wider">
                     Quick Reactions
                   </div>
                   <div className="grid grid-cols-6 gap-1">
@@ -435,7 +435,7 @@ const ChatInput = ({
                         key={emoji}
                         type="button"
                         onClick={() => insertEmoji(emoji)}
-                        className="w-8 h-8 rounded-lg hover:bg-purple-500/20 flex items-center justify-center text-lg hover:scale-125 transition-transform"
+                        className="w-8 h-8 rounded-lg hover:bg-purple-500/15 flex items-center justify-center text-lg hover:scale-125 transition-transform"
                       >
                         {emoji}
                       </button>
@@ -456,8 +456,8 @@ const ChatInput = ({
               title={isRecording ? "Stop recording" : "Dictate message"}
               className={`p-2 rounded-full transition-all shrink-0 ${
                 isRecording
-                  ? "bg-red-500/20 text-red-400 border border-red-500/40 animate-pulse shadow-[0_0_12px_rgba(239,68,68,0.3)]"
-                  : "text-slate-400 hover:text-slate-100 hover:bg-purple-500/15"
+                  ? "bg-red-500/20 text-red-500 dark:text-red-400 border border-red-500/40 animate-pulse shadow-[0_0_12px_rgba(239,68,68,0.3)]"
+                  : "text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-purple-500/15"
               }`}
             >
               <HiOutlineMicrophone className="w-4 h-4" />
@@ -470,7 +470,7 @@ const ChatInput = ({
                 onClick={onStop}
                 aria-label="Stop generating"
                 title="Stop generating"
-                className="w-8 h-8 rounded-full bg-slate-200 text-slate-900 flex items-center justify-center hover:bg-white transition-all shadow-md active:scale-95"
+                className="w-8 h-8 rounded-full bg-slate-800 dark:bg-slate-200 text-white dark:text-slate-900 flex items-center justify-center hover:opacity-90 transition-all shadow-md active:scale-95"
               >
                 <HiStop className="w-4 h-4" />
               </button>
@@ -485,7 +485,7 @@ const ChatInput = ({
                 className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 shrink-0 ${
                   canSend
                     ? "bg-gradient-to-tr from-purple-500 to-cyan-500 text-white shadow-[0_2px_14px_rgba(139,92,246,0.45)] hover:scale-105 active:scale-95 cursor-pointer"
-                    : "bg-white/10 text-slate-500 cursor-not-allowed opacity-60"
+                    : "bg-black/10 dark:bg-white/10 text-slate-400 dark:text-slate-500 cursor-not-allowed opacity-60"
                 }`}
               >
                 <HiArrowUp className="w-4 h-4 stroke-[2.5]" />
@@ -496,15 +496,15 @@ const ChatInput = ({
       </div>
 
       {/* Bottom disclaimer & shortcut hint */}
-      <div className="flex items-center justify-center gap-2 mt-2 text-[11px] text-slate-500/80 text-center select-none">
+      <div className="flex items-center justify-center gap-2 mt-2 text-[11px] text-slate-500 dark:text-slate-500/80 text-center select-none">
         <span>Nexora can make mistakes. Verify sensitive details.</span>
-        <span className="hidden sm:inline text-slate-600">·</span>
-        <span className="hidden sm:inline text-slate-500/60">
-          <kbd className="px-1 py-0.5 rounded bg-slate-800/60 border border-slate-700/50 text-[10px] font-mono text-slate-400">
+        <span className="hidden sm:inline text-slate-400 dark:text-slate-600">·</span>
+        <span className="hidden sm:inline text-slate-400 dark:text-slate-500/60">
+          <kbd className="px-1 py-0.5 rounded bg-slate-200 dark:bg-slate-800/60 border border-slate-300 dark:border-slate-700/50 text-[10px] font-mono text-slate-700 dark:text-slate-400">
             Enter
           </kbd>{" "}
           send,{" "}
-          <kbd className="px-1 py-0.5 rounded bg-slate-800/60 border border-slate-700/50 text-[10px] font-mono text-slate-400">
+          <kbd className="px-1 py-0.5 rounded bg-slate-200 dark:bg-slate-800/60 border border-slate-300 dark:border-slate-700/50 text-[10px] font-mono text-slate-700 dark:text-slate-400">
             Shift+Enter
           </kbd>{" "}
           newline

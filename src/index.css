@@ -28,20 +28,25 @@
     color: hsl(var(--foreground));
     min-height: 100vh;
     overflow-x: hidden;
+    transition: background-color 0.25s ease, color 0.25s ease;
   }
 
   /* Scrollbar styling */
   ::-webkit-scrollbar {
-    width: 5px;
-    height: 5px;
+    width: 6px;
+    height: 6px;
   }
 
   ::-webkit-scrollbar-track {
+    background: rgba(226, 232, 240, 0.7);
+  }
+
+  .dark ::-webkit-scrollbar-track {
     background: rgba(13, 18, 48, 0.5);
   }
 
   ::-webkit-scrollbar-thumb {
-    background: rgba(139, 92, 246, 0.3);
+    background: rgba(139, 92, 246, 0.25);
     border-radius: 100px;
   }
 
@@ -118,8 +123,22 @@
 
 @layer utilities {
 
-  /* Skeleton shimmer */
+  /* Skeleton shimmer (light mode default) */
   .skeleton {
+    background: linear-gradient(90deg,
+        rgba(139, 92, 246, 0.06) 0%,
+        rgba(139, 92, 246, 0.14) 25%,
+        rgba(6, 182, 212, 0.22) 50%,
+        rgba(139, 92, 246, 0.14) 75%,
+        rgba(139, 92, 246, 0.06) 100%);
+    background-size: 300% 100%;
+    animation: skeletonShimmer 1.8s ease-in-out infinite;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Skeleton shimmer (dark mode) */
+  .dark .skeleton {
     background: linear-gradient(90deg,
         rgba(255, 255, 255, 0.03) 0%,
         rgba(139, 92, 246, 0.09) 25%,

@@ -49,14 +49,16 @@ const ConversationItem = ({ conversation, isActive = false, onClick }) => {
         <div className="flex items-center justify-between mb-0.5">
           <span
             className={`text-sm font-semibold truncate ${
-              isActive ? "text-white" : "text-slate-200 group-hover:text-white"
+              isActive
+                ? "text-purple-900 dark:text-white font-bold"
+                : "text-slate-800 dark:text-slate-200 group-hover:text-purple-700 dark:group-hover:text-white"
             }`}
           >
             {name}
           </span>
           <span
             className={`text-[10px] shrink-0 ml-2 ${
-              unread > 0 ? "text-purple-400" : "text-slate-500"
+              unread > 0 ? "text-purple-600 dark:text-purple-400 font-semibold" : "text-slate-400 dark:text-slate-500"
             }`}
           >
             {formatTime(timestamp)}
@@ -67,8 +69,8 @@ const ConversationItem = ({ conversation, isActive = false, onClick }) => {
           <p
             className={`text-xs truncate flex-1 ${
               unread > 0
-                ? "text-slate-300 font-medium"
-                : "text-slate-500"
+                ? "text-slate-800 dark:text-slate-200 font-medium"
+                : "text-slate-500 dark:text-slate-400"
             }`}
           >
             {lastMessage || "No messages yet"}

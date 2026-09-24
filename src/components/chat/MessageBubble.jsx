@@ -56,7 +56,7 @@ const MessageBubble = ({ message, showAvatar = true }) => {
       <div className={`flex flex-col max-w-[70%] md:max-w-[60%] ${isOwn ? "items-end" : "items-start"}`}>
         {/* Sender name (for incoming only) */}
         {!isOwn && showAvatar && (
-          <span className="text-[11px] font-medium text-purple-400/80 mb-1 ml-1">
+          <span className="text-[11px] font-medium text-purple-600 dark:text-purple-400/80 mb-1 ml-1">
             {senderName}
           </span>
         )}
@@ -67,20 +67,20 @@ const MessageBubble = ({ message, showAvatar = true }) => {
           <div
             className={`relative px-4 py-2.5 rounded-2xl text-sm leading-relaxed select-text ${
               isOwn
-                ? "bg-gradient-to-br from-purple-600 to-violet-700 text-white rounded-br-sm shadow-lg shadow-purple-900/30"
-                : "bg-[#111840] border border-purple-500/10 text-slate-200 rounded-bl-sm shadow-sm"
+                ? "bg-gradient-to-br from-purple-600 to-violet-700 text-white rounded-br-sm shadow-md shadow-purple-900/30"
+                : "bg-white dark:bg-[#111840] border border-purple-200/80 dark:border-purple-500/10 text-slate-800 dark:text-slate-200 rounded-bl-sm shadow-[0_2px_8px_rgba(0,0,0,0.04)] dark:shadow-sm"
             }`}
           >
             {/* AI badge if web search or deep think used */}
             {(message.webSearch || message.deepThink) && (
               <div className="flex items-center gap-1.5 mb-1.5 text-[10px] font-medium opacity-80">
                 {message.webSearch && (
-                  <span className="px-1.5 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">
+                  <span className="px-1.5 py-0.5 rounded-full bg-cyan-500/20 text-cyan-600 dark:text-cyan-300 border border-cyan-500/30">
                     🌐 Web Search
                   </span>
                 )}
                 {message.deepThink && (
-                  <span className="px-1.5 py-0.5 rounded-full bg-purple-500/20 text-purple-300 border border-purple-500/30">
+                  <span className="px-1.5 py-0.5 rounded-full bg-purple-500/20 text-purple-700 dark:text-purple-300 border border-purple-500/30">
                     🧠 Deep Think
                   </span>
                 )}
@@ -99,8 +99,8 @@ const MessageBubble = ({ message, showAvatar = true }) => {
                         className="max-h-48 w-full object-cover rounded-lg border border-purple-500/20"
                       />
                     ) : (
-                      <div className="flex items-center gap-2 p-2 bg-black/25 rounded-lg text-xs border border-white/10">
-                        <span className="text-purple-400">📎</span>
+                      <div className="flex items-center gap-2 p-2 bg-slate-100 dark:bg-black/25 rounded-lg text-xs border border-purple-300/30 dark:border-white/10 text-slate-800 dark:text-slate-200">
+                        <span className="text-purple-500 dark:text-purple-400">📎</span>
                         <div className="flex flex-col min-w-0">
                           <span className="truncate font-medium">{att.name}</span>
                           <span className="text-[10px] opacity-70">{att.size}</span>
@@ -118,7 +118,7 @@ const MessageBubble = ({ message, showAvatar = true }) => {
           <div className="relative opacity-0 group-hover:opacity-100 transition-opacity duration-200">
             <button
               onClick={() => setShowReactions((v) => !v)}
-              className="p-1 rounded-lg text-slate-400/60 hover:text-purple-400 hover:bg-purple-500/10 transition-all"
+              className="p-1 rounded-lg text-slate-400 hover:text-purple-600 dark:hover:text-purple-400 hover:bg-purple-500/10 transition-all"
               aria-label="Add reaction"
             >
               <HiOutlineFaceSmile className="w-4 h-4" />
@@ -127,7 +127,7 @@ const MessageBubble = ({ message, showAvatar = true }) => {
             {/* Reaction picker */}
             {showReactions && (
               <div
-                className={`absolute bottom-full mb-1 flex gap-1 p-1.5 rounded-xl bg-[#111840] border border-purple-500/20 shadow-lg z-10 ${
+                className={`absolute bottom-full mb-1 flex gap-1 p-1.5 rounded-xl bg-white dark:bg-[#111840] border border-purple-300/50 dark:border-purple-500/20 shadow-xl z-10 ${
                   isOwn ? "right-0" : "left-0"
                 }`}
               >
@@ -151,9 +151,9 @@ const MessageBubble = ({ message, showAvatar = true }) => {
             {localReactions.map((r) => (
               <span
                 key={r.emoji}
-                className="flex items-center gap-0.5 text-[11px] px-1.5 py-0.5 rounded-full bg-[#111840] border border-purple-500/10"
+                className="flex items-center gap-0.5 text-[11px] px-1.5 py-0.5 rounded-full bg-slate-100 dark:bg-[#111840] border border-purple-300/30 dark:border-purple-500/10"
               >
-                {r.emoji} <span className="text-slate-400">{r.count}</span>
+                {r.emoji} <span className="text-slate-600 dark:text-slate-400">{r.count}</span>
               </span>
             ))}
           </div>
@@ -161,7 +161,7 @@ const MessageBubble = ({ message, showAvatar = true }) => {
 
         {/* Timestamp + read status */}
         <div className={`flex items-center gap-1 mt-1 ${isOwn ? "flex-row-reverse" : ""}`}>
-          <span className="text-[10px] text-slate-500">{formatTime(timestamp)}</span>
+          <span className="text-[10px] text-slate-500 dark:text-slate-500">{formatTime(timestamp)}</span>
           {isOwn && (
             <span className="text-[10px]">
               {status === "read" ? (

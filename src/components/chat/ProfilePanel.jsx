@@ -46,7 +46,7 @@ const ProfilePanel = ({ contact = {}, isOpen, onClose }) => {
       {/* Panel */}
       <aside
         className={`
-          flex flex-col h-full bg-[#0d1230] border-l border-purple-500/10
+          flex flex-col h-full bg-white/95 dark:bg-[#0d1230] border-l border-purple-500/10
           transition-all duration-300 ease-in-out overflow-y-auto no-scrollbar
           xl:w-72 xl:relative xl:translate-x-0
           fixed right-0 top-0 bottom-0 w-80 z-30
@@ -57,11 +57,11 @@ const ProfilePanel = ({ contact = {}, isOpen, onClose }) => {
       >
         {/* Header */}
         <div className="flex items-center justify-between px-4 py-4 border-b border-purple-500/10 shrink-0">
-          <h2 className="text-sm font-semibold text-slate-200">Contact Info</h2>
+          <h2 className="text-sm font-semibold text-slate-900 dark:text-slate-200">Contact Info</h2>
           <button
             onClick={onClose}
             aria-label="Close panel"
-            className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-purple-500/10 transition-all"
+            className="p-2 rounded-xl text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-purple-500/10 transition-all"
           >
             <HiOutlineXMark className="w-5 h-5" />
           </button>
@@ -71,9 +71,9 @@ const ProfilePanel = ({ contact = {}, isOpen, onClose }) => {
         <div className="flex flex-col items-center gap-3 px-4 py-6 border-b border-purple-500/10">
           <UserAvatar name={name} src={avatar} size="2xl" online={status === "online"} />
           <div className="text-center">
-            <h3 className="text-base font-bold text-slate-100">{name}</h3>
+            <h3 className="text-base font-bold text-slate-900 dark:text-slate-100">{name}</h3>
             {userName && (
-              <p className="text-xs text-purple-400/80 mt-0.5">@{userName}</p>
+              <p className="text-xs text-purple-600 dark:text-purple-400/80 mt-0.5">@{userName}</p>
             )}
             <div className="mt-2">
               <UserStatus status={status} />
@@ -85,7 +85,7 @@ const ProfilePanel = ({ contact = {}, isOpen, onClose }) => {
         {about && (
           <div className="px-4 py-4 border-b border-purple-500/10">
             <h4 className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-2">About</h4>
-            <p className="text-sm text-slate-300 leading-relaxed">{about}</p>
+            <p className="text-sm text-slate-700 dark:text-slate-300 leading-relaxed">{about}</p>
           </div>
         )}
 
@@ -96,7 +96,7 @@ const ProfilePanel = ({ contact = {}, isOpen, onClose }) => {
               <HiOutlinePhoto className="w-3.5 h-3.5" />
               Shared Media
             </h4>
-            <button className="text-[11px] text-purple-400 hover:text-purple-300 transition-colors">
+            <button className="text-[11px] text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 transition-colors">
               See all
             </button>
           </div>
@@ -113,12 +113,12 @@ const ProfilePanel = ({ contact = {}, isOpen, onClose }) => {
         {/* Files / Links */}
         <div className="px-4 py-4 border-b border-purple-500/10">
           <div className="flex gap-2">
-            <button className="flex-1 flex items-center gap-2 px-3 py-2.5 rounded-xl bg-purple-500/8 border border-purple-500/15 text-xs text-slate-300 hover:bg-purple-500/15 transition-all">
-              <HiOutlineDocument className="w-4 h-4 text-purple-400" />
+            <button className="flex-1 flex items-center gap-2 px-3 py-2.5 rounded-xl bg-purple-500/5 dark:bg-purple-500/8 border border-purple-500/15 text-xs text-slate-700 dark:text-slate-300 hover:bg-purple-500/15 transition-all">
+              <HiOutlineDocument className="w-4 h-4 text-purple-600 dark:text-purple-400" />
               Files
             </button>
-            <button className="flex-1 flex items-center gap-2 px-3 py-2.5 rounded-xl bg-cyan-500/8 border border-cyan-500/15 text-xs text-slate-300 hover:bg-cyan-500/15 transition-all">
-              <HiOutlineLink className="w-4 h-4 text-cyan-400" />
+            <button className="flex-1 flex items-center gap-2 px-3 py-2.5 rounded-xl bg-cyan-500/5 dark:bg-cyan-500/8 border border-cyan-500/15 text-xs text-slate-700 dark:text-slate-300 hover:bg-cyan-500/15 transition-all">
+              <HiOutlineLink className="w-4 h-4 text-cyan-600 dark:text-cyan-400" />
               Links
             </button>
           </div>
@@ -128,10 +128,10 @@ const ProfilePanel = ({ contact = {}, isOpen, onClose }) => {
         <div className="px-4 py-4 flex flex-col gap-2">
           <h4 className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Actions</h4>
           {[
-            { icon: <HiOutlineBellSlash className="w-4 h-4" />, label: "Mute notifications", color: "text-slate-300" },
-            { icon: <HiOutlineMagnifyingGlass className="w-4 h-4" />, label: "Search in conversation", color: "text-slate-300" },
-            { icon: <HiOutlineNoSymbol className="w-4 h-4" />, label: "Block user", color: "text-red-400" },
-            { icon: <HiOutlineFlag className="w-4 h-4" />, label: "Report", color: "text-red-400" },
+            { icon: <HiOutlineBellSlash className="w-4 h-4" />, label: "Mute notifications", color: "text-slate-700 dark:text-slate-300" },
+            { icon: <HiOutlineMagnifyingGlass className="w-4 h-4" />, label: "Search in conversation", color: "text-slate-700 dark:text-slate-300" },
+            { icon: <HiOutlineNoSymbol className="w-4 h-4" />, label: "Block user", color: "text-red-500 dark:text-red-400" },
+            { icon: <HiOutlineFlag className="w-4 h-4" />, label: "Report", color: "text-red-500 dark:text-red-400" },
           ].map((action) => (
             <button
               key={action.label}

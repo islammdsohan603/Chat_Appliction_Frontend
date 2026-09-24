@@ -661,7 +661,7 @@ const LivePreview = () => (
               </div>
               {/* Composer */}
               <div className="px-3 py-2.5 border-t border-purple-500/10">
-                <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-[#111840] border border-purple-500/20 hover:border-purple-500/40 transition-colors">
+                <div className="flex items-center gap-2 px-3 py-2 rounded-xl dark:bg-[#111840] bg-white border border-purple-500/20 hover:border-purple-500/40 transition-colors shadow-sm">
                   <span className="text-[10px] text-slate-500 flex-1">Reply to Alex…</span>
                   <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-purple-500 to-violet-600 flex items-center justify-center cursor-pointer hover:scale-110 active:scale-95 transition-transform">
                     <svg className="w-3 h-3 text-white rotate-45" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
@@ -673,9 +673,9 @@ const LivePreview = () => (
             </div>
 
             {/* Profile panel */}
-            <div className="w-48 border-l border-purple-500/10 bg-[#0a0f2a]/60 hidden lg:flex flex-col items-center py-5 px-3">
+            <div className="w-48 border-l border-purple-500/10 dark:bg-[#0a0f2a]/60 bg-white/70 hidden lg:flex flex-col items-center py-5 px-3">
               <div className="w-14 h-14 rounded-full bg-gradient-to-br from-purple-500 to-violet-600 flex items-center justify-center text-lg font-bold text-white mb-2 shadow-md hover:scale-105 transition-transform">A</div>
-              <p className="text-xs font-bold text-slate-100 mb-0.5">Alex Morgan</p>
+              <p className="text-xs font-bold text-slate-900 dark:text-slate-100 mb-0.5">Alex Morgan</p>
               <p className="text-[10px] text-purple-400/80 mb-2">@alexmorgan</p>
               <div className="flex items-center gap-1.5 mb-4 px-2 py-0.5 rounded-full bg-green-500/10 border border-green-500/20">
                 <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />

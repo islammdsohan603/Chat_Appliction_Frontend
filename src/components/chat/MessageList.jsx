@@ -26,7 +26,7 @@ const formatDateLabel = (dateStr) => {
 const DateSeparator = ({ label }) => (
   <div className="flex items-center gap-3 px-4 py-3">
     <div className="flex-1 h-px bg-gradient-to-r from-transparent via-purple-500/20 to-transparent" />
-    <span className="text-[11px] font-medium text-slate-500 px-3 py-1 rounded-full bg-[#111840] border border-purple-500/10">
+    <span className="text-[11px] font-medium text-slate-600 dark:text-slate-400 px-3 py-1 rounded-full bg-white dark:bg-[#111840] border border-purple-300/40 dark:border-purple-500/10 shadow-xs">
       {label}
     </span>
     <div className="flex-1 h-px bg-gradient-to-r from-transparent via-purple-500/20 to-transparent" />
@@ -73,8 +73,8 @@ const MessageList = ({
           </svg>
         </div>
         <div>
-          <p className="text-sm font-medium text-slate-300">No messages yet</p>
-          <p className="text-xs text-slate-500 mt-1">Start the conversation below</p>
+          <p className="text-sm font-medium text-slate-700 dark:text-slate-300">No messages yet</p>
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Start the conversation below</p>
         </div>
       </div>
     );

@@ -7,6 +7,25 @@
     <meta name="description" content="NEXORA — The premium real-time communication platform. Connect, chat, and collaborate with your team instantly." />
     <meta name="theme-color" content="#060918" />
     <title>NEXORA — Connect. Chat. Collaborate.</title>
+    <script>
+      (function() {
+        try {
+          var saved = localStorage.getItem('theme');
+          var theme = saved || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+          if (theme === 'dark') {
+            document.documentElement.classList.add('dark');
+            document.documentElement.classList.remove('light');
+            document.documentElement.setAttribute('data-theme', 'dark');
+          } else {
+            document.documentElement.classList.remove('dark');
+            document.documentElement.classList.add('light');
+            document.documentElement.setAttribute('data-theme', 'light');
+          }
+          var meta = document.querySelector('meta[name="theme-color"]');
+          if (meta) meta.setAttribute('content', theme === 'dark' ? '#060918' : '#f8fafc');
+        } catch (e) {}
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

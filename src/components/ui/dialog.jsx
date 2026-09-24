@@ -55,7 +55,7 @@ function DialogContent({
       <DialogPrimitive.Popup
         data-slot="dialog-content"
         className={cn(
-          "fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 rounded-2xl border border-purple-500/20 bg-[#0d1230]/95 p-6 shadow-2xl shadow-purple-950/50 backdrop-blur-2xl duration-200 data-[state=open]:animate-scaleIn data-[state=closed]:scale-95 text-slate-200 outline-none",
+          "fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 rounded-2xl border border-purple-200/80 dark:border-purple-500/20 bg-white/95 dark:bg-[#0d1230]/95 p-6 shadow-2xl shadow-purple-950/10 dark:shadow-purple-950/50 backdrop-blur-2xl duration-200 data-[state=open]:animate-scaleIn data-[state=closed]:scale-95 text-slate-800 dark:text-slate-200 outline-none",
           className
         )}
         {...props}
@@ -63,7 +63,7 @@ function DialogContent({
         {children}
         {showClose && (
           <DialogPrimitive.Close
-            className="absolute right-4 top-4 rounded-xl p-2 text-slate-400 opacity-70 transition-opacity hover:opacity-100 hover:bg-purple-500/10 hover:text-white focus:outline-none disabled:pointer-events-none"
+            className="absolute right-4 top-4 rounded-xl p-2 text-slate-400 hover:text-slate-900 dark:hover:text-white opacity-70 transition-opacity hover:opacity-100 hover:bg-purple-500/10 focus:outline-none disabled:pointer-events-none"
             aria-label="Close"
           >
             <HiOutlineXMark className="h-5 w-5" />
@@ -111,7 +111,7 @@ function DialogTitle({
   return (
     <DialogPrimitive.Title
       data-slot="dialog-title"
-      className={cn("text-lg font-bold leading-none tracking-tight text-slate-100", className)}
+      className={cn("text-lg font-bold leading-none tracking-tight text-slate-900 dark:text-slate-100", className)}
       {...props}
     />
   );
@@ -124,7 +124,7 @@ function DialogDescription({
   return (
     <DialogPrimitive.Description
       data-slot="dialog-description"
-      className={cn("text-xs text-slate-400 mt-1", className)}
+      className={cn("text-xs text-slate-500 dark:text-slate-400 mt-1", className)}
       {...props}
     />
   );

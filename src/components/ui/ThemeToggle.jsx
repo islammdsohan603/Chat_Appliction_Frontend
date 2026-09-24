@@ -11,36 +11,44 @@ const ThemeToggle = ({ className = "", showLabel = false }) => {
     if (typeof window === "undefined") return true;
     const stored = localStorage.getItem("theme");
     if (stored) return stored === "dark";
-    // Check if class already exists on documentElement, otherwise default to dark for NEXORA
-    return document.documentElement.classList.contains("dark") || true;
+    return document.documentElement.classList.contains("dark");
   });
 
-  useEffect(() => {
-    const applyTheme = (dark) => {
-      setIsDark(dark);
-      if (dark) {
-        document.documentElement.classList.add("dark");
-        document.documentElement.classList.remove("light");
-        localStorage.setItem("theme", "dark");
-      } else {
-        document.documentElement.classList.remove("dark");
-        document.documentElement.classList.add("light");
-        localStorage.setItem("theme", "light");
-      }
-    };
+  const applyTheme = (dark) => {
+    setIsDark(dark);
+    const themeStr = dark ? "dark" : "light";
+    if (dark) {
+      document.documentElement.classList.add("dark");
+      document.documentElement.classList.remove("light");
+      document.documentElement.setAttribute("data-theme", "dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+      document.documentElement.classList.add("light");
+      document.documentElement.setAttribute("data-theme", "light");
+    }
+    localStorage.setItem("theme", themeStr);
+    const metaTheme = document.querySelector('meta[name="theme-color"]');
+    if (metaTheme) metaTheme.setAttribute("content", dark ? "#060918" : "#f8fafc");
+  };
 
-    // Initial check from localStorage
-    const saved = localStorage.getItem("theme") || "dark";
-    applyTheme(saved === "dark");
+  useEffect(() => {
+    // Initial check from localStorage or current DOM state
+    const saved = localStorage.getItem("theme");
+    if (saved) {
+      applyTheme(saved === "dark");
+    } else {
+      const isCurrentlyDark = document.documentElement.classList.contains("dark");
+      applyTheme(isCurrentlyDark);
+    }
 
     // Listen to external theme changes (e.g. from Settings or another toggle)
     const handleStorage = (e) => {
       if (e.key === "theme") {
-        applyTheme(e.newValue === "dark");
+        setIsDark(e.newValue === "dark");
       }
     };
     const handleCustom = (e) => {
-      applyTheme(e.detail?.theme === "dark");
+      setIsDark(e.detail?.theme === "dark");
     };
 
     window.addEventListener("storage", handleStorage);
@@ -53,19 +61,9 @@ const ThemeToggle = ({ className = "", showLabel = false }) => {
   }, []);
 
   const toggleTheme = () => {
-    const newTheme = !isDark;
-    setIsDark(newTheme);
-    const themeStr = newTheme ? "dark" : "light";
-
-    if (newTheme) {
-      document.documentElement.classList.add("dark");
-      document.documentElement.classList.remove("light");
-    } else {
-      document.documentElement.classList.remove("dark");
-      document.documentElement.classList.add("light");
-    }
-
-    localStorage.setItem("theme", themeStr);
+    const nextDark = !isDark;
+    applyTheme(nextDark);
+    const themeStr = nextDark ? "dark" : "light";
     window.dispatchEvent(new CustomEvent("nexoraThemeChange", { detail: { theme: themeStr } }));
   };
 

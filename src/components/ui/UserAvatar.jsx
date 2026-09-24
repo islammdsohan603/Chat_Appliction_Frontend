@@ -77,7 +77,7 @@ const UserAvatar = ({
       )}
       {online && (
         <span
-          className={`absolute bottom-0 right-0 ${indicatorClass} rounded-full bg-green-500 border-[#0d1230]`}
+          className={`absolute bottom-0 right-0 ${indicatorClass} rounded-full bg-green-500 border-white dark:border-[#0d1230]`}
           role="status"
           aria-label="Online"
         />

@@ -8,6 +8,7 @@ import { toast } from "react-toastify";
 import axios from "axios";
 import { clearUser } from "../../redux/userSlice";
 import UserAvatar from "../components/ui/UserAvatar";
+import ThemeToggle from "../components/ui/ThemeToggle";
 import {
   HiOutlineArrowLeft,
   HiOutlinePencilSquare,
@@ -25,24 +26,24 @@ import { EditProfile } from "../components/models/EditProfile";
 /* ── Stats row ── */
 const StatItem = ({ value, label }) => (
   <div className="flex flex-col items-center gap-1 px-6 py-4">
-    <span className="text-2xl font-extrabold bg-gradient-to-br from-purple-400 to-cyan-400 bg-clip-text text-transparent">
+    <span className="text-2xl font-extrabold bg-gradient-to-br from-purple-500 to-cyan-500 bg-clip-text text-transparent">
       {value}
     </span>
-    <span className="text-xs text-slate-500 font-medium">{label}</span>
+    <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">{label}</span>
   </div>
 );
 
 /* ── Info row ── */
 const InfoRow = ({ icon, label, value }) => (
   <div className="flex items-center gap-4 px-4 py-3.5 rounded-xl hover:bg-purple-500/5 transition-colors">
-    <div className="w-9 h-9 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400 shrink-0">
+    <div className="w-9 h-9 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-600 dark:text-purple-400 shrink-0">
       {icon}
     </div>
     <div className="flex-1 min-w-0">
       <p className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider">
         {label}
       </p>
-      <p className="text-sm text-slate-200 truncate mt-0.5">{value || "—"}</p>
+      <p className="text-sm font-medium text-slate-800 dark:text-slate-200 truncate mt-0.5">{value || "—"}</p>
     </div>
   </div>
 );
@@ -50,11 +51,11 @@ const InfoRow = ({ icon, label, value }) => (
 /* ── Section card ── */
 const Card = ({ title, children, className = "" }) => (
   <div
-    className={`glass rounded-2xl border border-purple-500/15 overflow-hidden ${className}`}
+    className={`glass rounded-2xl border border-purple-300/40 dark:border-purple-500/15 overflow-hidden ${className}`}
   >
     {title && (
       <div className="px-5 py-4 border-b border-purple-500/10">
-        <h3 className="text-sm font-semibold text-slate-200">{title}</h3>
+        <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-200">{title}</h3>
       </div>
     )}
     <div>{children}</div>
@@ -66,8 +67,8 @@ const ActionButton = ({ icon, label, href, onClick, variant = "default" }) => {
   const base =
     "flex items-center gap-3 px-4 py-3.5 rounded-xl transition-all text-sm font-medium w-full text-left";
   const variants = {
-    default: "text-slate-300 hover:bg-purple-500/10 hover:text-white",
-    danger: "text-red-400 hover:bg-red-500/10 hover:text-red-300",
+    default: "text-slate-700 dark:text-slate-300 hover:bg-purple-500/10 hover:text-purple-700 dark:hover:text-white",
+    danger: "text-red-500 dark:text-red-400 hover:bg-red-500/10 hover:text-red-600 dark:hover:text-red-300",
   };
 
   const cls = `${base} ${variants[variant]}`;
@@ -84,7 +85,7 @@ const ActionButton = ({ icon, label, href, onClick, variant = "default" }) => {
   return (
     <button onClick={onClick} className={cls}>
       <span
-        className={variant === "danger" ? "text-red-400" : "text-slate-400"}
+        className={variant === "danger" ? "text-red-500 dark:text-red-400" : "text-slate-400"}
       >
         {icon}
       </span>
@@ -124,25 +125,25 @@ const Profile = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-[#060918] flex items-center justify-center">
+      <div className="min-h-screen bg-slate-50 dark:bg-[#060918] flex items-center justify-center">
         <div className="w-8 h-8 border-2 border-purple-500/30 border-t-purple-500 rounded-full animate-spin" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#060918] font-inter text-slate-200">
+    <div className="min-h-screen bg-slate-50 dark:bg-[#060918] font-inter text-slate-800 dark:text-slate-200 transition-colors duration-200">
       {/* Background */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden">
         <div
-          className="absolute -top-40 -left-40 w-[500px] h-[500px] rounded-full blur-[100px] opacity-20"
+          className="absolute -top-40 -left-40 w-[500px] h-[500px] rounded-full blur-[100px] opacity-15 dark:opacity-20"
           style={{
             background:
               "radial-gradient(circle, rgba(139,92,246,0.8) 0%, transparent 70%)",
           }}
         />
         <div
-          className="absolute -bottom-40 -right-40 w-[500px] h-[500px] rounded-full blur-[100px] opacity-15"
+          className="absolute -bottom-40 -right-40 w-[500px] h-[500px] rounded-full blur-[100px] opacity-10 dark:opacity-15"
           style={{
             background:
               "radial-gradient(circle, rgba(6,182,212,0.8) 0%, transparent 70%)",
@@ -151,23 +152,26 @@ const Profile = () => {
       </div>
 
       {/* Top nav */}
-      <header className="sticky top-0 z-10 bg-[#060918]/80 backdrop-blur-xl border-b border-purple-500/10">
+      <header className="sticky top-0 z-10 bg-white/80 dark:bg-[#060918]/80 backdrop-blur-xl border-b border-purple-500/10">
         <div className="max-w-4xl mx-auto px-4 h-14 flex items-center justify-between">
           <Link
             to="/chat"
-            className="flex items-center gap-2 text-sm text-slate-400 hover:text-white transition-colors"
+            className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400 hover:text-purple-600 dark:hover:text-white transition-colors"
           >
             <HiOutlineArrowLeft className="w-4 h-4" />
             <span>Back to Chat</span>
           </Link>
-          <h1 className="text-sm font-bold text-slate-200">My Profile</h1>
-          <button
-            onClick={() => setIsModels(true)}
-            aria-label="Edit profile"
-            className="p-2 cursor-pointer rounded-xl text-slate-400 hover:text-purple-300 hover:bg-purple-500/10 transition-all"
-          >
-            <HiOutlinePencilSquare className="w-4.5 h-4.5" />
-          </button>
+          <h1 className="text-sm font-bold text-slate-900 dark:text-slate-200">My Profile</h1>
+          <div className="flex items-center gap-2">
+            <ThemeToggle className="!p-1.5 !rounded-xl" />
+            <button
+              onClick={() => setIsModels(true)}
+              aria-label="Edit profile"
+              className="p-2 cursor-pointer rounded-xl text-slate-600 dark:text-slate-400 hover:text-purple-600 dark:hover:text-purple-300 hover:bg-purple-500/10 transition-all"
+            >
+              <HiOutlinePencilSquare className="w-4.5 h-4.5" />
+            </button>
+          </div>
         </div>
       </header>
 
@@ -189,25 +193,25 @@ const Profile = () => {
 
                 {/* Name & username */}
                 <div className="text-center">
-                  <h2 className="text-xl font-extrabold text-slate-100">
+                  <h2 className="text-xl font-extrabold text-slate-900 dark:text-slate-100">
                     {displayName}
                   </h2>
                   {userName && (
-                    <p className="text-sm text-purple-400/80 mt-0.5">
+                    <p className="text-sm text-purple-600 dark:text-purple-400/80 mt-0.5">
                       @{userName}
                     </p>
                   )}
                 </div>
 
                 {/* Bio */}
-                <p className="text-xs text-slate-400/70 text-center leading-relaxed">
+                <p className="text-xs text-slate-600 dark:text-slate-400/70 text-center leading-relaxed">
                   {user.bio || "Building the future of real-time communication 💜"}
                 </p>
 
                 {/* Online indicator */}
                 <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-green-500/10 border border-green-500/25">
                   <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                  <span className="text-xs font-medium text-green-400">
+                  <span className="text-xs font-medium text-green-600 dark:text-green-400">
                     Online now
                   </span>
                 </div>
@@ -215,7 +219,7 @@ const Profile = () => {
                 {/* Edit profile button */}
                 <button 
                   onClick={() => setIsModels(true)}
-                  className="w-full py-2.5 rounded-xl border border-purple-500/25 text-sm font-semibold text-purple-300 hover:bg-purple-500/10 hover:border-purple-500/40 transition-all flex items-center justify-center gap-2">
+                  className="w-full py-2.5 rounded-xl border border-purple-300/60 dark:border-purple-500/25 text-sm font-semibold text-purple-700 dark:text-purple-300 hover:bg-purple-50 dark:hover:bg-purple-500/10 hover:border-purple-400 dark:hover:border-purple-500/40 transition-all flex items-center justify-center gap-2 cursor-pointer shadow-xs">
                   <HiOutlinePencilSquare className="w-4 h-4" />
                   Edit Profile
                 </button>
@@ -307,19 +311,19 @@ const Profile = () => {
                     <HiOutlineShieldCheck className="w-4 h-4" />
                   </div>
                   <div className="flex-1">
-                    <p className="text-sm font-semibold text-slate-200">
+                    <p className="text-sm font-semibold text-slate-900 dark:text-slate-200">
                       Account is Secure
                     </p>
                     <p className="text-xs text-slate-500 mt-0.5">
                       JWT authentication active · Password encrypted
                     </p>
                   </div>
-                  <div className="px-2.5 py-1 rounded-full bg-green-500/10 border border-green-500/25 text-[10px] font-semibold text-green-400">
+                  <div className="px-2.5 py-1 rounded-full bg-green-500/10 border border-green-500/25 text-[10px] font-semibold text-green-500 dark:text-green-400">
                     Active
                   </div>
                 </div>
                 <div className="px-4 py-3 mx-2 mb-2 rounded-xl bg-purple-500/5 border border-purple-500/10">
-                  <p className="text-xs text-slate-500">
+                  <p className="text-xs text-slate-600 dark:text-slate-400">
                     Your password is encrypted using bcryptjs. Sessions are
                     managed with secure httpOnly cookies that expire in 7 days.
                   </p>
@@ -364,9 +368,9 @@ const Profile = () => {
                       {item.icon}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm text-slate-200">
+                      <p className="text-sm text-slate-900 dark:text-slate-200">
                         <span className="font-medium">{item.action}</span>{" "}
-                        <span className="text-purple-400/80">
+                        <span className="text-purple-600 dark:text-purple-400/80">
                           {item.target}
                         </span>
                       </p>

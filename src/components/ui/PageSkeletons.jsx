@@ -10,7 +10,7 @@ export const SkeletonBox = ({ className = "" }) => (
    ───────────────────────────────────────── */
 export const AuthSkeleton = ({ type = "signup" }) => {
   return (
-    <div className="min-h-screen w-full flex items-center justify-center bg-[#060918] font-inter relative overflow-hidden px-4 py-12">
+    <div className="min-h-screen w-full flex items-center justify-center bg-slate-50 dark:bg-[#060918] font-inter relative overflow-hidden px-4 py-12">
       {/* Background ambient orbs */}
       <div
         className="absolute w-[600px] h-[600px] -left-[150px] top-1/2 -translate-y-1/2 blur-[80px] pointer-events-none opacity-40 animate-pulse"
@@ -26,7 +26,7 @@ export const AuthSkeleton = ({ type = "signup" }) => {
       />
 
       {/* Auth card container */}
-      <div className="relative w-full max-w-md glass rounded-3xl p-8 sm:p-10 border border-purple-500/20 shadow-[0_20px_50px_rgba(0,0,0,0.5)] z-10">
+      <div className="relative w-full max-w-md bg-white/85 dark:bg-[rgba(15,20,50,0.65)] backdrop-blur-2xl rounded-3xl p-8 sm:p-10 border border-purple-200/80 dark:border-purple-500/20 shadow-xl dark:shadow-[0_20px_50px_rgba(0,0,0,0.5)] z-10">
         {/* Shimmer top accent line */}
         <div className="absolute top-0 left-8 right-8 h-1 bg-gradient-to-r from-purple-500/40 via-cyan-400/60 to-purple-500/40 rounded-full animate-pulse" />
 
@@ -97,7 +97,7 @@ export const AuthSkeleton = ({ type = "signup" }) => {
    ───────────────────────────────────────── */
 export const HomeSkeleton = () => {
   return (
-    <div className="min-h-screen bg-[#060918] font-inter text-slate-200 overflow-hidden">
+    <div className="min-h-screen bg-slate-50 dark:bg-[#060918] font-inter text-slate-800 dark:text-slate-200 overflow-hidden">
       {/* Top Navbar Skeleton */}
       <div className="h-16 border-b border-purple-500/10 px-4 sm:px-8 flex items-center justify-between max-w-7xl mx-auto">
         <div className="flex items-center gap-3">
@@ -146,7 +146,7 @@ export const HomeSkeleton = () => {
 
           {/* Right Column: Chat Window Preview Skeleton */}
           <div className="flex-1 w-full max-w-lg">
-            <div className="glass rounded-2xl p-4 border border-purple-500/20 shadow-2xl space-y-4">
+            <div className="bg-white/80 dark:bg-white/5 backdrop-blur-xl rounded-2xl p-4 border border-purple-200/80 dark:border-purple-500/20 shadow-2xl space-y-4">
               <div className="flex items-center justify-between pb-3 border-b border-purple-500/10">
                 <div className="flex items-center gap-3">
                   <div className="w-8 h-8 rounded-full skeleton" />
@@ -193,7 +193,7 @@ export const HomeSkeleton = () => {
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {[1, 2, 3, 4, 5, 6].map((i) => (
-              <div key={i} className="glass rounded-2xl p-6 border border-purple-500/15 space-y-3">
+              <div key={i} className="bg-white/80 dark:bg-white/5 backdrop-blur-xl rounded-2xl p-6 border border-purple-200/80 dark:border-purple-500/15 space-y-3">
                 <div className="w-12 h-12 rounded-xl skeleton mb-4" />
                 <SkeletonBox className="h-5 w-36" />
                 <SkeletonBox className="h-3.5 w-full" />
@@ -212,9 +212,9 @@ export const HomeSkeleton = () => {
    ───────────────────────────────────────── */
 export const ChatSkeleton = () => {
   return (
-    <div className="h-screen w-screen flex bg-[#060918] overflow-hidden">
+    <div className="h-screen w-screen flex bg-slate-50 dark:bg-[#060918] overflow-hidden">
       {/* Sidebar Skeleton */}
-      <div className="w-80 border-r border-purple-500/15 flex flex-col bg-[#080d28]/60 shrink-0">
+      <div className="w-80 border-r border-purple-500/15 flex flex-col bg-white/85 dark:bg-[#080d28]/60 shrink-0">
         {/* Header */}
         <div className="p-4 border-b border-purple-500/10 flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -255,9 +255,9 @@ export const ChatSkeleton = () => {
       </div>
 
       {/* Center Chat Area Skeleton */}
-      <div className="flex-1 flex flex-col bg-[#060918]">
+      <div className="flex-1 flex flex-col bg-slate-50 dark:bg-[#060918]">
         {/* Chat Header */}
-        <div className="h-16 border-b border-purple-500/15 px-6 flex items-center justify-between bg-[#080d28]/40">
+        <div className="h-16 border-b border-purple-500/15 px-6 flex items-center justify-between bg-white/80 dark:bg-[#080d28]/40">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-full skeleton" />
             <div className="space-y-1.5">
@@ -310,8 +310,8 @@ export const ChatSkeleton = () => {
         </div>
 
         {/* Message Composer */}
-        <div className="p-4 border-t border-purple-500/15 bg-[#080d28]/40">
-          <div className="flex items-center gap-3 bg-[#111840] p-2 rounded-2xl border border-purple-500/20">
+        <div className="p-4 border-t border-purple-500/15 bg-white/80 dark:bg-[#080d28]/40">
+          <div className="flex items-center gap-3 bg-slate-100 dark:bg-[#111840] p-2 rounded-2xl border border-purple-300/40 dark:border-purple-500/20">
             <div className="w-8 h-8 rounded-xl skeleton" />
             <div className="w-8 h-8 rounded-xl skeleton" />
             <SkeletonBox className="h-8 flex-1 rounded-xl" />
@@ -321,7 +321,7 @@ export const ChatSkeleton = () => {
       </div>
 
       {/* Right Profile Panel Skeleton (Desktop) */}
-      <div className="hidden xl:flex w-72 border-l border-purple-500/15 flex-col p-6 bg-[#080d28]/60 space-y-6">
+      <div className="hidden xl:flex w-72 border-l border-purple-500/15 flex-col p-6 bg-white/85 dark:bg-[#080d28]/60 space-y-6">
         <div className="flex flex-col items-center text-center space-y-3">
           <div className="w-20 h-20 rounded-full skeleton shadow-lg" />
           <SkeletonBox className="h-4 w-28" />
@@ -346,7 +346,7 @@ export const ChatSkeleton = () => {
    ───────────────────────────────────────── */
 export const ProfileSkeleton = () => {
   return (
-    <div className="min-h-screen bg-[#060918] font-inter text-slate-200">
+    <div className="min-h-screen bg-slate-50 dark:bg-[#060918] font-inter text-slate-800 dark:text-slate-200">
       {/* Top Header Skeleton */}
       <div className="h-14 border-b border-purple-500/10 px-6 flex items-center justify-between max-w-4xl mx-auto">
         <SkeletonBox className="h-4 w-28" />
