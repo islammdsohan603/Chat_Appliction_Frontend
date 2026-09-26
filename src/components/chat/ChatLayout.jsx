@@ -1,178 +1,36 @@
 /**
- * ChatLayout — Three-panel chat application layout.
- * Desktop: Sidebar | Chat | Profile
- * Tablet: Sidebar | Chat (Profile as drawer)
- * Mobile: Single panel with navigation
+ * ChatLayout — Responsive Nexora AI Chat Application with ChatGPT-style conversation history
+ * Panels:
+ * - Desktop: Sidebar | Main Chat | Profile (optional)
+ * - Mobile: Sidebar Drawer | Main Chat
  */
 import { useState, useCallback, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import axios from "axios";
 import { clearUser } from "../../../redux/userSlice";
 import ChatSidebar from "./ChatSidebar";
 import ChatHeader from "./ChatHeader";
 import MessageList from "./MessageList";
-import MessageComposer from "./MessageComposer";
 import ChatInput from "./ChatInput";
 import ProfilePanel from "./ProfilePanel";
 import AiChatBox from "./AiChatBox";
 import { HiOutlineBars3, HiOutlineArrowLeft } from "react-icons/hi2";
 
-/* ── Mock data — replace with real API calls ── */
-const MOCK_CONVERSATIONS = [
-  {
-    id: "1",
-    name: "Alex Morgan",
-    lastMessage: "Hey! Are you available for a call?",
-    timestamp: new Date().toISOString(),
-    unread: 3,
-    status: "online",
-    isGroup: false,
-  },
-  {
-    id: "2",
-    name: "Design Team",
-    lastMessage: "Sarah: The mockups look great! 🎨",
-    timestamp: new Date(Date.now() - 1800000).toISOString(),
-    unread: 0,
-    status: "online",
-    isGroup: true,
-  },
-  {
-    id: "3",
-    name: "Sarah Chen",
-    lastMessage: "I'll send the files shortly",
-    timestamp: new Date(Date.now() - 3600000).toISOString(),
-    unread: 1,
-    status: "away",
-    isGroup: false,
-  },
-  {
-    id: "4",
-    name: "Dev Squad",
-    lastMessage: "The build passed! ✅",
-    timestamp: new Date(Date.now() - 86400000).toISOString(),
-    unread: 0,
-    status: "offline",
-    isGroup: true,
-  },
-  {
-    id: "5",
-    name: "Marcus K.",
-    lastMessage: "Sounds good to me",
-    timestamp: new Date(Date.now() - 172800000).toISOString(),
-    unread: 0,
-    status: "offline",
-    isGroup: false,
-  },
-];
-
-const generateMessages = (currentUserId) => [
-  {
-    id: "m1",
-    text: "Hey! How's the project going? 👋",
-    timestamp: new Date(Date.now() - 3600000).toISOString(),
-    senderId: "other",
-    senderName: "Alex Morgan",
-    status: "read",
-    reactions: [],
-  },
-  {
-    id: "m2",
-    text: "It's going really well! Just finished the UI components.",
-    timestamp: new Date(Date.now() - 3540000).toISOString(),
-    senderId: currentUserId,
-    senderName: "You",
-    status: "read",
-    reactions: [{ emoji: "👍", count: 1 }],
-  },
-  {
-    id: "m3",
-    text: "That's amazing! Can't wait to see the final result 🚀",
-    timestamp: new Date(Date.now() - 3480000).toISOString(),
-    senderId: "other",
-    senderName: "Alex Morgan",
-    status: "read",
-    reactions: [],
-  },
-  {
-    id: "m4",
-    text: "The design looks super clean. Really professional!",
-    timestamp: new Date(Date.now() - 1800000).toISOString(),
-    senderId: "other",
-    senderName: "Alex Morgan",
-    status: "read",
-    reactions: [],
-  },
-  {
-    id: "m5",
-    text: "Thanks! I went with a dark glassmorphism theme with purple-cyan accents.",
-    timestamp: new Date(Date.now() - 1740000).toISOString(),
-    senderId: currentUserId,
-    senderName: "You",
-    status: "read",
-    reactions: [{ emoji: "🔥", count: 2 }],
-  },
-  {
-    id: "m6",
-    text: "Are you available for a quick call later?",
-    timestamp: new Date(Date.now() - 120000).toISOString(),
-    senderId: "other",
-    senderName: "Alex Morgan",
-    status: "read",
-    reactions: [],
-  },
-];
-
-/* ═════════════════════════════════════════
-   Empty / Welcome state when no chat selected
-   ═════════════════════════════════════════ */
-const WelcomeScreen = ({ onStartAiChat }) => (
-  <div className="flex-1 flex flex-col items-center justify-center p-6 text-center max-w-md mx-auto w-full my-auto">
-    <div className="relative mb-5">
-      <div className="w-20 h-20 rounded-3xl bg-gradient-to-br from-purple-500/20 to-cyan-500/20 border border-purple-500/25 flex items-center justify-center shadow-[0_0_30px_rgba(139,92,246,0.15)]">
-        <svg className="w-10 h-10 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-          <path strokeLinecap="round" strokeLinejoin="round" d="M8.625 9.75a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375m-13.5 3.01c0 1.6 1.123 2.994 2.707 3.227 1.087.16 2.185.283 3.293.369V21l4.184-4.183a1.14 1.14 0 01.778-.332 48.294 48.294 0 005.83-.498c1.585-.233 2.708-1.626 2.708-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0012 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018z" />
-        </svg>
-      </div>
-      <div className="absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full bg-cyan-400 animate-ping" />
-    </div>
-
-    <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-slate-100 mb-2">
-      What's on your mind today?
-    </h2>
-    <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 max-w-sm mb-6 leading-relaxed">
-      Chat with Nexora AI using real-time streaming, analyze images, or pick a conversation from the sidebar.
-    </p>
-
-    <div className="flex items-center gap-3">
-      <button
-        type="button"
-        onClick={onStartAiChat}
-        className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-cyan-500 text-white font-medium text-xs sm:text-sm shadow-lg shadow-purple-500/25 hover:scale-105 active:scale-95 transition-all flex items-center gap-2 cursor-pointer"
-      >
-        <span className="w-2 h-2 rounded-full bg-cyan-300 animate-pulse" />
-        <span>Open Nexora AI Chat</span>
-      </button>
-    </div>
-  </div>
-);
-
-/* ═════════════════════════════════════════
-   Main ChatLayout
-   ═════════════════════════════════════════ */
 const ChatLayout = () => {
   const { userData } = useSelector((state) => state.user);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { conversationId } = useParams();
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
-  const [activeConversationId, setActiveConversationId] = useState(null);
+  const [activeHumanId, setActiveHumanId] = useState(null);
   const [messages, setMessages] = useState([]);
   const [isTyping] = useState(false);
-  const [conversations, setConversations] = useState([]);
+  const [aiConversations, setAiConversations] = useState([]);
+  const [directUsers, setDirectUsers] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isMessagesLoading, setIsMessagesLoading] = useState(false);
 
@@ -185,63 +43,73 @@ const ChatLayout = () => {
     import.meta.env.NEXT_PUBLIC_SERVER_URL ||
     "http://localhost:8000";
 
-  const AI_CONVERSATION = {
-    id: "nexora-ai",
-    name: "Nexora AI",
-    lastMessage: "Powered by Gemini 2.5 Flash. Ask anything!",
-    timestamp: new Date().toISOString(),
-    unread: 0,
-    status: "online",
-    isGroup: false,
-    isAi: true,
-    avatar: null,
-  };
-
-  useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const response = await axios.get(`${serverUrl}/api/user/all`, {
-          withCredentials: true,
-        });
-
-        // Map users to conversation format
-        const mappedUsers = response.data.map((u) => ({
-          id: u._id,
-          name: u.name || u.userName,
-          lastMessage: "Start a conversation",
-          timestamp: u.updatedAt,
-          unread: 0,
-          status: "offline",
-          isGroup: false,
-          avatar: u.image,
-        }));
-
-        setConversations([AI_CONVERSATION, ...mappedUsers]);
-      } catch (error) {
-        console.error("Failed to fetch users", error);
-      } finally {
-        setIsLoading(false);
+  // 1. Fetch AI Conversations for the sidebar
+  const fetchAiConversations = useCallback(async () => {
+    try {
+      const response = await axios.get(`${serverUrl}/api/conversations`, {
+        withCredentials: true,
+      });
+      if (Array.isArray(response.data)) {
+        setAiConversations(
+          response.data.map((c) => ({
+            ...c,
+            isAi: true,
+          }))
+        );
       }
-    };
-    fetchUsers();
+    } catch (error) {
+      console.error("Failed to fetch AI conversations:", error);
+    }
   }, [serverUrl]);
 
-  const activeConversation = conversations.find(
-    (c) => c.id === activeConversationId
-  );
+  // 2. Fetch Direct Users
+  const fetchUsers = useCallback(async () => {
+    try {
+      const response = await axios.get(`${serverUrl}/api/user/all`, {
+        withCredentials: true,
+      });
+      if (Array.isArray(response.data)) {
+        setDirectUsers(
+          response.data.map((u) => ({
+            id: u._id,
+            _id: u._id,
+            name: u.name || u.userName,
+            title: u.name || u.userName,
+            lastMessage: "Start a conversation",
+            timestamp: u.updatedAt,
+            unread: 0,
+            status: "offline",
+            isGroup: false,
+            isAi: false,
+            avatar: u.image,
+          }))
+        );
+      }
+    } catch (error) {
+      console.error("Failed to fetch users:", error);
+    }
+  }, [serverUrl]);
 
-  // Fetch messages from database for selected conversation (skip for AI)
   useEffect(() => {
-    if (!activeConversationId || activeConversationId === "nexora-ai") return;
+    const initializeData = async () => {
+      setIsLoading(true);
+      await Promise.all([fetchAiConversations(), fetchUsers()]);
+      setIsLoading(false);
+    };
+    initializeData();
+  }, [fetchAiConversations, fetchUsers]);
+
+  // 3. Sync Human conversation messages when activeHumanId changes
+  useEffect(() => {
+    if (!activeHumanId) return;
 
     let isMounted = true;
-    const fetchConversationMessages = async () => {
+    const fetchHumanMessages = async () => {
       setIsMessagesLoading(true);
       try {
-        const response = await axios.get(
-          `${serverUrl}/api/chat/${activeConversationId}`,
-          { withCredentials: true }
-        );
+        const response = await axios.get(`${serverUrl}/api/chat/${activeHumanId}`, {
+          withCredentials: true,
+        });
 
         if (!isMounted) return;
 
@@ -251,10 +119,7 @@ const ChatLayout = () => {
           attachments: msg.attachments || [],
           timestamp: msg.createdAt,
           senderId: msg.senderId,
-          senderName:
-            msg.senderId === currentUserId
-              ? "You"
-              : activeConversation?.name || "User",
+          senderName: msg.senderId === currentUserId ? "You" : "User",
           status: "sent",
           reactions: [],
         }));
@@ -262,8 +127,8 @@ const ChatLayout = () => {
         setMessages(formatted);
       } catch (error) {
         if (!isMounted) return;
-        console.error("Failed to fetch messages from database:", error);
-        toast.error("Failed to load conversation history");
+        console.error("Failed to fetch messages:", error);
+        toast.error("Failed to load direct chat history");
       } finally {
         if (isMounted) {
           setIsMessagesLoading(false);
@@ -271,48 +136,109 @@ const ChatLayout = () => {
       }
     };
 
-    fetchConversationMessages();
+    fetchHumanMessages();
 
     return () => {
       isMounted = false;
     };
-  }, [activeConversationId, serverUrl, currentUserId, activeConversation?.name]);
+  }, [activeHumanId, serverUrl, currentUserId]);
 
-  const handleSelectConversation = useCallback((id) => {
-    setActiveConversationId(id);
+  // Handle selecting an item from the sidebar
+  const handleSelectConversation = useCallback(
+    (id) => {
+      const isDirectUser = directUsers.some((u) => (u._id || u.id) === id);
+
+      if (isDirectUser) {
+        setActiveHumanId(id);
+        navigate("/chat");
+      } else {
+        setActiveHumanId(null);
+        navigate(`/chat/${id}`);
+      }
+      setSidebarOpen(false);
+    },
+    [directUsers, navigate]
+  );
+
+  // Handle "+ New Chat" action
+  const handleNewChat = useCallback(() => {
+    setActiveHumanId(null);
+    navigate("/chat");
     setSidebarOpen(false);
-  }, []);
+  }, [navigate]);
 
-  const handleSendMessage = useCallback(
+  // Handle deletion of an AI conversation
+  const handleDeleteConversation = useCallback(
+    async (id) => {
+      try {
+        await axios.delete(`${serverUrl}/api/conversations/${id}`, {
+          withCredentials: true,
+        });
+        setAiConversations((prev) => prev.filter((c) => (c._id || c.id) !== id));
+        toast.success("Conversation deleted");
+
+        if (conversationId === id) {
+          navigate("/chat");
+        }
+      } catch (error) {
+        console.error("Delete conversation error:", error);
+        toast.error("Failed to delete conversation");
+      }
+    },
+    [conversationId, navigate, serverUrl]
+  );
+
+  // Optimistic update when new session created during streaming
+  const handleSessionCreated = useCallback(
+    (newConv) => {
+      setAiConversations((prev) => [
+        { ...newConv, isAi: true },
+        ...prev.filter((c) => (c._id || c.id) !== newConv._id),
+      ]);
+      navigate(`/chat/${newConv._id}`, { replace: true });
+    },
+    [navigate]
+  );
+
+  // Update conversation snippet and order when AI response finishes
+  const handleConversationUpdated = useCallback(
+    (lastSnippet) => {
+      if (conversationId) {
+        setAiConversations((prev) => {
+          const matchIndex = prev.findIndex((c) => (c._id || c.id) === conversationId);
+          if (matchIndex === -1) return prev;
+
+          const updatedItem = {
+            ...prev[matchIndex],
+            lastMessage: lastSnippet.slice(0, 100),
+            updatedAt: new Date().toISOString(),
+          };
+
+          const remaining = prev.filter((_, idx) => idx !== matchIndex);
+          return [updatedItem, ...remaining];
+        });
+      }
+    },
+    [conversationId]
+  );
+
+  // Handle peer-to-peer human message submission
+  const handleSendHumanMessage = useCallback(
     async (payload) => {
-      const textContent =
-        typeof payload === "string" ? payload : payload?.text || "";
-      const attachments =
-        typeof payload === "object" ? payload?.attachments || [] : [];
+      const textContent = typeof payload === "string" ? payload : payload?.text || "";
+      const attachments = typeof payload === "object" ? payload?.attachments || [] : [];
       if (!textContent && attachments.length === 0) return;
 
-      let targetReceiverId = activeConversationId;
-      // If no active conversation is selected yet, select the first available user
-      if (!targetReceiverId && conversations.length > 0) {
-        targetReceiverId = conversations[0].id;
-        setActiveConversationId(targetReceiverId);
-      }
-
-      if (!targetReceiverId) {
-        toast.info("Please select a user from the sidebar to chat with.");
-        return;
-      }
+      if (!activeHumanId) return;
 
       try {
         const response = await axios.post(
-          `${serverUrl}/api/chat/send/${targetReceiverId}`,
+          `${serverUrl}/api/chat/send/${activeHumanId}`,
           {
             message: textContent,
             attachments,
           },
-          {
-            withCredentials: true,
-          }
+          { withCredentials: true }
         );
 
         const savedChat = response.data?.chat;
@@ -320,8 +246,6 @@ const ChatLayout = () => {
           id: savedChat?._id || `msg-${Date.now()}`,
           text: savedChat?.message || textContent,
           attachments: savedChat?.attachments || attachments,
-          webSearch: typeof payload === "object" ? payload?.webSearch : false,
-          deepThink: typeof payload === "object" ? payload?.deepThink : false,
           timestamp: savedChat?.createdAt || new Date().toISOString(),
           senderId: currentUserId,
           senderName: currentUserName,
@@ -331,32 +255,24 @@ const ChatLayout = () => {
 
         setMessages((prev) => [...prev, newMessage]);
 
-        // Update preview in sidebar
-        setConversations((prev) =>
-          prev.map((c) =>
-            c.id === targetReceiverId
+        // Update preview in direct users list
+        setDirectUsers((prev) =>
+          prev.map((u) =>
+            (u._id || u.id) === activeHumanId
               ? {
-                  ...c,
+                  ...u,
                   lastMessage: textContent || "Attachment",
                   timestamp: new Date().toISOString(),
                 }
-              : c
+              : u
           )
         );
       } catch (error) {
         console.error("Failed to store chat message:", error);
-        toast.error(
-          error.response?.data?.message || "Failed to send chat message"
-        );
+        toast.error(error.response?.data?.message || "Failed to send chat message");
       }
     },
-    [
-      activeConversationId,
-      conversations,
-      currentUserId,
-      currentUserName,
-      serverUrl,
-    ]
+    [activeHumanId, currentUserId, currentUserName, serverUrl]
   );
 
   const handleLogout = async () => {
@@ -370,23 +286,32 @@ const ChatLayout = () => {
     navigate("/login");
   };
 
-  const contactInfo = activeConversation
-    ? {
-        name: activeConversation.name,
-        userName: activeConversation.name.toLowerCase().replace(/\s+/g, ""),
-        status: activeConversation.status,
-        about: "Love building amazing products and collaborating with great teams! 💜",
-      }
-    : {};
+  const activeAiConversation = aiConversations.find(
+    (c) => (c._id || c.id) === conversationId
+  );
+  const activeHumanContact = directUsers.find(
+    (u) => (u._id || u.id) === activeHumanId
+  );
+
+  // Combine lists for sidebar
+  const sidebarConversations = [...aiConversations, ...directUsers];
+  const activeSidebarId = activeHumanId || conversationId || null;
 
   return (
     <div className="h-screen w-full flex bg-slate-50 dark:bg-[#060918] overflow-hidden font-inter transition-colors duration-200">
       {/* ════ LEFT SIDEBAR ════ */}
       <ChatSidebar
-        user={{ userName: currentUserName, email: currentUser.email, image: currentUser.image, name: currentUser.name }}
-        conversations={conversations}
-        activeId={activeConversationId}
+        user={{
+          userName: currentUserName,
+          email: currentUser.email,
+          image: currentUser.image,
+          name: currentUser.name,
+        }}
+        conversations={sidebarConversations}
+        activeId={activeSidebarId}
         onSelect={handleSelectConversation}
+        onNewChat={handleNewChat}
+        onDelete={handleDeleteConversation}
         onLogout={handleLogout}
         isLoading={isLoading}
         isOpen={sidebarOpen}
@@ -395,92 +320,71 @@ const ChatLayout = () => {
 
       {/* ════ MAIN CHAT AREA ════ */}
       <main className="flex-1 flex flex-col min-w-0 relative">
-        {/* Mobile top bar (when no chat selected) */}
-        {!activeConversationId && (
-          <div className="flex items-center justify-between px-4 py-3 border-b border-purple-500/10 bg-white/80 dark:bg-[#060918]/80 backdrop-blur-sm md:hidden">
-            <button
-              onClick={() => setSidebarOpen(true)}
-              aria-label="Open sidebar"
-              className="p-2 rounded-xl text-slate-600 dark:text-slate-400 hover:text-purple-600 dark:hover:text-white hover:bg-purple-500/10 transition-all"
-            >
-              <HiOutlineBars3 className="w-5 h-5" />
-            </button>
-            <span className="text-base font-bold gradient-text">NEXORA</span>
-            <div className="w-9" />
-          </div>
-        )}
+        {/* Mobile top bar */}
+        <div className="flex items-center justify-between px-4 py-3 border-b border-purple-500/10 bg-white/80 dark:bg-[#060918]/80 backdrop-blur-sm md:hidden shrink-0">
+          <button
+            onClick={() => setSidebarOpen(true)}
+            aria-label="Open sidebar"
+            className="p-2 rounded-xl text-slate-600 dark:text-slate-400 hover:text-purple-600 dark:hover:text-white hover:bg-purple-500/10 transition-all cursor-pointer"
+          >
+            <HiOutlineBars3 className="w-5 h-5" />
+          </button>
+          <span className="text-base font-bold gradient-text">NEXORA</span>
+          <div className="w-9" />
+        </div>
 
-        {/* Chat header (when human conversation selected) */}
-        {activeConversation && !activeConversation.isAi && (
-          <ChatHeader
-            contact={{
-              name: activeConversation.name,
-              status: activeConversation.status,
-            }}
-            onProfileToggle={() => setProfileOpen((v) => !v)}
-            onBack={() => setActiveConversationId(null)}
-            showBack
-          />
-        )}
-
-        {/* Message area */}
-        {activeConversation?.isAi ? (
+        {/* Direct Human Chat View */}
+        {activeHumanContact ? (
           <div className="flex-1 flex flex-col h-full overflow-hidden">
-            {/* Mobile back bar for AI chat */}
-            <div className="flex items-center justify-between px-4 py-3 border-b border-purple-500/10 bg-white/80 dark:bg-[#060918]/80 backdrop-blur-sm md:hidden shrink-0">
-              <button
-                onClick={() => setActiveConversationId(null)}
-                aria-label="Back to conversations"
-                className="p-2 rounded-xl text-slate-600 dark:text-slate-400 hover:text-purple-600 dark:hover:text-white hover:bg-purple-500/10 transition-all"
-              >
-                <HiOutlineArrowLeft className="w-5 h-5" />
-              </button>
-              <span className="text-sm font-bold gradient-text">Nexora AI</span>
-              <div className="w-9" />
-            </div>
-            <AiChatBox className="flex-1 rounded-none border-0 shadow-none max-w-full bg-transparent dark:bg-transparent" />
-          </div>
-        ) : activeConversation ? (
-          <>
+            <ChatHeader
+              contact={{
+                name: activeHumanContact.name,
+                status: activeHumanContact.status,
+              }}
+              onProfileToggle={() => setProfileOpen((v) => !v)}
+              onBack={() => setActiveHumanId(null)}
+              showBack
+            />
             <MessageList
               messages={messages}
               isTyping={isTyping}
-              typingUser={activeConversation.name}
+              typingUser={activeHumanContact.name}
               currentUserId={currentUserId}
               isLoading={isMessagesLoading}
             />
             <ChatInput
-              onSend={handleSendMessage}
-              placeholder={`Message ${activeConversation.name}…`}
+              onSend={handleSendHumanMessage}
+              placeholder={`Message ${activeHumanContact.name}…`}
             />
-          </>
+          </div>
         ) : (
-          <WelcomeScreen
-            onStartAiChat={() => {
-              setActiveConversationId("nexora-ai");
-            }}
-          />
+          /* Nexora AI Chat View (Both for /chat and /chat/:conversationId) */
+          <div className="flex-1 flex flex-col h-full overflow-hidden">
+            <AiChatBox
+              conversationId={conversationId || null}
+              activeConversation={activeAiConversation}
+              onSessionCreated={handleSessionCreated}
+              onConversationUpdated={handleConversationUpdated}
+              onNewChat={handleNewChat}
+              onDeleteConversation={handleDeleteConversation}
+              className="flex-1 rounded-none border-0 shadow-none max-w-full bg-transparent dark:bg-transparent"
+            />
+          </div>
         )}
       </main>
 
       {/* ════ RIGHT PROFILE PANEL ════ */}
-      {activeConversation && (
+      {activeHumanContact && (
         <ProfilePanel
-          contact={contactInfo}
+          contact={{
+            name: activeHumanContact.name,
+            userName: activeHumanContact.name.toLowerCase().replace(/\s+/g, ""),
+            status: activeHumanContact.status,
+            about: "Connected via Nexora Direct Messaging.",
+          }}
           isOpen={profileOpen}
           onClose={() => setProfileOpen(false)}
         />
-      )}
-
-      {/* Mobile sidebar hamburger — always visible when closed */}
-      {!sidebarOpen && !activeConversationId && (
-        <button
-          onClick={() => setSidebarOpen(true)}
-          aria-label="Open sidebar"
-          className="fixed left-4 top-4 p-2.5 rounded-xl bg-white dark:bg-[#111840] border border-purple-300/40 dark:border-purple-500/20 text-slate-700 dark:text-slate-300 shadow-lg md:hidden z-10"
-        >
-          <HiOutlineBars3 className="w-5 h-5" />
-        </button>
       )}
     </div>
   );

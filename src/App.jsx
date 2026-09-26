@@ -135,6 +135,14 @@ function App() {
             }
           />
           <Route
+            path="/chat/:conversationId"
+            element={
+              <ProtectedRoute>
+                <ChatLayout />
+              </ProtectedRoute>
+            }
+          />
+          <Route
             path="/profile"
             element={
               <ProtectedRoute>

@@ -6,50 +6,71 @@ const DEFAULT_SERVER_URL =
   "http://localhost:8000";
 
 /**
- * Custom hook for real-time streaming AI chat (similar to ChatGPT) using Server-Sent Events (SSE)
- * with multimodal image attachment and automatic database history synchronization.
+ * Custom hook for real-time streaming AI chat using Server-Sent Events (SSE)
+ * with MongoDB conversation session persistence and Google Gemini (@google/genai).
  */
 export const useAiChat = ({
-  endpoint = `${DEFAULT_SERVER_URL}/api/ai/chat/stream`,
-  historyEndpoint = `${DEFAULT_SERVER_URL}/api/ai/history`,
-  initialMessages = [],
-  systemInstruction,
+  conversationId = null,
+  systemInstruction = "You are Nexora AI, a brilliant, helpful, and concise AI assistant.",
   model = "gemini-2.5-flash",
+  onSessionCreated,
+  onConversationUpdated,
   onError,
   onFinish,
 } = {}) => {
-  const [messages, setMessages] = useState(initialMessages);
+  const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [selectedImage, setSelectedImage] = useState(null); // { file, previewUrl, base64 }
   const [isLoading, setIsLoading] = useState(false);
   const [isStreaming, setIsStreaming] = useState(false);
-  const [isHistoryLoading, setIsHistoryLoading] = useState(true);
+  const [isHistoryLoading, setIsHistoryLoading] = useState(false);
   const [error, setError] = useState(null);
 
   const abortControllerRef = useRef(null);
 
-  // Load chat history from database on mount
+  // Load chat history from database when conversationId changes
   useEffect(() => {
     let isMounted = true;
-    const fetchHistory = async () => {
+
+    if (!conversationId || conversationId === "new") {
+      setMessages([]);
+      setIsHistoryLoading(false);
+      setError(null);
+      return;
+    }
+
+    const fetchConversationMessages = async () => {
+      setIsHistoryLoading(true);
+      setError(null);
       try {
-        const response = await fetch(historyEndpoint, {
-          credentials: "include",
-        });
-        if (!response.ok) return;
+        const response = await fetch(
+          `${DEFAULT_SERVER_URL}/api/conversations/${conversationId}`,
+          { credentials: "include" }
+        );
+
+        if (!response.ok) {
+          if (response.status === 404) {
+            throw new Error("Conversation not found");
+          }
+          throw new Error("Failed to load conversation history");
+        }
+
         const data = await response.json();
-        if (isMounted && Array.isArray(data) && data.length > 0) {
-          const formatted = data.map((item) => ({
-            id: item._id,
-            role: item.role,
-            content: item.prompt,
-            imageUrl: item.imageUrl,
-            createdAt: item.createdAt,
+        if (isMounted && data.messages) {
+          const formatted = data.messages.map((m) => ({
+            id: m._id,
+            role: m.role,
+            content: m.content,
+            imageUrl: m.imageUrl,
+            createdAt: m.createdAt,
           }));
           setMessages(formatted);
         }
       } catch (err) {
-        console.warn("Could not load AI chat history:", err);
+        if (isMounted) {
+          console.error("Load conversation error:", err);
+          setError(err.message || "Failed to load conversation");
+        }
       } finally {
         if (isMounted) {
           setIsHistoryLoading(false);
@@ -57,11 +78,12 @@ export const useAiChat = ({
       }
     };
 
-    fetchHistory();
+    fetchConversationMessages();
+
     return () => {
       isMounted = false;
     };
-  }, [historyEndpoint]);
+  }, [conversationId]);
 
   // Cleanup abort controller and image preview on unmount
   useEffect(() => {
@@ -131,16 +153,16 @@ export const useAiChat = ({
       setMessages((prev) => [...prev, userMessage, assistantPlaceholder]);
 
       try {
-        const response = await fetch(endpoint, {
+        const response = await fetch(`${DEFAULT_SERVER_URL}/api/conversations/stream`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           credentials: "include",
           body: JSON.stringify({
+            conversationId: conversationId && conversationId !== "new" ? conversationId : undefined,
             prompt: promptText,
             imageUrl: imagePayload?.base64 || null,
-            messages: [...messages, userMessage],
             systemInstruction,
             model,
           }),
@@ -183,9 +205,16 @@ export const useAiChat = ({
 
             try {
               const parsed = JSON.parse(dataContent);
+
+              if (parsed.type === "session_created" && parsed.conversation) {
+                // Instantly update parent/sidebar and URL
+                onSessionCreated?.(parsed.conversation);
+              }
+
               if (parsed.error) {
                 throw new Error(parsed.error);
               }
+
               if (parsed.text) {
                 accumulatedContent += parsed.text;
                 const currentText = accumulatedContent;
@@ -215,6 +244,7 @@ export const useAiChat = ({
           )
         );
 
+        onConversationUpdated?.(accumulatedContent);
         onFinish?.({
           id: assistantMessageId,
           role: "assistant",
@@ -257,27 +287,20 @@ export const useAiChat = ({
         abortControllerRef.current = null;
       }
     },
-    [endpoint, input, selectedImage, isLoading, isStreaming, messages, model, systemInstruction, onError, onFinish]
+    [
+      conversationId,
+      input,
+      selectedImage,
+      isLoading,
+      isStreaming,
+      model,
+      systemInstruction,
+      onSessionCreated,
+      onConversationUpdated,
+      onError,
+      onFinish,
+    ]
   );
-
-  /**
-   * Clear messages both locally and from database
-   */
-  const clearMessages = useCallback(async () => {
-    stop();
-    setMessages([]);
-    setError(null);
-    setSelectedImage(null);
-
-    try {
-      await fetch(historyEndpoint, {
-        method: "DELETE",
-        credentials: "include",
-      });
-    } catch (err) {
-      console.error("Failed to delete chat history:", err);
-    }
-  }, [stop, historyEndpoint]);
 
   return {
     messages,
@@ -291,7 +314,6 @@ export const useAiChat = ({
     isStreaming,
     isHistoryLoading,
     error,
-    clearMessages,
     setMessages,
   };
 };

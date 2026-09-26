@@ -1,12 +1,6 @@
-/**
- * ConversationItem — Single conversation row in the sidebar.
- *
- * Props:
- *  - conversation: { id, name, lastMessage, timestamp, unread, status, avatar }
- *  - isActive: boolean
- *  - onClick: () => void
- */
+import { useState } from "react";
 import UserAvatar from "../ui/UserAvatar";
+import { HiOutlineChatBubbleLeftRight, HiOutlineTrash } from "react-icons/hi2";
 
 const formatTime = (timestamp) => {
   if (!timestamp) return "";
@@ -24,41 +18,91 @@ const formatTime = (timestamp) => {
   return date.toLocaleDateString([], { month: "short", day: "numeric" });
 };
 
-const ConversationItem = ({ conversation, isActive = false, onClick }) => {
-  const { name, lastMessage, timestamp, unread = 0, status, avatar } = conversation;
+const ConversationItem = ({
+  conversation,
+  isActive = false,
+  onClick,
+  onDelete,
+}) => {
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const id = conversation._id || conversation.id;
+  const title = conversation.title || conversation.name || "Untitled Chat";
+  const lastMessage = conversation.lastMessage || "No messages yet";
+  const timestamp = conversation.updatedAt || conversation.createdAt || conversation.timestamp;
+  const isAi = conversation.isAi !== false; // Default true for AI sessions unless specified
+
+  const handleDelete = async (e) => {
+    e.stopPropagation();
+    if (isDeleting) return;
+    setIsDeleting(true);
+    try {
+      await onDelete?.(id);
+    } finally {
+      setIsDeleting(false);
+    }
+  };
 
   return (
-    <button
+    <div
       onClick={onClick}
-      className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-all duration-200 group ${
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          onClick?.();
+        }
+      }}
+      className={`group relative w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition-all duration-200 cursor-pointer ${
         isActive
-          ? "bg-purple-500/15 border border-purple-500/20"
-          : "hover:bg-purple-500/8 border border-transparent hover:border-purple-500/10"
+          ? "bg-purple-500/20 border border-purple-500/40 text-purple-900 dark:text-white font-medium shadow-[0_2px_12px_rgba(139,92,246,0.15)]"
+          : "hover:bg-purple-500/8 border border-transparent hover:border-purple-500/15 text-slate-700 dark:text-slate-300"
       }`}
       aria-selected={isActive}
-      role="option"
     >
-      <UserAvatar
-        name={name}
-        src={avatar}
-        size="md"
-        online={status === "online"}
-      />
+      {/* Active accent pill */}
+      {isActive && (
+        <span className="absolute left-1 top-2.5 bottom-2.5 w-1 rounded-full bg-gradient-to-b from-purple-500 to-cyan-400" />
+      )}
 
-      <div className="flex-1 min-w-0">
+      {/* Avatar / Icon */}
+      {conversation.avatar || !isAi ? (
+        <UserAvatar
+          name={title}
+          src={conversation.avatar}
+          size="sm"
+          online={conversation.status === "online"}
+        />
+      ) : (
+        <div
+          className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 transition-colors ${
+            isActive
+              ? "bg-gradient-to-tr from-purple-600 to-cyan-500 text-white shadow-md shadow-purple-500/30"
+              : "bg-purple-500/10 text-purple-600 dark:text-purple-300 group-hover:bg-purple-500/15"
+          }`}
+        >
+          <HiOutlineChatBubbleLeftRight className="w-4 h-4" />
+        </div>
+      )}
+
+      {/* Content */}
+      <div className="flex-1 min-w-0 pr-1">
         <div className="flex items-center justify-between mb-0.5">
           <span
-            className={`text-sm font-semibold truncate ${
+            className={`text-xs sm:text-sm font-semibold truncate ${
               isActive
-                ? "text-purple-900 dark:text-white font-bold"
+                ? "text-purple-900 dark:text-white"
                 : "text-slate-800 dark:text-slate-200 group-hover:text-purple-700 dark:group-hover:text-white"
             }`}
           >
-            {name}
+            {title}
           </span>
           <span
-            className={`text-[10px] shrink-0 ml-2 ${
-              unread > 0 ? "text-purple-600 dark:text-purple-400 font-semibold" : "text-slate-400 dark:text-slate-500"
+            className={`text-[10px] shrink-0 ml-1.5 transition-opacity ${
+              isActive
+                ? "text-purple-600 dark:text-purple-300 font-semibold"
+                : "text-slate-400 dark:text-slate-500 group-hover:opacity-60"
             }`}
           >
             {formatTime(timestamp)}
@@ -66,23 +110,25 @@ const ConversationItem = ({ conversation, isActive = false, onClick }) => {
         </div>
 
         <div className="flex items-center justify-between gap-1">
-          <p
-            className={`text-xs truncate flex-1 ${
-              unread > 0
-                ? "text-slate-800 dark:text-slate-200 font-medium"
-                : "text-slate-500 dark:text-slate-400"
-            }`}
-          >
-            {lastMessage || "No messages yet"}
+          <p className="text-[11px] truncate text-slate-500 dark:text-slate-400 flex-1">
+            {lastMessage}
           </p>
-          {unread > 0 && (
-            <span className="shrink-0 min-w-[18px] h-[18px] flex items-center justify-center rounded-full bg-gradient-to-br from-purple-500 to-violet-600 text-[10px] font-bold text-white px-1 shadow-[0_2px_8px_rgba(139,92,246,0.4)]">
-              {unread > 99 ? "99+" : unread}
-            </span>
-          )}
         </div>
       </div>
-    </button>
+
+      {/* Delete button (visible on group-hover or active) */}
+      {onDelete && (
+        <button
+          type="button"
+          onClick={handleDelete}
+          disabled={isDeleting}
+          title="Delete conversation"
+          className="opacity-0 group-hover:opacity-100 p-1.5 rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-500/10 transition-all shrink-0 cursor-pointer"
+        >
+          <HiOutlineTrash className="w-3.5 h-3.5" />
+        </button>
+      )}
+    </div>
   );
 };
 

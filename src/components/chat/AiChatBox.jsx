@@ -6,6 +6,7 @@ import {
   FiUser,
   FiCpu,
   FiSquare,
+  FiPlus,
   FiTrash2,
   FiX,
   FiAlertCircle,
@@ -13,14 +14,20 @@ import {
 import { IoSparkles } from "react-icons/io5";
 
 /**
- * Production-ready AI Chatbot Component
+ * Production-ready AI Chatbot Component for Nexora AI
  * Features:
- * - Single, unified input bar at the bottom (no duplicate inputs)
- * - React Icons (FiSend, FiImage, FiCpu, FiUser, etc.)
+ * - Single, unified input bar at the bottom
  * - Multimodal image attachment with live preview & in-bubble display
- * - Automatic database persistence of user prompt, image, and AI responses
+ * - Automatic database persistence of user prompt, image, and AI responses under conversations
+ * - Real-time SSE streaming with Gemini 2.5 Flash
  */
 export const AiChatBox = ({
+  conversationId = null,
+  activeConversation = null,
+  onSessionCreated,
+  onConversationUpdated,
+  onNewChat,
+  onDeleteConversation,
   systemInstruction = "You are Nexora AI, a brilliant, helpful, and concise AI assistant.",
   model = "gemini-2.5-flash",
   className = "",
@@ -37,8 +44,13 @@ export const AiChatBox = ({
     isStreaming,
     isHistoryLoading,
     error,
-    clearMessages,
-  } = useAiChat({ systemInstruction, model });
+  } = useAiChat({
+    conversationId,
+    systemInstruction,
+    model,
+    onSessionCreated,
+    onConversationUpdated,
+  });
 
   const messagesEndRef = useRef(null);
   const textareaRef = useRef(null);
@@ -116,23 +128,23 @@ export const AiChatBox = ({
     >
       {/* ── Top Header ── */}
       <div className="flex items-center justify-between px-5 py-3.5 border-b border-purple-500/10 bg-white/40 dark:bg-[#111840]/60 backdrop-blur-md shrink-0">
-        <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-purple-500 to-cyan-400 p-0.5 shadow-md shadow-purple-500/20 flex items-center justify-center">
+        <div className="flex items-center gap-3 min-w-0">
+          <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-purple-500 to-cyan-400 p-0.5 shadow-md shadow-purple-500/20 flex items-center justify-center shrink-0">
             <div className="w-full h-full bg-[#0d1230] rounded-[10px] flex items-center justify-center">
               <FiCpu className="w-4 h-4 text-cyan-300 animate-pulse" />
             </div>
           </div>
-          <div>
+          <div className="min-w-0">
             <div className="flex items-center gap-2">
-              <h3 className="font-bold text-slate-900 dark:text-slate-100 text-sm sm:text-base">
-                Nexora AI
+              <h3 className="font-bold text-slate-900 dark:text-slate-100 text-sm sm:text-base truncate">
+                {activeConversation?.title || "Nexora AI"}
               </h3>
-              <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-purple-500/15 border border-purple-500/30 text-purple-600 dark:text-purple-300 flex items-center gap-1">
+              <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-purple-500/15 border border-purple-500/30 text-purple-600 dark:text-purple-300 flex items-center gap-1 shrink-0">
                 <IoSparkles className="w-2.5 h-2.5" />
                 Gemini
               </span>
             </div>
-            <p className="text-[11px] text-slate-500 dark:text-slate-400">
+            <p className="text-[11px] text-slate-500 dark:text-slate-400 truncate">
               {isStreaming
                 ? "Streaming response..."
                 : isLoading
@@ -142,17 +154,30 @@ export const AiChatBox = ({
           </div>
         </div>
 
-        {messages.length > 0 && (
-          <button
-            type="button"
-            onClick={clearMessages}
-            title="Clear conversation history from database"
-            className="px-3 py-1.5 rounded-xl text-slate-500 dark:text-slate-400 hover:text-red-500 dark:hover:text-red-400 hover:bg-red-500/10 border border-transparent hover:border-red-500/20 transition-all text-xs flex items-center gap-1.5 font-medium cursor-pointer"
-          >
-            <FiTrash2 className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">Clear Chat</span>
-          </button>
-        )}
+        <div className="flex items-center gap-2 shrink-0">
+          {conversationId && (
+            <button
+              type="button"
+              onClick={onNewChat}
+              title="Start a new chat"
+              className="px-3 py-1.5 rounded-xl bg-purple-500/10 hover:bg-purple-500/20 text-purple-700 dark:text-purple-300 border border-purple-500/20 transition-all text-xs flex items-center gap-1.5 font-medium cursor-pointer"
+            >
+              <FiPlus className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">New Chat</span>
+            </button>
+          )}
+
+          {conversationId && onDeleteConversation && (
+            <button
+              type="button"
+              onClick={() => onDeleteConversation(conversationId)}
+              title="Delete this conversation"
+              className="p-1.5 rounded-xl text-slate-400 hover:text-red-500 hover:bg-red-500/10 border border-transparent hover:border-red-500/20 transition-all text-xs cursor-pointer"
+            >
+              <FiTrash2 className="w-4 h-4" />
+            </button>
+          )}
+        </div>
       </div>
 
       {/* ── Scrollable Message View ── */}
@@ -160,7 +185,7 @@ export const AiChatBox = ({
         {isHistoryLoading ? (
           <div className="h-full flex items-center justify-center text-xs text-slate-400 gap-2">
             <span className="w-2 h-2 rounded-full bg-purple-500 animate-ping" />
-            Loading chat history...
+            Loading conversation history...
           </div>
         ) : messages.length === 0 ? (
           <div className="h-full flex flex-col items-center justify-center text-center p-6 space-y-4 my-auto">
