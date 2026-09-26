@@ -104,7 +104,10 @@ export const AiChatBox = ({
   };
 
   const handleSubmit = (e) => {
-    e?.preventDefault();
+    if (e) {
+      e.preventDefault?.();
+      e.stopPropagation?.();
+    }
     if ((!input.trim() && !selectedImage) || isLoading || isStreaming) return;
 
     sendMessage();
@@ -118,7 +121,8 @@ export const AiChatBox = ({
   const handleKeyDown = (e) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
-      handleSubmit();
+      e.stopPropagation();
+      handleSubmit(e);
     }
   };
 
@@ -330,7 +334,11 @@ export const AiChatBox = ({
 
         {/* Unified Input Box */}
         <form
-          onSubmit={handleSubmit}
+          onSubmit={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            handleSubmit(e);
+          }}
           className="relative flex items-center rounded-2xl bg-white/90 dark:bg-[#111840]/90 border border-purple-500/25 focus-within:border-purple-500/60 shadow-inner transition-all px-2 py-1.5"
         >
           {/* Image Upload Action Trigger */}
@@ -375,7 +383,8 @@ export const AiChatBox = ({
               </button>
             ) : (
               <button
-                type="submit"
+                type="button"
+                onClick={handleSubmit}
                 disabled={!input.trim() && !selectedImage}
                 title="Send message"
                 className={`w-8 h-8 rounded-xl flex items-center justify-center transition-all cursor-pointer ${

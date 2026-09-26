@@ -172,6 +172,12 @@ const ChatSidebar = ({
               placeholder="Search conversations…"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  e.stopPropagation();
+                }
+              }}
               aria-label="Search conversations"
               className="w-full pl-9 pr-4 py-2 rounded-xl bg-slate-100 dark:bg-[#111840] border border-purple-300/40 dark:border-purple-500/15 text-xs sm:text-sm text-slate-900 dark:text-slate-200 placeholder:text-slate-400 dark:placeholder:text-slate-500/60 outline-none focus:border-purple-500/40 focus:shadow-[0_0_0_3px_rgba(139,92,246,0.08)] transition-all"
             />

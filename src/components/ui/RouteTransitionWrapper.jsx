@@ -17,12 +17,54 @@ const RouteTransitionWrapper = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [currentPath, setCurrentPath] = useState(location.pathname);
   const [progress, setProgress] = useState(0);
+  const prevPathRef = React.useRef(location.pathname);
+  const isInitialMount = React.useRef(true);
 
   useEffect(() => {
-    // Reset loading state on route change or initial mount
+    // 1. Initial page load skeleton
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+      setIsLoading(true);
+      setCurrentPath(location.pathname);
+      setProgress(25);
+
+      const pInterval = setInterval(() => {
+        setProgress((prev) => {
+          if (prev >= 90) {
+            clearInterval(pInterval);
+            return 90;
+          }
+          return prev + 25;
+        });
+      }, 150);
+
+      const timer = setTimeout(() => {
+        setProgress(100);
+        setTimeout(() => {
+          setIsLoading(false);
+        }, 100);
+      }, 400);
+
+      return () => {
+        clearInterval(pInterval);
+        clearTimeout(timer);
+      };
+    }
+
+    const prevPath = prevPathRef.current;
+    prevPathRef.current = location.pathname;
+
+    // 2. Prevent reloading or unmounting when navigating within the chat (/chat <-> /chat/:id)
+    if (prevPath.startsWith("/chat") && location.pathname.startsWith("/chat")) {
+      setCurrentPath(location.pathname);
+      setIsLoading(false);
+      return;
+    }
+
+    // 3. Reset loading state on genuine cross-page route change
     setIsLoading(true);
     setCurrentPath(location.pathname);
-    setProgress(15);
+    setProgress(20);
     window.scrollTo({ top: 0, behavior: "instant" });
 
     const pInterval = setInterval(() => {
@@ -33,14 +75,14 @@ const RouteTransitionWrapper = ({ children }) => {
         }
         return prev + 25;
       });
-    }, 250);
+    }, 150);
 
     const timer = setTimeout(() => {
       setProgress(100);
       setTimeout(() => {
         setIsLoading(false);
-      }, 150);
-    }, 1200);
+      }, 100);
+    }, 400);
 
     return () => {
       clearInterval(pInterval);

@@ -27,6 +27,7 @@ export const useAiChat = ({
   const [error, setError] = useState(null);
 
   const abortControllerRef = useRef(null);
+  const activeSessionIdRef = useRef(conversationId);
 
   // Load chat history from database when conversationId changes
   useEffect(() => {
@@ -36,8 +37,16 @@ export const useAiChat = ({
       setMessages([]);
       setIsHistoryLoading(false);
       setError(null);
+      activeSessionIdRef.current = null;
       return;
     }
+
+    // If conversationId was set by the active streaming session, do not re-fetch and overwrite active stream
+    if (conversationId === activeSessionIdRef.current) {
+      return;
+    }
+
+    activeSessionIdRef.current = conversationId;
 
     const fetchConversationMessages = async () => {
       setIsHistoryLoading(true);
@@ -207,7 +216,8 @@ export const useAiChat = ({
               const parsed = JSON.parse(dataContent);
 
               if (parsed.type === "session_created" && parsed.conversation) {
-                // Instantly update parent/sidebar and URL
+                // Instantly update parent/sidebar and URL without wiping streaming state
+                activeSessionIdRef.current = parsed.conversation._id;
                 onSessionCreated?.(parsed.conversation);
               }
 
