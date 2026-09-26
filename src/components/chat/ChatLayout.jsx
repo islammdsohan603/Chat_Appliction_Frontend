@@ -16,7 +16,8 @@ import MessageList from "./MessageList";
 import MessageComposer from "./MessageComposer";
 import ChatInput from "./ChatInput";
 import ProfilePanel from "./ProfilePanel";
-import { HiOutlineBars3 } from "react-icons/hi2";
+import AiChatBox from "./AiChatBox";
+import { HiOutlineBars3, HiOutlineArrowLeft } from "react-icons/hi2";
 
 /* ── Mock data — replace with real API calls ── */
 const MOCK_CONVERSATIONS = [
@@ -188,6 +189,18 @@ const ChatLayout = () => {
     import.meta.env.NEXT_PUBLIC_SERVER_URL ||
     "http://localhost:8000";
 
+  const AI_CONVERSATION = {
+    id: "nexora-ai",
+    name: "Nexora AI",
+    lastMessage: "Powered by Gemini 2.5 Flash. Ask anything!",
+    timestamp: new Date().toISOString(),
+    unread: 0,
+    status: "online",
+    isGroup: false,
+    isAi: true,
+    avatar: null,
+  };
+
   useEffect(() => {
     const fetchUsers = async () => {
       try {
@@ -207,7 +220,7 @@ const ChatLayout = () => {
           avatar: u.image,
         }));
 
-        setConversations(mappedUsers);
+        setConversations([AI_CONVERSATION, ...mappedUsers]);
       } catch (error) {
         console.error("Failed to fetch users", error);
       } finally {
@@ -221,9 +234,9 @@ const ChatLayout = () => {
     (c) => c.id === activeConversationId
   );
 
-  // Fetch messages from database for selected conversation
+  // Fetch messages from database for selected conversation (skip for AI)
   useEffect(() => {
-    if (!activeConversationId) return;
+    if (!activeConversationId || activeConversationId === "nexora-ai") return;
 
     let isMounted = true;
     const fetchConversationMessages = async () => {
@@ -401,8 +414,8 @@ const ChatLayout = () => {
           </div>
         )}
 
-        {/* Chat header (when conversation selected) */}
-        {activeConversation && (
+        {/* Chat header (when human conversation selected) */}
+        {activeConversation && !activeConversation.isAi && (
           <ChatHeader
             contact={{
               name: activeConversation.name,
@@ -414,36 +427,42 @@ const ChatLayout = () => {
           />
         )}
 
-        {/* Also show hamburger in desktop header for tablet */}
-        {activeConversation && (
-          <button
-            onClick={() => setSidebarOpen(true)}
-            aria-label="Open sidebar"
-            className="absolute left-3 top-3 p-2 rounded-xl text-slate-600 dark:text-slate-400 hover:text-purple-600 dark:hover:text-white hover:bg-purple-500/10 transition-all md:hidden z-10"
-            style={{ display: 'none' }}
-          >
-            <HiOutlineBars3 className="w-5 h-5" />
-          </button>
-        )}
-
         {/* Message area */}
-        {activeConversation ? (
-          <MessageList
-            messages={messages}
-            isTyping={isTyping}
-            typingUser={activeConversation.name}
-            currentUserId={currentUserId}
-            isLoading={isMessagesLoading}
-          />
+        {activeConversation?.isAi ? (
+          <div className="flex-1 flex flex-col h-full overflow-hidden">
+            {/* Mobile back bar for AI chat */}
+            <div className="flex items-center justify-between px-4 py-3 border-b border-purple-500/10 bg-white/80 dark:bg-[#060918]/80 backdrop-blur-sm md:hidden shrink-0">
+              <button
+                onClick={() => setActiveConversationId(null)}
+                aria-label="Back to conversations"
+                className="p-2 rounded-xl text-slate-600 dark:text-slate-400 hover:text-purple-600 dark:hover:text-white hover:bg-purple-500/10 transition-all"
+              >
+                <HiOutlineArrowLeft className="w-5 h-5" />
+              </button>
+              <span className="text-sm font-bold gradient-text">Nexora AI</span>
+              <div className="w-9" />
+            </div>
+            <AiChatBox className="flex-1 rounded-none border-0 shadow-none max-w-full bg-transparent dark:bg-transparent" />
+          </div>
+        ) : activeConversation ? (
+          <>
+            <MessageList
+              messages={messages}
+              isTyping={isTyping}
+              typingUser={activeConversation.name}
+              currentUserId={currentUserId}
+              isLoading={isMessagesLoading}
+            />
+            <ChatInput
+              onSend={handleSendMessage}
+              placeholder={`Message ${activeConversation.name}…`}
+            />
+          </>
         ) : (
-          <WelcomeScreen onSendMessage={handleSendMessage} />
-        )}
-
-        {/* ChatGPT Style Floating Input for active chat */}
-        {activeConversation && (
-          <ChatInput
-            onSend={handleSendMessage}
-            placeholder={`Message ${activeConversation.name}…`}
+          <WelcomeScreen
+            onSendMessage={(payload) => {
+              setActiveConversationId("nexora-ai");
+            }}
           />
         )}
       </main>
