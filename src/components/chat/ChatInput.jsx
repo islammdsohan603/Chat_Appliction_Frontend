@@ -6,18 +6,17 @@
  */
 import { useState, useRef, useEffect, useCallback } from "react";
 import {
-  HiPlus,
-  HiArrowUp,
-  HiOutlinePaperClip,
-  HiOutlineFaceSmile,
-  HiOutlineMicrophone,
-  HiOutlineGlobeAlt,
-  HiOutlineSparkles,
-  HiOutlineXMark,
-  HiOutlinePhoto,
-  HiOutlineDocumentText,
-  HiStop,
-} from "react-icons/hi2";
+  FiSend,
+  FiPaperclip,
+  FiSmile,
+  FiMic,
+  FiGlobe,
+  FiX,
+  FiImage,
+  FiFileText,
+  FiSquare,
+} from "react-icons/fi";
+import { IoSparkles } from "react-icons/io5";
 
 const POPULAR_EMOJIS = [
   "👍", "❤️", "🔥", "🚀", "😂", "✨",
@@ -317,9 +316,9 @@ const ChatInput = ({
                     className="w-7 h-7 rounded-lg object-cover border border-purple-500/30"
                   />
                 ) : file.isImage ? (
-                  <HiOutlinePhoto className="w-5 h-5 text-purple-500 dark:text-purple-400 shrink-0" />
+                  <FiImage className="w-4 h-4 text-purple-500 dark:text-purple-400 shrink-0" />
                 ) : (
-                  <HiOutlineDocumentText className="w-5 h-5 text-cyan-600 dark:text-cyan-400 shrink-0" />
+                  <FiFileText className="w-4 h-4 text-cyan-600 dark:text-cyan-400 shrink-0" />
                 )}
                 <div className="flex flex-col min-w-0">
                   <span className="truncate text-xs font-medium text-slate-800 dark:text-slate-200">
@@ -331,9 +330,9 @@ const ChatInput = ({
                   type="button"
                   onClick={() => removeAttachment(file.id)}
                   aria-label="Remove attachment"
-                  className="p-1 rounded-full text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/10 transition-colors ml-1"
+                  className="p-1 rounded-full text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/10 transition-colors ml-1 cursor-pointer"
                 >
-                  <HiOutlineXMark className="w-3.5 h-3.5" />
+                  <FiX className="w-3.5 h-3.5" />
                 </button>
               </div>
             ))}
@@ -370,9 +369,9 @@ const ChatInput = ({
               onClick={() => fileInputRef.current?.click()}
               aria-label="Attach files or images"
               title="Attach files or photos"
-              className="p-2 rounded-full text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-purple-500/15 border border-transparent hover:border-purple-500/20 transition-all shrink-0 active:scale-95"
+              className="p-2 rounded-full text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-purple-500/15 border border-transparent hover:border-purple-500/20 transition-all shrink-0 active:scale-95 cursor-pointer"
             >
-              <HiPlus className="w-4 h-4" />
+              <FiPaperclip className="w-4 h-4" />
             </button>
 
             {/* Web Search toggle (ChatGPT style) */}
@@ -381,13 +380,13 @@ const ChatInput = ({
               onClick={() => setWebSearchActive((v) => !v)}
               aria-label="Search the web"
               title="Search the web"
-              className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-xs font-medium transition-all ${
+              className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-xs font-medium transition-all cursor-pointer ${
                 webSearchActive
                   ? "bg-cyan-500/20 text-cyan-700 dark:text-cyan-300 border border-cyan-500/40 shadow-[0_0_12px_rgba(6,182,212,0.2)]"
                   : "text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-purple-500/10 border border-transparent"
               }`}
             >
-              <HiOutlineGlobeAlt className="w-4 h-4" />
+              <FiGlobe className="w-3.5 h-3.5" />
               <span className="hidden sm:inline text-xs">Search</span>
             </button>
 
@@ -397,13 +396,13 @@ const ChatInput = ({
               onClick={() => setDeepThinkActive((v) => !v)}
               aria-label="Deep Think / Reason"
               title="Deep Think mode"
-              className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-xs font-medium transition-all ${
+              className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-xs font-medium transition-all cursor-pointer ${
                 deepThinkActive
                   ? "bg-purple-500/20 text-purple-700 dark:text-purple-300 border border-purple-500/40 shadow-[0_0_12px_rgba(168,85,247,0.2)]"
                   : "text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-purple-500/10 border border-transparent"
               }`}
             >
-              <HiOutlineSparkles className="w-4 h-4" />
+              <IoSparkles className="w-3.5 h-3.5" />
               <span className="hidden sm:inline text-xs">Reason</span>
             </button>
 
@@ -414,13 +413,13 @@ const ChatInput = ({
                 onClick={() => setShowEmojiPicker((v) => !v)}
                 aria-label="Add emoji"
                 title="Add emoji"
-                className={`p-2 rounded-full transition-all shrink-0 ${
+                className={`p-2 rounded-full transition-all shrink-0 cursor-pointer ${
                   showEmojiPicker
                     ? "text-purple-600 dark:text-purple-400 bg-purple-500/20"
                     : "text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-purple-500/15"
                 }`}
               >
-                <HiOutlineFaceSmile className="w-4 h-4" />
+                <FiSmile className="w-4 h-4" />
               </button>
 
               {/* Emoji Picker Popup */}
@@ -435,7 +434,7 @@ const ChatInput = ({
                         key={emoji}
                         type="button"
                         onClick={() => insertEmoji(emoji)}
-                        className="w-8 h-8 rounded-lg hover:bg-purple-500/15 flex items-center justify-center text-lg hover:scale-125 transition-transform"
+                        className="w-8 h-8 rounded-lg hover:bg-purple-500/15 flex items-center justify-center text-lg hover:scale-125 transition-transform cursor-pointer"
                       >
                         {emoji}
                       </button>
@@ -454,41 +453,41 @@ const ChatInput = ({
               onClick={toggleRecording}
               aria-label={isRecording ? "Stop dictation" : "Voice dictation"}
               title={isRecording ? "Stop recording" : "Dictate message"}
-              className={`p-2 rounded-full transition-all shrink-0 ${
+              className={`p-2 rounded-full transition-all shrink-0 cursor-pointer ${
                 isRecording
                   ? "bg-red-500/20 text-red-500 dark:text-red-400 border border-red-500/40 animate-pulse shadow-[0_0_12px_rgba(239,68,68,0.3)]"
                   : "text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-purple-500/15"
               }`}
             >
-              <HiOutlineMicrophone className="w-4 h-4" />
+              <FiMic className="w-4 h-4" />
             </button>
 
-            {/* Stop Loading Button (if AI is currently generating) */}
+            {/* Stop Loading Button */}
             {isLoading ? (
               <button
                 type="button"
                 onClick={onStop}
                 aria-label="Stop generating"
                 title="Stop generating"
-                className="w-8 h-8 rounded-full bg-slate-800 dark:bg-slate-200 text-white dark:text-slate-900 flex items-center justify-center hover:opacity-90 transition-all shadow-md active:scale-95"
+                className="w-8 h-8 rounded-full bg-slate-800 dark:bg-slate-200 text-white dark:text-slate-900 flex items-center justify-center hover:opacity-90 transition-all shadow-md active:scale-95 cursor-pointer"
               >
-                <HiStop className="w-4 h-4" />
+                <FiSquare className="w-3.5 h-3.5 fill-current" />
               </button>
             ) : (
-              /* Iconic ChatGPT Up Arrow Send Button */
+              /* Send Button with react-icons FiSend */
               <button
                 type="button"
                 onClick={handleSend}
                 disabled={!canSend}
                 aria-label="Send prompt"
                 title={canSend ? "Send message (Enter)" : "Type a message to send"}
-                className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 shrink-0 ${
+                className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 shrink-0 cursor-pointer ${
                   canSend
-                    ? "bg-gradient-to-tr from-purple-500 to-cyan-500 text-white shadow-[0_2px_14px_rgba(139,92,246,0.45)] hover:scale-105 active:scale-95 cursor-pointer"
+                    ? "bg-gradient-to-tr from-purple-500 to-cyan-500 text-white shadow-[0_2px_14px_rgba(139,92,246,0.45)] hover:scale-105 active:scale-95"
                     : "bg-black/10 dark:bg-white/10 text-slate-400 dark:text-slate-500 cursor-not-allowed opacity-60"
                 }`}
               >
-                <HiArrowUp className="w-4 h-4 stroke-[2.5]" />
+                <FiSend className="w-3.5 h-3.5 translate-x-[-1px] translate-y-[1px]" />
               </button>
             )}
           </div>

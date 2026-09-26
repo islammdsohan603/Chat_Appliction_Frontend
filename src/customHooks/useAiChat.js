@@ -6,18 +6,12 @@ const DEFAULT_SERVER_URL =
   "http://localhost:8000";
 
 /**
- * Custom hook for real-time streaming AI chat (similar to ChatGPT) using Server-Sent Events (SSE).
- *
- * @param {Object} options
- * @param {string} [options.endpoint] - API endpoint for streaming (default: /api/ai/chat/stream)
- * @param {Array} [options.initialMessages] - Initial conversation messages
- * @param {string} [options.systemInstruction] - Optional system instruction for the AI
- * @param {string} [options.model] - Gemini model identifier (default: "gemini-2.5-flash")
- * @param {Function} [options.onError] - Error callback
- * @param {Function} [options.onFinish] - Callback fired when stream finishes
+ * Custom hook for real-time streaming AI chat (similar to ChatGPT) using Server-Sent Events (SSE)
+ * with multimodal image attachment and automatic database history synchronization.
  */
 export const useAiChat = ({
   endpoint = `${DEFAULT_SERVER_URL}/api/ai/chat/stream`,
+  historyEndpoint = `${DEFAULT_SERVER_URL}/api/ai/history`,
   initialMessages = [],
   systemInstruction,
   model = "gemini-2.5-flash",
@@ -26,20 +20,60 @@ export const useAiChat = ({
 } = {}) => {
   const [messages, setMessages] = useState(initialMessages);
   const [input, setInput] = useState("");
+  const [selectedImage, setSelectedImage] = useState(null); // { file, previewUrl, base64 }
   const [isLoading, setIsLoading] = useState(false);
   const [isStreaming, setIsStreaming] = useState(false);
+  const [isHistoryLoading, setIsHistoryLoading] = useState(true);
   const [error, setError] = useState(null);
 
   const abortControllerRef = useRef(null);
 
-  // Cleanup abort controller on unmount
+  // Load chat history from database on mount
+  useEffect(() => {
+    let isMounted = true;
+    const fetchHistory = async () => {
+      try {
+        const response = await fetch(historyEndpoint, {
+          credentials: "include",
+        });
+        if (!response.ok) return;
+        const data = await response.json();
+        if (isMounted && Array.isArray(data) && data.length > 0) {
+          const formatted = data.map((item) => ({
+            id: item._id,
+            role: item.role,
+            content: item.prompt,
+            imageUrl: item.imageUrl,
+            createdAt: item.createdAt,
+          }));
+          setMessages(formatted);
+        }
+      } catch (err) {
+        console.warn("Could not load AI chat history:", err);
+      } finally {
+        if (isMounted) {
+          setIsHistoryLoading(false);
+        }
+      }
+    };
+
+    fetchHistory();
+    return () => {
+      isMounted = false;
+    };
+  }, [historyEndpoint]);
+
+  // Cleanup abort controller and image preview on unmount
   useEffect(() => {
     return () => {
       if (abortControllerRef.current) {
         abortControllerRef.current.abort();
       }
+      if (selectedImage?.previewUrl) {
+        URL.revokeObjectURL(selectedImage.previewUrl);
+      }
     };
-  }, []);
+  }, [selectedImage]);
 
   /**
    * Stop current streaming generation
@@ -54,14 +88,15 @@ export const useAiChat = ({
   }, []);
 
   /**
-   * Send a prompt and stream the AI response
+   * Send a prompt and optional image, streaming the AI response
    */
   const sendMessage = useCallback(
-    async (promptOverride) => {
+    async (promptOverride, imageOverride) => {
       const promptText = (promptOverride !== undefined ? promptOverride : input).trim();
-      if (!promptText || isLoading || isStreaming) return;
+      const imagePayload = imageOverride !== undefined ? imageOverride : selectedImage;
 
-      // Abort any ongoing request
+      if ((!promptText && !imagePayload) || isLoading || isStreaming) return;
+
       if (abortControllerRef.current) {
         abortControllerRef.current.abort();
       }
@@ -77,6 +112,7 @@ export const useAiChat = ({
         id: `user-${Date.now()}`,
         role: "user",
         content: promptText,
+        imageUrl: imagePayload?.base64 || imagePayload?.previewUrl || null,
         createdAt: new Date().toISOString(),
       };
 
@@ -89,8 +125,9 @@ export const useAiChat = ({
         isStreaming: true,
       };
 
-      // Clear input and append messages
+      // Clear input and attachments
       setInput("");
+      setSelectedImage(null);
       setMessages((prev) => [...prev, userMessage, assistantPlaceholder]);
 
       try {
@@ -99,8 +136,10 @@ export const useAiChat = ({
           headers: {
             "Content-Type": "application/json",
           },
+          credentials: "include",
           body: JSON.stringify({
             prompt: promptText,
+            imageUrl: imagePayload?.base64 || null,
             messages: [...messages, userMessage],
             systemInstruction,
             model,
@@ -183,7 +222,6 @@ export const useAiChat = ({
         });
       } catch (err) {
         if (err.name === "AbortError") {
-          // User aborted the stream manually
           setMessages((prev) =>
             prev.map((msg) =>
               msg.id === assistantMessageId
@@ -199,7 +237,6 @@ export const useAiChat = ({
         setError(errMsg);
         onError?.(err);
 
-        // Update assistant message to display error
         setMessages((prev) =>
           prev.map((msg) =>
             msg.id === assistantMessageId
@@ -220,23 +257,39 @@ export const useAiChat = ({
         abortControllerRef.current = null;
       }
     },
-    [endpoint, input, isLoading, isStreaming, messages, model, systemInstruction, onError, onFinish]
+    [endpoint, input, selectedImage, isLoading, isStreaming, messages, model, systemInstruction, onError, onFinish]
   );
 
-  const clearMessages = useCallback(() => {
+  /**
+   * Clear messages both locally and from database
+   */
+  const clearMessages = useCallback(async () => {
     stop();
     setMessages([]);
     setError(null);
-  }, [stop]);
+    setSelectedImage(null);
+
+    try {
+      await fetch(historyEndpoint, {
+        method: "DELETE",
+        credentials: "include",
+      });
+    } catch (err) {
+      console.error("Failed to delete chat history:", err);
+    }
+  }, [stop, historyEndpoint]);
 
   return {
     messages,
     input,
     setInput,
+    selectedImage,
+    setSelectedImage,
     sendMessage,
     stop,
     isLoading,
     isStreaming,
+    isHistoryLoading,
     error,
     clearMessages,
     setMessages,
