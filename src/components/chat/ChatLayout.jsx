@@ -177,16 +177,20 @@ const ChatLayout = () => {
   const [isTyping] = useState(false);
   const [conversations, setConversations] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isMessagesLoading, setIsMessagesLoading] = useState(false);
 
   const currentUser = userData?.user || userData || {};
   const currentUserId = currentUser._id || "me";
   const currentUserName = currentUser.name || currentUser.userName || "You";
 
+  const serverUrl =
+    import.meta.env.VITE_SERVER_URL ||
+    import.meta.env.NEXT_PUBLIC_SERVER_URL ||
+    "http://localhost:8000";
+
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const serverUrl =
-          import.meta.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:8000";
         const response = await axios.get(`${serverUrl}/api/user/all`, {
           withCredentials: true,
         });
@@ -211,48 +215,143 @@ const ChatLayout = () => {
       }
     };
     fetchUsers();
-  }, []);
+  }, [serverUrl]);
 
   const activeConversation = conversations.find(
     (c) => c.id === activeConversationId
   );
 
+  // Fetch messages from database for selected conversation
+  useEffect(() => {
+    if (!activeConversationId) return;
+
+    let isMounted = true;
+    const fetchConversationMessages = async () => {
+      setIsMessagesLoading(true);
+      try {
+        const response = await axios.get(
+          `${serverUrl}/api/chat/${activeConversationId}`,
+          { withCredentials: true }
+        );
+
+        if (!isMounted) return;
+
+        const formatted = (response.data || []).map((msg) => ({
+          id: msg._id,
+          text: msg.message,
+          attachments: msg.attachments || [],
+          timestamp: msg.createdAt,
+          senderId: msg.senderId,
+          senderName:
+            msg.senderId === currentUserId
+              ? "You"
+              : activeConversation?.name || "User",
+          status: "sent",
+          reactions: [],
+        }));
+
+        setMessages(formatted);
+      } catch (error) {
+        if (!isMounted) return;
+        console.error("Failed to fetch messages from database:", error);
+        toast.error("Failed to load conversation history");
+      } finally {
+        if (isMounted) {
+          setIsMessagesLoading(false);
+        }
+      }
+    };
+
+    fetchConversationMessages();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [activeConversationId, serverUrl, currentUserId, activeConversation?.name]);
+
   const handleSelectConversation = useCallback((id) => {
     setActiveConversationId(id);
     setSidebarOpen(false);
-    // Load mock messages for the selected conversation
-    setMessages(generateMessages(currentUserId));
-  }, [currentUserId]);
+  }, []);
 
-  const handleSendMessage = useCallback((payload) => {
-    const textContent = typeof payload === "string" ? payload : payload?.text || "";
-    const attachments = typeof payload === "object" ? payload?.attachments || [] : [];
-    if (!textContent && attachments.length === 0) return;
+  const handleSendMessage = useCallback(
+    async (payload) => {
+      const textContent =
+        typeof payload === "string" ? payload : payload?.text || "";
+      const attachments =
+        typeof payload === "object" ? payload?.attachments || [] : [];
+      if (!textContent && attachments.length === 0) return;
 
-    // If no active conversation is selected yet, select the first one if available
-    if (!activeConversationId && conversations.length > 0) {
-      setActiveConversationId(conversations[0].id);
-    }
+      let targetReceiverId = activeConversationId;
+      // If no active conversation is selected yet, select the first available user
+      if (!targetReceiverId && conversations.length > 0) {
+        targetReceiverId = conversations[0].id;
+        setActiveConversationId(targetReceiverId);
+      }
 
-    const newMessage = {
-      id: `msg-${Date.now()}`,
-      text: textContent,
-      attachments,
-      webSearch: typeof payload === "object" ? payload?.webSearch : false,
-      deepThink: typeof payload === "object" ? payload?.deepThink : false,
-      timestamp: new Date().toISOString(),
-      senderId: currentUserId,
-      senderName: currentUserName,
-      status: "sent",
-      reactions: [],
-    };
-    setMessages((prev) => [...prev, newMessage]);
-  }, [activeConversationId, conversations, currentUserId, currentUserName]);
+      if (!targetReceiverId) {
+        toast.info("Please select a user from the sidebar to chat with.");
+        return;
+      }
+
+      try {
+        const response = await axios.post(
+          `${serverUrl}/api/chat/send/${targetReceiverId}`,
+          {
+            message: textContent,
+            attachments,
+          },
+          {
+            withCredentials: true,
+          }
+        );
+
+        const savedChat = response.data?.chat;
+        const newMessage = {
+          id: savedChat?._id || `msg-${Date.now()}`,
+          text: savedChat?.message || textContent,
+          attachments: savedChat?.attachments || attachments,
+          webSearch: typeof payload === "object" ? payload?.webSearch : false,
+          deepThink: typeof payload === "object" ? payload?.deepThink : false,
+          timestamp: savedChat?.createdAt || new Date().toISOString(),
+          senderId: currentUserId,
+          senderName: currentUserName,
+          status: "sent",
+          reactions: [],
+        };
+
+        setMessages((prev) => [...prev, newMessage]);
+
+        // Update preview in sidebar
+        setConversations((prev) =>
+          prev.map((c) =>
+            c.id === targetReceiverId
+              ? {
+                  ...c,
+                  lastMessage: textContent || "Attachment",
+                  timestamp: new Date().toISOString(),
+                }
+              : c
+          )
+        );
+      } catch (error) {
+        console.error("Failed to store chat message:", error);
+        toast.error(
+          error.response?.data?.message || "Failed to send chat message"
+        );
+      }
+    },
+    [
+      activeConversationId,
+      conversations,
+      currentUserId,
+      currentUserName,
+      serverUrl,
+    ]
+  );
 
   const handleLogout = async () => {
     try {
-      const serverUrl =
-        import.meta.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:8000";
       await axios.get(`${serverUrl}/api/auth/logout`, { withCredentials: true });
     } catch {
       // Logout anyway
@@ -334,7 +433,7 @@ const ChatLayout = () => {
             isTyping={isTyping}
             typingUser={activeConversation.name}
             currentUserId={currentUserId}
-            isLoading={false}
+            isLoading={isMessagesLoading}
           />
         ) : (
           <WelcomeScreen onSendMessage={handleSendMessage} />
